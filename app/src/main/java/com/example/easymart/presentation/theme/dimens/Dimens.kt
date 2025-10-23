@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 
 @Immutable
 data class AppDimens(
@@ -43,7 +44,15 @@ data class AppDimens(
 
     val featuredCardHeight: Dp,
     val recommendedHeight: Dp,
-    val recommendedWidth: Dp
+    val recommendedWidth: Dp,
+
+    //sản phẩm trong giỏ hàng
+    val cartImgSize: Dp,
+    val qtyBtnSize: Dp,
+    val cardQualityHeight: Dp,
+
+    val productImageHeight: Dp,
+    val avatarCardSize: Dp,
 )
 
 val LocalAppDimens = staticCompositionLocalOf { DefaultDimens }

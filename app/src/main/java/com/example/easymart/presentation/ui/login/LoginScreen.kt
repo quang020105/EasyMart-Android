@@ -39,8 +39,8 @@ import com.example.easymart.presentation.ui.common.components.RoundedActionButto
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    onSignUpClick: (email: String, sdt: String, password: String) -> Unit = {_,_,_ ->},
-    onNavigateToLogin: () -> Unit
+    onLoginClick: (email: String, sdt: String, password: String) -> Unit = {_,_,_ ->},
+    onNavigateToSignUp: () -> Unit
 ) {
     val dimens = LocalAppDimens.current
     val focusManager = LocalFocusManager.current
@@ -91,7 +91,7 @@ fun LoginScreen(
                 text = "Đăng nhập",
                 onClick = {
                     focusManager.clearFocus()
-                    onSignUpClick(email, sdt, password)
+                    onLoginClick(email, sdt, password)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 verticalPadding = dimens.spaceLg,
@@ -108,7 +108,7 @@ fun LoginScreen(
                 text = "Đăng kí",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable { onNavigateToLogin() }
+                modifier = Modifier.clickable { onNavigateToSignUp() }
             )
         }
     }
@@ -120,11 +120,11 @@ fun LoginScreenPreview() {
     EasyMartTheme {
         LoginScreen (
             modifier = Modifier.fillMaxSize(),
-            onSignUpClick = { email, sdt, password ->
+            onLoginClick = { email, sdt, password ->
                 // Handle sign up click
                 Log.d("login","Sign up clicked with fullName: email: $email, sdt: $sdt, password: $password")
             },
-            onNavigateToLogin = { }
+            onNavigateToSignUp = { }
         )
     }
 }

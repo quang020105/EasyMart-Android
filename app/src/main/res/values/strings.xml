@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">EasyMart</string>
     <string name="title_activity_home_screen">HomeScreen</string>
+    <string name="label_description">Mô tả sản phẩm</string>
+    <string name="action_add_to_cart">Thêm vào giỏ hàng</string>
+    <string name="label_orders">Đơn hàng của tôi</string>
+    <string name="label_address">Địa chỉ giao hàng</string>
+    <string name="label_payments">Phương thức thanh toán</string>
+    <string name="label_settings">Cài đặt</string>
+    <string name="label_logout">Đăng xuất</string>
 </resources>

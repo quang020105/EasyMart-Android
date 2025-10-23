@@ -34,5 +34,10 @@ val LargeDimens = AppDimens(
 
     featuredCardHeight = 200.dp,
     recommendedHeight = 160.dp,
-    recommendedWidth = 160.dp
+    recommendedWidth = 160.dp,
+    cartImgSize = 110.dp,
+    qtyBtnSize = 28.dp,
+    cardQualityHeight = 32.dp,
+    productImageHeight = 400.dp,
+    avatarCardSize = 120.dp,
 )

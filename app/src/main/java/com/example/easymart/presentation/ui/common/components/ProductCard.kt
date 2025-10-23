@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,13 +28,14 @@ fun ProductCard(
     product: Product,
     onClick: (Product) -> Unit,
     modifier: Modifier = Modifier,
-    cornerRadius: Dp = 12.dp
+    cornerRadius: Dp = 12.dp,
+    colorBackground: Color = MaterialTheme.colorScheme.surfaceVariant
 ) {
     Card(
         modifier = modifier.fillMaxSize(),
         shape = RoundedCornerShape(cornerRadius),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = colorBackground
         ),
         onClick = { onClick(product) }
     ) {

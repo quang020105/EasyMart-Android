@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.theme.EasyMartTheme
-import com.example.easymart.R
 import com.example.easymart.domain.model.Address
 
 @Composable
@@ -30,32 +29,34 @@ fun AddressCard(
 
     Card(
         modifier = modifier
-            .fillMaxWidth().border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(dimens.radiusLarge)
-            ),
+            .fillMaxWidth().padding(vertical = dimens.spaceXs),
         shape = RoundedCornerShape(dimens.radiusLarge),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth().border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(dimens.radiusLarge)
+                )
                 .padding(all = dimens.spaceLg)
         ) {
-            Box(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
-                    .padding(horizontal = dimens.spaceSm, vertical = dimens.spaceXs),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = if(address.tag) "Mặc định" else "",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
+            if(address.tagName != null){
+                Box(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
+                        .padding(horizontal = dimens.spaceSm, vertical = dimens.spaceXs),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = address.tagName,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
 
 
@@ -112,7 +113,7 @@ private fun AddressCardPreview() {
                 name = "Nguyễn Văn A",
                 detailAddress = "123 Đường ABC, Phường XYZ",
                 districtCity = "Quận 1, TP. Hồ Chí Minh",
-                tag = true,
+                tagName = "Mặc định",
                 phone = "0367985485"
             )
         )

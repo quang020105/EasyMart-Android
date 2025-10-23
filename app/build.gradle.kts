@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.example.easymart"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.easymart"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
 
         versionCode = 1
         versionName = "1.0"
@@ -57,4 +57,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.coil.compose)
+
+    //navigation
+    implementation (libs.androidx.navigation.compose)
+    implementation (libs.androidx.hilt.navigation.compose)
+
 }

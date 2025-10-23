@@ -34,7 +34,8 @@ fun RoundedActionButton(
     backGroundColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     textStyle: TextStyle = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Medium),
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    alpha: Float = 1f
 ) {
     val shape = RoundedCornerShape(cornerRadius)
     Button(
@@ -45,7 +46,7 @@ fun RoundedActionButton(
         shape = shape,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = backGroundColor,
+            containerColor = backGroundColor.copy(alpha = alpha),
             contentColor = contentColor,
             disabledContainerColor = backGroundColor.copy(alpha = 0.3f),
             disabledContentColor = contentColor.copy(alpha = 0.3f)
