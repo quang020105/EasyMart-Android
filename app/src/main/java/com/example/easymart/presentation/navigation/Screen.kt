@@ -28,6 +28,10 @@ sealed class Screen(val route: String){
         fun createRoute(status: String) = "order_status/$status"
     }
     data object DeliveryAddress: Screen("delivery_address")
+    data object PaymentMethod: Screen("payment_method")
+    data object AddAddress: Screen("add_address"){
+        fun createRoute(addressId: Int) = "add_address/$addressId"
+    }
 
     //graph search
     data object SearchGraph: Screen("search_graph")

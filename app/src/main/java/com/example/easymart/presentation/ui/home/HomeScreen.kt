@@ -33,6 +33,8 @@ import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.common.components.ProductCard
 import com.example.easymart.presentation.ui.common.components.ItemProductRecommendCard
 import com.example.easymart.presentation.ui.home.components.ProductRow
+import com.example.easymart.presentation.ui.mock.mockProducts
+import com.example.easymart.presentation.ui.mock.mockSimpleProduct
 
 
 @Composable
@@ -48,7 +50,7 @@ fun HomeScreen(
             .background(color = MaterialTheme.colorScheme.primary)
         )
         Card (modifier = Modifier.fillMaxWidth()
-            .fillMaxHeight(0.9f)
+            .fillMaxHeight(0.95f)
             .background(color = Color.Transparent)
             .align(Alignment.BottomCenter),
             shape = RoundedCornerShape(topStart = dimens.radiusXl, topEnd = dimens.radiusXl),
@@ -67,14 +69,7 @@ fun HomeScreen(
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Spacer(modifier = Modifier.height(dimens.spaceSm))
-                val featuredProduct = productRecommends.first()
-//                FeatureProductCard(
-//                    product = featuredProduct,
-//                    onProductClick = onProductClick,
-//                    modifier = Modifier
-//                        .height(dimens.featuredCardHeight)
-//
-//                )
+                val featuredProduct = productRecommends.randomOrNull() ?: mockSimpleProduct
                ProductCard(
                    product = featuredProduct,
                    onClick = onProductClick,

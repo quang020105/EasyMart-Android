@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id ("kotlin-kapt")               // cần cho annotation processing (kapt)
+    id ("com.google.dagger.hilt.android") // áp dụng plugin Hilt cho module app
+    //id ("com.google.devtools.ksp")       // <-- bật KSP cho module này
 }
 
 android {
@@ -50,6 +53,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.foundation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -64,4 +68,31 @@ dependencies {
     implementation (libs.androidx.navigation.compose)
     implementation (libs.androidx.hilt.navigation.compose)
 
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    //moshi
+    implementation(libs.moshi.kotlin)
+    implementation(libs.moshi.adapters)
+    implementation(libs.converter.moshi)
+
+    // Networking
+    implementation(libs.logging.interceptor)
+
+    //hilt
+    implementation (libs.hilt.android)
+    kapt (libs.dagger.hilt.compiler)
+    kapt (libs.androidx.hilt.compiler)   // hoặc version phù hợp bạn đang dùng
+
+    //room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    //noinspection KaptUsageInsteadOfKsp
+    kapt(libs.androidx.room.compiler)
+
+    //tìm kiếm nhanh bằng algolia
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.algoliasearch.client.kotlin.jvm)
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.cio)
 }

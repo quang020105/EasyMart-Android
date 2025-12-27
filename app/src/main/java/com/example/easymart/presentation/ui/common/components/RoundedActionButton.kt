@@ -1,5 +1,6 @@
 package com.example.easymart.presentation.ui.common.components
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -20,6 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.easymart.presentation.theme.EasyMartTheme
+import com.example.easymart.presentation.ui.common.expansion.pressScale
 
 @Composable
 fun RoundedActionButton(
@@ -37,12 +40,19 @@ fun RoundedActionButton(
     enabled: Boolean = true,
     alpha: Float = 1f
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     val shape = RoundedCornerShape(cornerRadius)
     Button(
         onClick = onClick,
         modifier = modifier
+            .pressScale(
+                enabled = true,
+                pressedScale = 0.86f,
+                interactionSource = interactionSource
+            )
             .defaultMinSize(minWidth = minWidth, minHeight = minHeight)
             .clip(shape),
+        interactionSource = interactionSource,
         shape = shape,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(

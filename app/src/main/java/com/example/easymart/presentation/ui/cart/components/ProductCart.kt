@@ -2,6 +2,7 @@ package com.example.easymart.presentation.ui.cart.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,20 +32,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.easymart.R
+import com.example.easymart.domain.model.CartItem
 import com.example.easymart.domain.model.Product
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.common.components.ProductCard
+import com.example.easymart.presentation.ui.mock.mockSimpleCartItems
+import com.example.easymart.utils.toVNDString
 
 @Composable
 fun ProductCart(
     modifier: Modifier = Modifier,
     checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit = {},
-    product: Product,
+    cartItem: CartItem,
     onPlusClick: () -> Unit = {},
     onMinusClick: () -> Unit = {},
-    quantity: Int = 1
 ) {
     val dimens = LocalAppDimens.current
     Card(
@@ -68,7 +71,6 @@ fun ProductCart(
             Checkbox(
                 checked = checked,
                 onCheckedChange = onCheckedChange,
-                modifier = Modifier.padding(start = dimens.spaceMd),
                 colors = CheckboxDefaults.colors(
                     checkedColor = MaterialTheme.colorScheme.primary,
                     uncheckedColor = MaterialTheme.colorScheme.onBackground
@@ -78,7 +80,7 @@ fun ProductCart(
                 modifier = Modifier
                     .padding(all = dimens.spaceXs)
                     .size(dimens.cartImgSize),
-                product = product,
+                product = cartItem.product,
                 onClick = {},
                 colorBackground = MaterialTheme.colorScheme.background
             )
@@ -87,62 +89,62 @@ fun ProductCart(
                     .padding(all = dimens.spaceSm)
             ) {
                 Text(
-                    text = product.name,
+                    text = cartItem.product.name,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2
                 )
                 Text(
-                    text = "$${product.price}",
+                    text = cartItem.price.toVNDString(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(vertical = dimens.spaceSm)
                 )
             }
 
-            Surface(
-                modifier = Modifier
-                    .padding(end = dimens.spaceMd, bottom = dimens.spaceMd)
-                    .wrapContentWidth()
-                    .align(Alignment.Bottom),
-                shape = RoundedCornerShape(dimens.radiusSmall),
-                shadowElevation = dimens.cardElevation,
-                color = MaterialTheme.colorScheme.background
+        }
+
+        Surface(
+            modifier = Modifier
+                .padding(end = dimens.spaceMd, bottom = dimens.spaceMd)
+                .wrapContentWidth().align(Alignment.End),
+            shape = RoundedCornerShape(dimens.radiusSmall),
+            shadowElevation = dimens.cardElevation,
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Row(
+                modifier = Modifier.height(dimens.cardQualityHeight),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
             ) {
-                Row(
-                    modifier = Modifier.height(dimens.cardQualityHeight),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
+                IconButton(
+                    onClick = onMinusClick,
+                    modifier = Modifier.wrapContentSize()
+
                 ) {
-                    IconButton(
-                        onClick = onMinusClick,
-                        modifier = Modifier.wrapContentSize()
-
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_minus),
-                            contentDescription = "Minus",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.fillMaxHeight()
-                        )
-                    }
-                    Text(
-                        text = quantity.toString(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_minus),
+                        contentDescription = "Minus",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.fillMaxHeight()
                     )
-                    IconButton(
-                        onClick = onPlusClick
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_plus),
-                            contentDescription = "Minus",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.fillMaxHeight()
-                        )
-                    }
-
                 }
+                Text(
+                    text = cartItem.quantity.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                IconButton(
+                    onClick = onPlusClick
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_plus),
+                        contentDescription = "Minus",
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.fillMaxHeight()
+                    )
+                }
+
             }
         }
     }
@@ -156,14 +158,7 @@ fun ProductCartPreview() {
             modifier = Modifier,
             checked = false,
             onCheckedChange = {},
-            product = Product(
-                id = 1,
-                name = "Product Name",
-                imageRes = com.example.easymart.R.drawable.pic_shoe_1,
-                price = 76.7,
-                description = "This is a sample product description.",
-                imageUrl = ""
-            ),
+            cartItem = mockSimpleCartItems,
             onPlusClick = {},
             onMinusClick = {}
         )

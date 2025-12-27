@@ -19,6 +19,7 @@ import com.example.easymart.domain.model.Product
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.common.components.RoundedActionButton
+import com.example.easymart.utils.toVNDString
 
 @Composable
 fun ProductRow(
@@ -43,7 +44,7 @@ fun ProductRow(
             )
             Spacer(modifier = Modifier.padding(top = dimens.spaceSm))
             Text(
-                text = "$${product.price}",
+                text = product.price.toVNDString(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -67,7 +68,7 @@ fun ProductRowPreview() {
                 id = 1,
                 name = "Sample Product",
                 description = "This is a sample product description.",
-                price = 9.99,
+                price = 304.5,
                 imageRes = R.drawable.pic_shoe_1,
                 imageUrl = ""
             ),

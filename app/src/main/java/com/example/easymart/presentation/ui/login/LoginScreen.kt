@@ -91,7 +91,7 @@ fun LoginScreen(
                 text = "Đăng nhập",
                 onClick = {
                     focusManager.clearFocus()
-                    onLoginClick(email, sdt, password)
+                    onLoginClick(email,"57478", password)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 verticalPadding = dimens.spaceLg,

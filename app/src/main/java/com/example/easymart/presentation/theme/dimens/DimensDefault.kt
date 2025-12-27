@@ -42,4 +42,10 @@ val DefaultDimens = AppDimens(
     cardQualityHeight = 24.dp,
     productImageHeight = 300.dp,
     avatarCardSize = 100.dp,
+    iconBottomSize = 24.dp,
+    bottomNavHeight = 100.dp,
+    contentIconSize = 12.dp,
+
+    iconSize = 20.dp,
+    searchInputHeight = 40.dp
 )

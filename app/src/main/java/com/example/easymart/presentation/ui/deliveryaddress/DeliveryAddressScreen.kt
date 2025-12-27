@@ -30,7 +30,7 @@ fun DeliveryAddressScreen(
     modifier: Modifier = Modifier,
     address: List<Address> = emptyList(),
     onAddressClick: (Address) -> Unit = {},
-    onAddressEditClick: (Address) -> Unit = {},
+    onAddressEditClick: (addressId: Int) -> Unit = {},
     onAddressAddClick: () -> Unit = {}
 ) {
     val dimens = LocalAppDimens.current
@@ -49,9 +49,10 @@ fun DeliveryAddressScreen(
             )
         }
 
-        items(address) { addr ->
+        items(address) { address ->
             AddressCard(
-                address = addr
+                address = address,
+                onEditClick = { onAddressEditClick(address.id) }
             )
         }
 
@@ -92,12 +93,11 @@ fun DeliveryAddressScreenPreview() {
         DeliveryAddressScreen(
             address = listOf(
                 Address(
-                    "Mặc định",
-                    1,
-                    "Nguyễn Văn A",
-                    "0123456789",
-                    "123 Đường A, Phường B, Quận",
-                    " Quận C, TP. HCM"
+                    isDefault = true,
+                    name = "Nguyễn Văn A",
+                    phone = "0123456789",
+                    detailAddress = "123 Đường A, Phường B, Quận",
+                    districtCity = " Quận C, TP. HCM"
                 ),
                 Address(
                     name = "Trần Thị B",

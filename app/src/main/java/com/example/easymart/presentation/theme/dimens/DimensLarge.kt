@@ -40,4 +40,10 @@ val LargeDimens = AppDimens(
     cardQualityHeight = 32.dp,
     productImageHeight = 400.dp,
     avatarCardSize = 120.dp,
+    iconBottomSize = 32.dp,
+    bottomNavHeight = 120.dp,
+    contentIconSize = 18.dp,
+
+    iconSize = 28.dp,
+    searchInputHeight = 56.dp
 )

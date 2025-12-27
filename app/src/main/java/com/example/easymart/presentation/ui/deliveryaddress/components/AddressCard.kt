@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -13,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,52 +23,80 @@ import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.domain.model.Address
 
+
 @Composable
 fun AddressCard(
     modifier: Modifier = Modifier,
-    address: Address
+    address: Address,
+    onEditClick: (() -> Unit)? = null
 ) {
     val dimens = LocalAppDimens.current
 
     Card(
         modifier = modifier
-            .fillMaxWidth().padding(vertical = dimens.spaceXs),
+            .fillMaxWidth()
+            .padding(vertical = dimens.spaceXs),
         shape = RoundedCornerShape(dimens.radiusLarge),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth().border(
+                .fillMaxWidth()
+                .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
                     shape = RoundedCornerShape(dimens.radiusLarge)
                 )
                 .padding(all = dimens.spaceLg)
         ) {
-            if(address.tagName != null){
-                Box(
+
+            // ----- TAG + EDIT ICON -----
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+
+                if (address.tagName != null) {
+                    Box(
+                        modifier = Modifier
+                            .wrapContentWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
+                            .padding(horizontal = dimens.spaceSm, vertical = dimens.spaceXs),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = address.tagName ?: "",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.height(0.dp))
+                }
+
+                IconButton(
+                    onClick = { onEditClick?.invoke() },
                     modifier = Modifier
-                        .wrapContentWidth()
+                        .size(dimens.iconSmall)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
-                        .padding(horizontal = dimens.spaceSm, vertical = dimens.spaceXs),
-                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = address.tagName,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary
+                    Icon(
+                        painter = painterResource(id = com.example.easymart.R.drawable.ic_edit),
+                        contentDescription = "Edit address",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
-
-            Row (
+            // -------- NAME + PHONE --------
+            Row(
                 modifier = Modifier
                     .padding(vertical = dimens.spaceXs)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 Text(
                     text = address.name,
                     style = MaterialTheme.typography.titleMedium,
@@ -86,14 +117,13 @@ fun AddressCard(
                 )
             }
 
+            // -------- ADDRESS --------
             Text(
                 text = address.detailAddress,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-
-            // District / city
             Text(
                 text = address.districtCity,
                 style = MaterialTheme.typography.bodyMedium,
@@ -104,6 +134,8 @@ fun AddressCard(
     }
 }
 
+
+
 @Preview(showBackground = false)
 @Composable
 private fun AddressCardPreview() {
@@ -113,7 +145,7 @@ private fun AddressCardPreview() {
                 name = "Nguyễn Văn A",
                 detailAddress = "123 Đường ABC, Phường XYZ",
                 districtCity = "Quận 1, TP. Hồ Chí Minh",
-                tagName = "Mặc định",
+                isDefault = true,
                 phone = "0367985485"
             )
         )

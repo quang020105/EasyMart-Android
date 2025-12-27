@@ -50,9 +50,15 @@ data class AppDimens(
     val cartImgSize: Dp,
     val qtyBtnSize: Dp,
     val cardQualityHeight: Dp,
+    val contentIconSize: Dp,
 
     val productImageHeight: Dp,
     val avatarCardSize: Dp,
+    val iconBottomSize: Dp,
+    val bottomNavHeight: Dp,
+
+    val iconSize: Dp,
+    val searchInputHeight: Dp
 )
 
 val LocalAppDimens = staticCompositionLocalOf { DefaultDimens }

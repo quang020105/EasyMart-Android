@@ -6,9 +6,9 @@ data class Product(
     val description: String?,
     val price: Double,
     val imageUrl: String,
-    val imageRes: Int,
+    val imageRes: Int = 0,
     val images: List<ProductImage> = emptyList(),
-    val categories: List<Category>? = emptyList(),
+    val category: String = "",
     val stockQuantity: Int = 0,
     val soldQuantity: Int = 0
 )

@@ -2,6 +2,7 @@ package com.example.easymart.presentation.ui.common.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import com.example.easymart.R
 import com.example.easymart.domain.model.Product
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
+import com.example.easymart.utils.toVNDString
 
 @Composable
 fun ItemProductRecommendCard(
@@ -39,7 +41,7 @@ fun ItemProductRecommendCard(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
                 shape = androidx.compose.foundation.shape.RoundedCornerShape(dimens.radiusMedium)
-            ),
+            ).clickable(onClick = { onProductClick(product) }),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(dimens.radiusMedium),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
@@ -51,7 +53,6 @@ fun ItemProductRecommendCard(
         ) {
             ProductCard(
                 product = product,
-                onClick = onProductClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(dimens.recommendedWidth),
@@ -76,7 +77,7 @@ fun ItemProductRecommendCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "$${product.price}",
+                        text = product.price.toVNDString(),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(bottom = dimens.spaceSm)

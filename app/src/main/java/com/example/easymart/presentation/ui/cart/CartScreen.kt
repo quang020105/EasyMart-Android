@@ -2,6 +2,7 @@ package com.example.easymart.presentation.ui.cart
 
 import android.view.View
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,26 +25,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.easymart.R
+import com.example.easymart.domain.model.CartItem
 import com.example.easymart.domain.model.Product
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.cart.components.ProductCart
 import com.example.easymart.presentation.ui.common.components.RoundedActionButton
+import com.example.easymart.presentation.ui.mock.mockCartItems
+import com.example.easymart.utils.toVNDString
 
 @Composable
 fun CartScreen(
     modifier: Modifier = Modifier,
-    onCheckOutCLick: () -> Unit,
+    onCheckOutClick: () -> Unit,
     subtotal: Double = 0.0,
     shipping: Double = 0.0,
     total: Double = 0.0,
     allChecked: Boolean = false,
-    products: List<Product> = emptyList(),
+    cartItems: List<CartItem> = emptyList(),
     onChangeCheckedAll: (Boolean) -> Unit = {},
-    onProductClick: (Product) -> Unit = {},
-    onPlusClick: (productId: String) -> Unit = {},
-    onMinusClick: (productId: String) -> Unit = {},
-    onCheckedChange: (productId: String, checked: Boolean) -> Unit = {_,_ -> },
+    onCartItemClick: (Product) -> Unit = {},
+    onPlusClick: (cartItem: CartItem) -> Unit = {},
+    onMinusClick: (cartItem: CartItem) -> Unit = {},
+    onCheckedChange: (cartItem: CartItem, checked: Boolean) -> Unit = { _, _ -> },
 ) {
     val dimens = LocalAppDimens.current
     Column(
@@ -52,62 +56,71 @@ fun CartScreen(
             .background(color = MaterialTheme.colorScheme.background),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
+        //column 1
         LazyColumn(
-            modifier = modifier.padding(horizontal = dimens.spaceMd),
+            modifier = Modifier
+                .padding(horizontal = dimens.spaceMd)
+                .fillMaxWidth()
+                .weight(1f),
 
             ) {
-            items(products, key = { it.id }) { product ->
+            items(cartItems, key = { it.id }) { cartItem ->
                 ProductCart(
-                    product = product,
-                    onMinusClick = { onMinusClick(product.id.toString()) },
-                    onPlusClick = { onPlusClick(product.id.toString()) },
-                    onCheckedChange = { checked -> onCheckedChange(product.id.toString(), checked) }
+                    cartItem = cartItem,
+                    checked = cartItem.isChecked,
+                    onMinusClick = { onMinusClick(cartItem) },
+                    onPlusClick = { onPlusClick(cartItem) },
+                    onCheckedChange = { checked ->
+                        onCheckedChange(
+                            cartItem,
+                            checked
+                        )
+                    }
                 )
             }
         }
+        //column 2
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.background)
                 .padding(horizontal = dimens.spaceLg)
         ) {
             Row(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(vertical = dimens.spaceSm),
+                    .padding(vertical = dimens.spaceXs),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
                     text = "Tổng tiền sản phẩm: ",
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodySmall,
                 )
                 Text(
-                    text = "$subtotal Đ",
-                    style = MaterialTheme.typography.bodyLarge,
+                    text = subtotal.toVNDString(),
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
 
             Row(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(vertical = dimens.spaceSm),
+                    .padding(vertical = dimens.spaceXs),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
                     text = "Phí vận chuyển : ",
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodySmall,
                 )
                 Text(
-                    text = "$shipping Đ",
-                    style = MaterialTheme.typography.bodyLarge,
+                    text = shipping.toVNDString(),
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
-            Spacer(
-                modifier = Modifier
-                    .height(dimens.spaceSm)
-            )
+
             HorizontalDivider(
                 modifier = Modifier
-                    .fillMaxWidth().padding(vertical = dimens.spaceSm),
+                    .fillMaxWidth()
+                    .padding(vertical = dimens.spaceSm),
                 thickness = DividerDefaults.Thickness,
                 color = DividerDefaults.color
             )
@@ -122,7 +135,7 @@ fun CartScreen(
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 Text(
-                    text = "$total Đ",
+                    text = total.toVNDString(),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -148,7 +161,7 @@ fun CartScreen(
                 )
                 RoundedActionButton(
                     text = "Mua hàng",
-                    onClick = onCheckOutCLick,
+                    onClick = onCheckOutClick,
                     modifier = Modifier.fillMaxWidth(0.4f),
                 )
             }
@@ -162,40 +175,8 @@ fun CartScreen(
 fun CartScreenPreview() {
     EasyMartTheme {
         CartScreen(
-            onCheckOutCLick = {},
-            products = listOf(
-                Product(
-                    1,
-                    "Product 1",
-                    "Description 1",
-                    10.0,
-                    "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/1.webp",
-                    R.drawable.pic_shoe_1
-                ),
-                Product(
-                    2,
-                    "Product 2",
-                    "Description 2",
-                    20.0,
-                    "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/1.webp",
-                    R.drawable.pic_shoe_1
-                ),
-                Product(
-                    3,
-                    "Product 3",
-                    "Description 3",
-                    30.0,
-                    "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/1.webp",
-                    R.drawable.pic_shoe_1
-                )
-            ),
-            onChangeCheckedAll = {},
-            onPlusClick = {},
-            onMinusClick = {},
-            onCheckedChange = { _, _ -> },
-            subtotal = 60.0,
-            shipping = 5.0,
-            total = 65.0
+            onCheckOutClick = {},
+            cartItems = mockCartItems
         )
     }
 }

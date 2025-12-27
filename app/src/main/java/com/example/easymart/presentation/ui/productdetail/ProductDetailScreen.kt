@@ -33,7 +33,9 @@ import com.example.easymart.R
 import coil.compose.AsyncImage
 import com.example.easymart.presentation.ui.common.components.RoundedActionButton
 import com.example.easymart.presentation.ui.common.components.ItemProductRecommendCard
+import com.example.easymart.presentation.ui.common.expansion.pressScale
 import com.example.easymart.presentation.ui.mock.mockProducts
+import com.example.easymart.utils.toVNDString
 
 @Composable
 fun ProductDetailScreen(
@@ -42,7 +44,7 @@ fun ProductDetailScreen(
     initialQuantity: Int = 1,
     onPlusClick: () -> Unit = {},
     onMinusClick: () -> Unit = {},
-    onAddToCartClick: (Int) -> Unit = {},
+    onAddToCartClick: (Product, Int) -> Unit = { _, _ -> },
     similarProducts: List<Product> = emptyList()
 ) {
     val dimens = LocalAppDimens.current
@@ -103,7 +105,7 @@ fun ProductDetailScreen(
                     )
 
                     Text(
-                        text = "$${product.price}",
+                        text = product.price.toVNDString(),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(top = dimens.spaceXs)
@@ -150,7 +152,7 @@ fun ProductDetailScreen(
                             modifier = Modifier
                                 .wrapContentWidth()
                                 .border(
-                                    width = 1.dp,
+                                    width = 0.dp,
                                     color = MaterialTheme.colorScheme.outline,
                                     shape = RoundedCornerShape(dimens.radiusSmall)
                                 ),
@@ -159,7 +161,7 @@ fun ProductDetailScreen(
                         ) {
                             Row(
                                 modifier = Modifier
-                                    .padding(horizontal = dimens.spaceXs),
+                                    .padding(horizontal = dimens.spaceSm, vertical = dimens.spaceXs),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 IconButton(
@@ -174,7 +176,8 @@ fun ProductDetailScreen(
                                     Icon(
                                         painter = painterResource(id = R.drawable.ic_minus),
                                         contentDescription = "minus",
-                                        tint = MaterialTheme.colorScheme.onSurface
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(dimens.contentIconSize)
                                     )
                                 }
 
@@ -195,7 +198,8 @@ fun ProductDetailScreen(
                                     Icon(
                                         painter = painterResource(id = R.drawable.ic_plus),
                                         contentDescription = "plus",
-                                        tint = MaterialTheme.colorScheme.onSurface
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(dimens.contentIconSize)
                                     )
                                 }
                             }
@@ -218,7 +222,7 @@ fun ProductDetailScreen(
 
                         RoundedActionButton(
                             text = stringResource(id = R.string.action_add_to_cart),
-                            onClick = { onAddToCartClick(quantity) },
+                            onClick = { onAddToCartClick(product, quantity) },
                             horizontalPadding = dimens.spaceMd
                         )
                     }

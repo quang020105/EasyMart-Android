@@ -8,4 +8,7 @@
     <string name="label_payments">Phương thức thanh toán</string>
     <string name="label_settings">Cài đặt</string>
     <string name="label_logout">Đăng xuất</string>
+    <string name="desc_cart">Biểu tượng giỏ hàng</string>
+    <string name="search_placeholder">Tìm kiếm sản phẩm</string>
+    <string name="action_save_address">Lưu địa chỉ</string>
 </resources>

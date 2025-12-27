@@ -35,16 +35,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.easymart.R
+import com.example.easymart.domain.model.CartItem
 import com.example.easymart.domain.model.Product
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.common.components.ProductCard
+import com.example.easymart.presentation.ui.mock.mockSimpleCartItems
+import com.example.easymart.utils.toVNDString
 
 @Composable
 fun PaymentProduct(
     modifier: Modifier = Modifier,
-    product: Product,
-    quantity: Int = 1
+    cartItem: CartItem
 ) {
     val dimens = LocalAppDimens.current
     Card(
@@ -69,7 +71,7 @@ fun PaymentProduct(
                 modifier = Modifier
                     .padding(all = dimens.spaceXs)
                     .size(dimens.cartImgSize),
-                product = product,
+                product = cartItem.product,
                 onClick = {},
                 colorBackground = MaterialTheme.colorScheme.background
             )
@@ -78,20 +80,20 @@ fun PaymentProduct(
                     .padding(all = dimens.spaceSm).weight(1f)
             ) {
                 Text(
-                    text = product.name,
+                    text = cartItem.product.name,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 2
                 )
                 Text(
-                    text = "$${product.price}",
+                    text = cartItem.product.price.toVNDString(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(vertical = dimens.spaceSm)
                 )
             }
             Text(
-                text = "x$quantity",
+                text = "x${cartItem.quantity}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
@@ -110,15 +112,7 @@ fun PaymentProductPreview() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(all = dimens.spaceMd),
-            product = Product(
-                id = 1,
-                name = "Sample Product",
-                price = 29.99,
-                imageUrl = "",
-                description = "This is a sample product description.",
-                imageRes = R.drawable.pic_shoe_1
-            ),
-            quantity = 2
+            cartItem = mockSimpleCartItems
         )
     }
 }
