@@ -10,4 +10,5 @@ interface AddressRepository {
     suspend fun setDefaultAddress(addressId: Int)
     suspend fun deleteAddress(addressId: Int)
     suspend fun getAddressById(addressId: Int): Address?
+    suspend fun getDefaultAddress(): Address?
 }

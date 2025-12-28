@@ -2,6 +2,7 @@ package com.example.easymart.presentation.ui.deliveryaddress.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -28,14 +29,18 @@ import com.example.easymart.domain.model.Address
 fun AddressCard(
     modifier: Modifier = Modifier,
     address: Address,
-    onEditClick: (() -> Unit)? = null
+    onEditClick: (() -> Unit)? = null,
+    onCLick: (() -> Unit)? = null
 ) {
     val dimens = LocalAppDimens.current
 
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = dimens.spaceXs),
+            .padding(vertical = dimens.spaceXs)
+            .clickable{
+                onCLick?.invoke()
+            },
         shape = RoundedCornerShape(dimens.radiusLarge),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
     ) {
@@ -99,7 +104,7 @@ fun AddressCard(
             ) {
                 Text(
                     text = address.name,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     fontWeight = FontWeight.Medium
                 )
@@ -113,19 +118,12 @@ fun AddressCard(
                 Text(
                     text = address.phone,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
             }
 
-            // -------- ADDRESS --------
             Text(
-                text = address.detailAddress,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Text(
-                text = address.districtCity,
+                text = address.addressString,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = dimens.spaceXs)
@@ -144,7 +142,7 @@ private fun AddressCardPreview() {
             address = Address(
                 name = "Nguyễn Văn A",
                 detailAddress = "123 Đường ABC, Phường XYZ",
-                districtCity = "Quận 1, TP. Hồ Chí Minh",
+                addressString = "Quận 1, TP. Hồ Chí Minh",
                 isDefault = true,
                 phone = "0367985485"
             )

@@ -12,31 +12,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.easymart.R
+import com.example.easymart.domain.model.Address
 import com.example.easymart.domain.model.CartItem
-import com.example.easymart.domain.model.Product
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.checkout.components.PaymentProduct
@@ -47,6 +42,7 @@ import com.example.easymart.utils.toVNDString
 @Composable
 fun CheckoutScreen(
     modifier: Modifier = Modifier,
+    address: Address? = null,
     cartItems: List<CartItem> = emptyList(),
     onAddressClick: () -> Unit = {},
     onPaymentClick: () -> Unit = {},
@@ -105,11 +101,54 @@ fun CheckoutScreen(
                                 contentDescription = "Biểu tượng địa chỉ",
                                 tint = MaterialTheme.colorScheme.primary,
                             )
-                            Text(
-                                text = "123 Đường ABC, Phường XYZ, Quận 1, TP.HCM",
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.padding(start = dimens.spaceMd)
-                            )
+//                            Text(
+//                                text = address?.detailAddress ?: "Chưa chọn địa chỉ",
+//                                style = MaterialTheme.typography.bodyLarge,
+//                                modifier = Modifier.padding(start = dimens.spaceMd)
+//                            )
+
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = dimens.spaceLg)
+                            ) {
+
+                                // -------- NAME + PHONE --------
+                                Row(
+                                    modifier = Modifier
+                                        .padding(vertical = dimens.spaceXs)
+                                        .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = address?.name ?: "",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    VerticalDivider(
+                                        modifier = Modifier
+                                            .padding(horizontal = dimens.spaceSm)
+                                            .height(16.dp),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                        thickness = 1.dp
+                                    )
+                                    Text(
+                                        text = address?.phone ?: "",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                    )
+                                }
+
+
+                                Text(
+                                    text = address?.addressString ?: "",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(vertical = dimens.spaceXs)
+                                )
+                            }
                         }
                     }
                 }
@@ -290,6 +329,11 @@ fun CheckoutScreen(
 fun CheckoutScreenPreview() {
     EasyMartTheme {
         CheckoutScreen(
+            address = Address(
+                name = "Nguyễn Văn A",
+                phone = "0367558301",
+                addressString = "123 Đường ABC, Phường XYZ, Quận 1, TP. Hồ Chí Minh",
+            ),
             cartItems = mockCartItems,
             subTotal = 290.0,
             shipping = 10.0,

@@ -28,4 +28,7 @@ interface AddressDao {
 
     @Query("UPDATE address SET isDefault = CASE WHEN id =:id THEN 1 ELSE 0 END")
     suspend fun setDefaultAddress(id: Int)
+
+    @Query("SELECT * FROM address WHERE isDefault = 1 LIMIT 1")
+    suspend fun getDefaultAddress(): AddressEntity?
 }

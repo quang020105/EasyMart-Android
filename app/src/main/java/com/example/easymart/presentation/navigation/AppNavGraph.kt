@@ -129,7 +129,7 @@ fun AppNavGraph(
             }
 
             composable(Screen.Checkout.route) { backStackEntry ->
-                //dùng chung 1 viewModel cho màn cart và checkout
+                //dùng chung 1 viewModel cho màn checkout và checkout
                 val parentEntry =
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
                 val cartVM = hiltViewModel<CartViewModel>(parentEntry)
@@ -157,6 +157,13 @@ fun AppNavGraph(
                     },
                     onAddressEditClick = { addressId ->
                         navController.navigate(Screen.AddAddress.createRoute(addressId))
+                    },
+                    onAddressDeleteClick = {
+                        addressId -> viewModel.deleteAddress(addressId)
+                    },
+                    onAddressClick = {
+                        address -> viewModel.selectAddress(address)
+                        navController.navigateUp()
                     }
                 )
             }

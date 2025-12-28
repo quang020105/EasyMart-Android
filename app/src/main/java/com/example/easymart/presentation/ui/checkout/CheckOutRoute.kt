@@ -18,10 +18,13 @@ fun CheckOutRoute(
     val subTotal = cartViewModel.subtotal.collectAsState()
     val shipping = cartViewModel.shipping.collectAsState()
     val total = cartViewModel.total.collectAsState()
+    val selectedAddress = addressViewModel.selectedAddress.collectAsState()
+
 
     Log.d("HomeRoute", "CartViewModel instance hash=${cartViewModel.hashCode()}")
 
     CheckoutScreen(
+        address = selectedAddress.value,
         cartItems = selectedItems.value,
         subTotal = subTotal.value,
         shipping = shipping.value,

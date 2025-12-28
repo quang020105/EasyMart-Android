@@ -12,7 +12,7 @@ data class AddressEntity(
     val name: String,
     val phone: String,
     val detailAddress: String,
-    val districtCity: String,
+    val addressString: String,
     val isDefault: Boolean = false,
     //lưu id để lookup dữ liệu khi cần sửa hoặc xóa địa chỉ
     val provinceCode: Int = 0,

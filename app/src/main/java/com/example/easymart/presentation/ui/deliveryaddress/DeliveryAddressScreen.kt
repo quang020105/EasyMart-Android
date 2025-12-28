@@ -1,7 +1,6 @@
 package com.example.easymart.presentation.ui.deliveryaddress
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,12 +9,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.AlertDialog
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.DismissDirection
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.SwipeToDismiss
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.TextButton
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -24,16 +40,22 @@ import com.example.easymart.domain.model.Address
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.deliveryaddress.components.AddressCard
+import com.example.easymart.presentation.ui.deliveryaddress.components.DeleteSwipeBackground
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DeliveryAddressScreen(
     modifier: Modifier = Modifier,
-    address: List<Address> = emptyList(),
+    addresses: List<Address> = emptyList(),
     onAddressClick: (Address) -> Unit = {},
     onAddressEditClick: (addressId: Int) -> Unit = {},
+    onAddressDeleteClick: (addressId: Int) -> Unit = {},
     onAddressAddClick: () -> Unit = {}
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var deleteAddressId by remember { mutableStateOf<Int?>(null) }
     val dimens = LocalAppDimens.current
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -49,11 +71,51 @@ fun DeliveryAddressScreen(
             )
         }
 
-        items(address) { address ->
-            AddressCard(
-                address = address,
-                onEditClick = { onAddressEditClick(address.id) }
+//        items(addresses) { address ->
+//            AddressCard(
+//                address = address,
+//                onEditClick = { onAddressEditClick(address.id) }
+//            )
+//        }
+
+        items(items = addresses, key = { it.id }){ address ->
+            val dismissState = rememberDismissState(
+                confirmStateChange = { dismissValue ->
+                    if (dismissValue == DismissValue.DismissedToStart) {
+                        deleteAddressId = address.id
+                        showDeleteDialog = true
+                        false //không cho dismiss luôn
+                    } else {
+                        true
+                    }
+                }
             )
+
+
+            SwipeToDismiss(
+                state = dismissState,
+                directions = setOf(DismissDirection.EndToStart),
+                background = {
+                    DeleteSwipeBackground(
+                    )
+                },
+                dismissContent = {
+                    AddressCard(
+                        address = address,
+                        onEditClick = { onAddressEditClick(address.id) },
+                        onCLick = { onAddressClick(address) }
+                    )
+                }
+            )
+
+//            SwipeAddressItem(
+//                address = address,
+//                onEditClick = { onAddressEditClick(address.id) },
+//                onDeleteClick = {
+//                    deleteAddressId = address.id
+//                    showDeleteDialog = true
+//                }
+//            )
         }
 
         item {
@@ -84,6 +146,38 @@ fun DeliveryAddressScreen(
             }
         }
     }
+
+    if (showDeleteDialog && deleteAddressId != null) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Xóa địa chỉ") },
+            text = { Text("Bạn có chắc chắn muốn xóa địa chỉ này không?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onAddressDeleteClick(deleteAddressId!!)
+                        showDeleteDialog = false
+                        deleteAddressId = null
+                    }
+                ) {
+                    Text("Xóa", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        deleteAddressId = null
+                    }
+                ) {
+                    Text("Hủy")
+                }
+            }
+        )
+    }
+
+
+
 }
 
 @Preview
@@ -91,19 +185,19 @@ fun DeliveryAddressScreen(
 fun DeliveryAddressScreenPreview() {
     EasyMartTheme {
         DeliveryAddressScreen(
-            address = listOf(
+            addresses = listOf(
                 Address(
                     isDefault = true,
                     name = "Nguyễn Văn A",
                     phone = "0123456789",
                     detailAddress = "123 Đường A, Phường B, Quận",
-                    districtCity = " Quận C, TP. HCM"
+                    addressString = " Quận C, TP. HCM"
                 ),
                 Address(
                     name = "Trần Thị B",
                     phone = "0987654321",
                     detailAddress = "456 Đường X, Phường Yên xá",
-                    districtCity = "Quận Hà Đông, Hà Nội"
+                    addressString = "Quận Hà Đông, Hà Nội"
                 )
             )
         )

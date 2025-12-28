@@ -38,4 +38,8 @@ class AddressRepositoryImpl @Inject constructor(
             return it.toDomain()
         }
     }
+
+    override suspend fun getDefaultAddress(): Address? {
+        return addressDao.getDefaultAddress()?.toDomain()
+    }
 }

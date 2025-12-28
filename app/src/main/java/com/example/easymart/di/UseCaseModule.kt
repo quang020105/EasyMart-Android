@@ -6,6 +6,7 @@ import com.example.easymart.domain.repository.LocationRepository
 import com.example.easymart.domain.repository.ProductRepository
 import com.example.easymart.domain.repository.SearchRepository
 import com.example.easymart.domain.usecase.address.GetAllAddressUseCase
+import com.example.easymart.domain.usecase.address.GetDefaultAddressUseCase
 import com.example.easymart.domain.usecase.address.InsertNewAddressUseCase
 import com.example.easymart.domain.usecase.cart.AddToCartUseCase
 import com.example.easymart.domain.usecase.cart.ClearAllCartsUseCase
@@ -76,6 +77,12 @@ object UseCaseModule {
     @Singleton
     fun provideInsertAddressesUseCase(addressRepo: AddressRepository): InsertNewAddressUseCase =
         InsertNewAddressUseCase(addressRepo)
+
+    @Provides
+    @Singleton
+    fun provideGetDefaultAddressUseCase(addressRepo: AddressRepository): GetDefaultAddressUseCase =
+        GetDefaultAddressUseCase(addressRepo)
+
 
     @Provides
     @Singleton

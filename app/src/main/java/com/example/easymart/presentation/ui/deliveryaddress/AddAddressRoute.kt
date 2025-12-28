@@ -20,6 +20,7 @@ fun AddAddressRoute(
     val uiState = viewModel.uiState.collectAsState()
     val isFormValid = viewModel.isFormValid.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
+    viewModel.loadProvinces()
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
     ) { innerPadding ->
@@ -71,9 +72,9 @@ fun AddAddressRoute(
         if(uiState.value.success){
             LaunchedEffect(uiState.value.success) {
                 //chạy coroutine con tránh block main thread
-                launch {
-                    snackBarHostState.showSnackbar("Thêm địa chỉ thành công")
-                }
+//                launch {
+//                    snackBarHostState.showSnackbar("Thêm địa chỉ thành công")
+//                }
                 viewModel.clearSuccess()
                 viewModel.resetForm()
                 //quay lại nếu thêm thành công

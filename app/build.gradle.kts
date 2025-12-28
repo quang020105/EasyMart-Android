@@ -62,6 +62,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.androidx.compose.material)
+    //coil
     implementation(libs.coil.compose)
 
     //navigation
@@ -95,4 +97,7 @@ dependencies {
     implementation(libs.algoliasearch.client.kotlin.jvm)
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.cio)
+
+    //foundation
+    implementation(libs.androidx.foundation)
 }
