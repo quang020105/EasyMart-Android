@@ -28,6 +28,8 @@ import com.example.easymart.presentation.ui.home.HomeRoute
 import com.example.easymart.presentation.ui.home.HomeScreen
 import com.example.easymart.presentation.ui.login.LoginRoute
 import com.example.easymart.presentation.ui.login.LoginScreen
+import com.example.easymart.presentation.ui.payment.PaymentRoute
+import com.example.easymart.presentation.ui.payment.PaymentViewModel
 import com.example.easymart.presentation.ui.productdetail.ProductDetailRoute
 import com.example.easymart.presentation.ui.productdetail.ProductDetailScreen
 import com.example.easymart.presentation.ui.productdetail.ProductDetailViewModel
@@ -129,14 +131,17 @@ fun AppNavGraph(
             }
 
             composable(Screen.Checkout.route) { backStackEntry ->
-                //dùng chung 1 viewModel cho màn checkout và checkout
+                //dùng chung viewModel
                 val parentEntry =
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
                 val cartVM = hiltViewModel<CartViewModel>(parentEntry)
                 val addressVM = hiltViewModel<AddressViewModel>(parentEntry)
+                val paymentVM = hiltViewModel<PaymentViewModel>(parentEntry)
+
                 CheckOutRoute(
                     cartViewModel = cartVM,
                     addressViewModel = addressVM,
+                    paymentViewModel = paymentVM,
                     onNavigateToAddress = {
                         navController.navigate(Screen.DeliveryAddress.route)
                     },
@@ -158,22 +163,30 @@ fun AppNavGraph(
                     onAddressEditClick = { addressId ->
                         navController.navigate(Screen.AddAddress.createRoute(addressId))
                     },
-                    onAddressDeleteClick = {
-                        addressId -> viewModel.deleteAddress(addressId)
+                    onAddressDeleteClick = { addressId ->
+                        viewModel.deleteAddress(addressId)
                     },
-                    onAddressClick = {
-                        address -> viewModel.selectAddress(address)
+                    onAddressClick = { address ->
+                        viewModel.selectAddress(address)
                         navController.navigateUp()
                     }
                 )
             }
 
             composable(Screen.PaymentMethod.route) {
+                val parentEntry =
+                    remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+                val viewModel = hiltViewModel<PaymentViewModel>(parentEntry)
 
+                PaymentRoute(
+                    viewModel = viewModel,
+                    onNavigateBack = { navController.navigateUp() }
+                )
             }
 
             composable(Screen.AddAddress.route) { backStackEntry ->
-                val parentEntry = remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+                val parentEntry =
+                    remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
                 val viewModel = hiltViewModel<AddressViewModel>(parentEntry)
 
                 LaunchedEffect(Unit) {

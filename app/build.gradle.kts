@@ -100,4 +100,7 @@ dependencies {
 
     //foundation
     implementation(libs.androidx.foundation)
+
+    //icons material3
+    implementation(libs.androidx.compose.material.icons.extended)
 }

@@ -1,5 +1,6 @@
 package com.example.easymart.presentation.theme
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -60,6 +61,7 @@ private val LightColorScheme = lightColorScheme(
 //Ngưỡng để chọn dimens phù hợp với kích thước (phone hoặc tablet)
 private const val DIMENS_THRESHOLD = 600
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun EasyMartTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

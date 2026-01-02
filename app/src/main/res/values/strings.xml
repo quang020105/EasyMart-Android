@@ -11,4 +11,10 @@
     <string name="desc_cart">Biểu tượng giỏ hàng</string>
     <string name="search_placeholder">Tìm kiếm sản phẩm</string>
     <string name="action_save_address">Lưu địa chỉ</string>
+    <string name="title_payment_cod">Thanh toán khi nhận hàng</string>
+    <string name="decs_payment_cod">Trả tiền mặt cho shipper</string>
+    <string name="title_payment_wallet">Ví điện tử</string>
+    <string name="desc_payment_wallet">Số dư hiện tại: %s</string>
+    <string name="title_payment_online">Thanh toán Online</string>
+    <string name="desc_payment_online">Thẻ ngân hàng, VNPay, MoMo...</string>
 </resources>

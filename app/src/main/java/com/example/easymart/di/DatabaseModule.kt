@@ -23,9 +23,23 @@ object DatabaseModule {
             ).fallbackToDestructiveMigration(false).build()
     }
 
+    @Singleton
     @Provides
     fun provideCartDao(database: EasyMartDatabase) = database.getCartDao()
 
+    @Singleton
     @Provides
     fun provideAddressDao(database: EasyMartDatabase) = database.getALlAddressDao()
+
+    @Singleton
+    @Provides
+    fun provideOrderDao(database: EasyMartDatabase) = database.getOrderDao()
+
+    @Singleton
+    @Provides
+    fun provideWalletDao(database: EasyMartDatabase) = database.getWalletDao()
+
+    @Singleton
+    @Provides
+    fun providePaymentDao(database: EasyMartDatabase) = database.getPaymentDao()
 }

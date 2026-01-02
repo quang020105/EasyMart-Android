@@ -6,9 +6,9 @@ data class Order(
     val userId: Int,
     val orderNumber: String,
     val items: List<OrderItem> = emptyList(),
-    val totalAmount: Double,
+    val totalAmount: Long,
     val status: OrderStatus = OrderStatus.PENDING,
-    val shippingAddress: Address? = null,
+    val shippingAddress: String = "",
     val createdAt: String = "",
     val payment: Payment? = null
 )

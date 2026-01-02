@@ -1,0 +1,116 @@
+package com.example.easymart.presentation.ui.payment
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.CreditCard
+import androidx.compose.material.icons.filled.LocalShipping
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.easymart.domain.model.PaymentMethod
+import com.example.easymart.presentation.theme.EasyMartTheme
+import com.example.easymart.presentation.theme.dimens.LocalAppDimens
+import com.example.easymart.presentation.ui.common.components.RoundedActionButton
+import com.example.easymart.presentation.ui.payment.components.PaymentMethodItem
+
+@Composable
+fun SelectPaymentMethodScreen(
+    totalAmount: Double,
+    state: PaymentUiState,
+    onMethodSelected: (PaymentMethod) -> Unit,
+    onConfirmClick: () -> Unit
+) {
+    val dimens = LocalAppDimens.current
+    Box(
+        modifier = Modifier
+        .background(MaterialTheme.colorScheme.surface)
+    ){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(dimens.spaceLg)
+        ) {
+
+            Text(
+                text = "Tổng thanh toán",
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Text(
+                text = "${"%,.0f".format(totalAmount)} đ",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(Modifier.height(dimens.spaceXl))
+
+            Text(
+                text = "Chọn phương thức thanh toán",
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(Modifier.height(dimens.spaceMd))
+
+            PaymentMethodItem(
+                method = PaymentMethod.ONLINE_GATEWAY,
+                title = "Thanh toán Online",
+                description = "Thẻ ngân hàng, VNPay, MoMo...",
+                icon = Icons.Default.CreditCard,
+                selected = state.selectedMethod == PaymentMethod.ONLINE_GATEWAY,
+                onClick = { onMethodSelected(PaymentMethod.ONLINE_GATEWAY) }
+            )
+
+            PaymentMethodItem(
+                method = PaymentMethod.COD,
+                title = "Thanh toán khi nhận hàng",
+                description = "Trả tiền mặt cho shipper",
+                icon = Icons.Default.LocalShipping,
+                selected = state.selectedMethod == PaymentMethod.COD,
+                onClick = { onMethodSelected(PaymentMethod.COD) }
+            )
+
+            PaymentMethodItem(
+                method = PaymentMethod.WALLET,
+                title = "Ví điện tử",
+                description = "Số dư hiện tại: 500.000 đ",
+                icon = Icons.Default.AccountBalanceWallet,
+                selected = state.selectedMethod == PaymentMethod.WALLET,
+                onClick = { onMethodSelected(PaymentMethod.WALLET) }
+            )
+
+            Spacer(Modifier.weight(1f))
+
+
+            RoundedActionButton(
+                text = "Xác nhận phương thức",
+                onClick = onConfirmClick,
+                verticalPadding = dimens.spaceLg,
+                cornerRadius = dimens.radiusXl,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun SelectPaymentMethodScreenPreview(){
+    EasyMartTheme {
+        SelectPaymentMethodScreen(
+            120000.0,
+            PaymentUiState(selectedMethod = PaymentMethod.COD),
+            onMethodSelected = {},
+            onConfirmClick = {}
+        )
+    }
+}

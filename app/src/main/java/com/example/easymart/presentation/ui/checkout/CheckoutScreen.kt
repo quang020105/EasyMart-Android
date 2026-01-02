@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,23 +27,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.easymart.R
 import com.example.easymart.domain.model.Address
 import com.example.easymart.domain.model.CartItem
+import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.checkout.components.PaymentProduct
 import com.example.easymart.presentation.ui.common.components.RoundedActionButton
 import com.example.easymart.presentation.ui.mock.mockCartItems
+import com.example.easymart.presentation.ui.payment.mapper.PaymentMethodUiMapper
 import com.example.easymart.utils.toVNDString
 
 @Composable
 fun CheckoutScreen(
     modifier: Modifier = Modifier,
     address: Address? = null,
+    paymentMethod: PaymentMethod? = null,
     cartItems: List<CartItem> = emptyList(),
     onAddressClick: () -> Unit = {},
     onPaymentClick: () -> Unit = {},
@@ -52,6 +57,7 @@ fun CheckoutScreen(
     onConfirmClick: () -> Unit = {}
 ) {
     val dimens = LocalAppDimens.current
+
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -74,7 +80,8 @@ fun CheckoutScreen(
                             width = 1.dp,
                             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
                             shape = RoundedCornerShape(dimens.radiusLarge)
-                        ).clickable(onClick = onAddressClick),
+                        )
+                        .clickable(onClick = onAddressClick),
                     colors = androidx.compose.material3.CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
                     ),
@@ -83,7 +90,7 @@ fun CheckoutScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(all = dimens.spaceMd)
+                            .padding(all = dimens.spaceLg)
                     ) {
                         Text(
                             text = "Địa chỉ giao hàng",
@@ -131,13 +138,17 @@ fun CheckoutScreen(
                                         modifier = Modifier
                                             .padding(horizontal = dimens.spaceSm)
                                             .height(16.dp),
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                            alpha = 0.5f
+                                        ),
                                         thickness = 1.dp
                                     )
                                     Text(
                                         text = address?.phone ?: "",
                                         style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                            alpha = 0.7f
+                                        )
                                     )
                                 }
 
@@ -152,9 +163,6 @@ fun CheckoutScreen(
                         }
                     }
                 }
-
-
-
                 Spacer(modifier = Modifier.height(dimens.spaceXl))
             }
 
@@ -167,7 +175,8 @@ fun CheckoutScreen(
                             width = 1.dp,
                             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
                             shape = RoundedCornerShape(dimens.radiusLarge)
-                        ).clickable(onClick = onAddressClick),
+                        )
+                        .clickable(onClick = onPaymentClick),
                     colors = androidx.compose.material3.CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface
                     ),
@@ -176,7 +185,7 @@ fun CheckoutScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(all = dimens.spaceMd)
+                            .padding(all = dimens.spaceLg)
                     ) {
                         Text(
                             text = "Phương thức thanh toán",
@@ -189,16 +198,32 @@ fun CheckoutScreen(
                                 .padding(vertical = dimens.spaceMd),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            //lấy dữ liệu từ paymentMethod để hiển thị
+                            val paymentUi = if (paymentMethod != null) {
+                                PaymentMethodUiMapper.map(paymentMethod)
+                            } else {
+                                PaymentMethodUiMapper.map(PaymentMethod.COD)
+                            }
+
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_wallet),
+                                painter = painterResource(id = paymentUi.iconRes),
                                 contentDescription = "Biểu tượng ví",
                                 tint = MaterialTheme.colorScheme.primary,
                             )
-                            Text(
-                                text = "Ví Momo",
-                                style = MaterialTheme.typography.bodyLarge,
+                            Column(
                                 modifier = Modifier.padding(start = dimens.spaceMd)
-                            )
+                            ) {
+                                Text(
+                                    text = stringResource(id = paymentUi.titleRes),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Spacer(modifier = Modifier.height(dimens.spaceSm))
+                                Text(
+                                    text = stringResource(id = paymentUi.descriptionRes),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }
@@ -310,9 +335,11 @@ fun CheckoutScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {
-            Text(text = "Tổng cộng: ",style = MaterialTheme.typography.titleSmall)
-            Text(text =  total.toVNDString(), color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge)
+            Text(text = "Tổng cộng: ", style = MaterialTheme.typography.titleSmall)
+            Text(
+                text = total.toVNDString(), color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge
+            )
             RoundedActionButton(
                 text = "Thanh toán",
                 onClick = onConfirmClick,
@@ -334,6 +361,7 @@ fun CheckoutScreenPreview() {
                 phone = "0367558301",
                 addressString = "123 Đường ABC, Phường XYZ, Quận 1, TP. Hồ Chí Minh",
             ),
+            paymentMethod = PaymentMethod.COD,
             cartItems = mockCartItems,
             subTotal = 290.0,
             shipping = 10.0,

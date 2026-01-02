@@ -134,7 +134,7 @@ fun OrderScreenPreview() {
                             quantity = 2
                         )
                     ),
-                    totalAmount = 130.0,
+                    totalAmount = 130L,
                     status = OrderStatus.SHIPPED,
                     userId = 1,
                     orderNumber = "ruru"
@@ -179,7 +179,7 @@ fun OrderScreenPreview() {
                             quantity = 2
                         )
                     ),
-                    totalAmount = 130.0,
+                    totalAmount = 130L,
                     status = OrderStatus.DELIVERED,
                     userId = 1,
                     orderNumber = "ruru"
