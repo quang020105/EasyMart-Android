@@ -43,6 +43,7 @@ fun CartScreen(
     total: Double = 0.0,
     allChecked: Boolean = false,
     cartItems: List<CartItem> = emptyList(),
+    selectedItems: List<CartItem> = emptyList(),
     onChangeCheckedAll: (Boolean) -> Unit = {},
     onCartItemClick: (Product) -> Unit = {},
     onPlusClick: (cartItem: CartItem) -> Unit = {},
@@ -163,6 +164,7 @@ fun CartScreen(
                     text = "Mua hàng",
                     onClick = onCheckOutClick,
                     modifier = Modifier.fillMaxWidth(0.4f),
+                    enabled = selectedItems.isNotEmpty()
                 )
             }
         }

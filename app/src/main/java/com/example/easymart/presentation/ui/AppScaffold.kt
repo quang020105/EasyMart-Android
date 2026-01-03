@@ -121,33 +121,6 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
         modifier = Modifier.fillMaxSize(),
         topBar = {
             if (showTopBar) {
-//                val isRootTopLevel = currentDestination?.let { dest ->
-//                    bottomNavItems.any { bnItem ->
-//                        dest.hierarchy.any {
-//                            it.route?.startsWith(bnItem.graphRoute) == true || it.route == bnItem.graphRoute
-//                        }
-//                    }
-//                } ?: false
-
-
-//                TopAppBar(
-//                    title = { Text("") },
-//                    navigationIcon = {
-//                        if (showBottomBar2) {
-//                            Text(text = "EasyMart")
-//                        } else {
-//                            IconButton(
-//                                onClick = { navController.navigateUp() }
-//                            ) {
-//                                Icon(
-//                                    painter = painterResource(R.drawable.ic_back),
-//                                    contentDescription = null
-//                                )
-//                            }
-//                        }
-//                    },
-//                )
-
                 when (currentRoute) {
                     Screen.Home.route -> {
                         val entry = navBackStackEntry
@@ -179,7 +152,7 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
 
                     else -> {
                         TopAppBar(
-                            title = { Text("") },
+                            title = { Text("Giỏ hành") },
                             navigationIcon = {
                                 if (showBottomBar2) {
                                     Text(text = "EasyMart")

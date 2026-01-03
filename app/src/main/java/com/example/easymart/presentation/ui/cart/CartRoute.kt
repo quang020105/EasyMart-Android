@@ -17,6 +17,7 @@ fun CartRoute(
     onCartItemClick: (Product) -> Unit = {},
 ){
     val cartItems = viewModel.cartItems.collectAsState()
+    val selectedItems = viewModel.selectedItems.collectAsState(initial = emptyList())
     val subTotal = viewModel.subtotal.collectAsState()
     val shipping = viewModel.shipping.collectAsState()
     val total = viewModel.total.collectAsState()
@@ -35,6 +36,7 @@ fun CartRoute(
     Log.d("HomeRoute", "CartViewModel instance hash=${viewModel.hashCode()}")
     CartScreen(
         cartItems = cartItems.value,
+        selectedItems = selectedItems.value,
         onCheckOutClick = onCheckOutClick,
         onCartItemClick = onCartItemClick,
         subtotal = subTotal.value,
