@@ -3,41 +3,35 @@ package com.example.easymart.presentation.navigation
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.example.easymart.domain.model.Product
+import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.presentation.ui.cart.CartRoute
-import com.example.easymart.presentation.ui.cart.CartScreen
 import com.example.easymart.presentation.ui.cart.CartViewModel
 import com.example.easymart.presentation.ui.checkout.CheckOutRoute
-import com.example.easymart.presentation.ui.checkout.CheckoutScreen
+import com.example.easymart.presentation.ui.checkout.CheckoutViewModel
 import com.example.easymart.presentation.ui.deliveryaddress.AddAddressRoute
-import com.example.easymart.presentation.ui.deliveryaddress.AddAddressScreen
 import com.example.easymart.presentation.ui.deliveryaddress.AddressViewModel
 import com.example.easymart.presentation.ui.deliveryaddress.DeliveryAddressRoute
 import com.example.easymart.presentation.ui.home.HomeRoute
-import com.example.easymart.presentation.ui.home.HomeScreen
 import com.example.easymart.presentation.ui.login.LoginRoute
-import com.example.easymart.presentation.ui.login.LoginScreen
-import com.example.easymart.presentation.ui.payment.PaymentRoute
-import com.example.easymart.presentation.ui.payment.PaymentViewModel
+import com.example.easymart.presentation.ui.payment.SelectPaymentRoute
+import com.example.easymart.presentation.ui.payment.SelectPaymentViewModel
 import com.example.easymart.presentation.ui.productdetail.ProductDetailRoute
-import com.example.easymart.presentation.ui.productdetail.ProductDetailScreen
 import com.example.easymart.presentation.ui.productdetail.ProductDetailViewModel
 import com.example.easymart.presentation.ui.profile.ProfileRoute
-import com.example.easymart.presentation.ui.profile.ProfileScreen
+import com.example.easymart.presentation.ui.resultorder.OnlinePaymentProcessingRoute
+import com.example.easymart.presentation.ui.resultorder.OrderSuccessRoute
 import com.example.easymart.presentation.ui.search.SearchRoute
 import com.example.easymart.presentation.ui.signup.SignUpRoute
-import com.example.easymart.presentation.ui.signup.SignUpScreen
 import com.example.easymart.presentation.ui.splash.SplashScreen
 
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -136,9 +130,10 @@ fun AppNavGraph(
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
                 val cartVM = hiltViewModel<CartViewModel>(parentEntry)
                 val addressVM = hiltViewModel<AddressViewModel>(parentEntry)
-                val paymentVM = hiltViewModel<PaymentViewModel>(parentEntry)
-
+                val paymentVM = hiltViewModel<SelectPaymentViewModel>(parentEntry)
+                val checkoutVM = hiltViewModel<CheckoutViewModel>(parentEntry)
                 CheckOutRoute(
+                    checkoutViewModel = checkoutVM,
                     cartViewModel = cartVM,
                     addressViewModel = addressVM,
                     paymentViewModel = paymentVM,
@@ -147,9 +142,89 @@ fun AppNavGraph(
                     },
                     onNavigateToPayment = {
                         navController.navigate(Screen.PaymentMethod.route)
+                    },
+                    onNavigateToSuccess = {
+                        navController.navigate(
+//                            Screen.OrderSuccess.createRoute(
+//                                orderId,
+//                                totalAmount,
+//                                paymentMethod.name
+//                            )
+                            Screen.OrderSuccess.route
+                        )
+                    },
+                    onNavigateToOnlineProcessing = {
+                        navController.navigate(
+                            Screen.OnlinePaymentProcessing.route
+                        )
                     }
                 )
             }
+
+//            composable(
+//                "${Screen.OrderSuccess.route}/{orderId}/{totalAmount}/{paymentMethod}",
+//                arguments = listOf(
+//                    navArgument("orderId") { type = NavType.IntType },
+//                    navArgument("totalAmount") { type = NavType.LongType },
+//                    navArgument("paymentMethod") { type = NavType.StringType })
+//            ) { backStackEntry ->
+//                val orderId = backStackEntry.arguments?.getInt("orderId") ?: -1
+//                val totalAmount = backStackEntry.arguments?.getLong("totalAmount") ?: 0L
+//                val paymentMethodStr = PaymentMethod.valueOf(
+//                    backStackEntry.arguments?.getString("paymentMethod") ?: PaymentMethod.COD.name
+//                )
+//                OrderSuccessRoute(
+//                    orderId = orderId,
+//                    totalAmount = totalAmount,
+//                    paymentMethod = paymentMethodStr,
+//                    onViewOrderClick = {
+//
+//                    },
+//                    onContinueShoppingClick = {
+//                        navController.navigate(Screen.Home.route) {
+//                            popUpTo(Screen.HomeGraph.route) {
+//                                inclusive = true
+//                            }
+//                        }
+//                    }
+//                )
+
+            composable(
+                Screen.OrderSuccess.route
+            ) { backStackEntry ->
+                val parentEntry =
+                    remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+                val viewModel = hiltViewModel<CheckoutViewModel>(parentEntry)
+                val uiState = viewModel.uiState.collectAsState()
+                val order = uiState.value.order
+                OrderSuccessRoute(
+                    orderId = order?.id ?: -1,
+                    totalAmount = order?.totalAmount ?: 0L,
+                    paymentMethod = order?.paymentMethod ?: PaymentMethod.COD,
+                    onViewOrderClick = {
+
+                    },
+                    onContinueShoppingClick = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.HomeGraph.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
+
+            }
+
+            composable(Screen.OnlinePaymentProcessing.route) {
+                OnlinePaymentProcessingRoute(
+                    onPaymentFinished = {
+                        navController.navigate(
+                            Screen.OrderSuccess.route
+                        )
+                    },
+                )
+            }
+
 
             composable(Screen.DeliveryAddress.route) { backStackEntry ->
                 val parentEntry =
@@ -176,9 +251,9 @@ fun AppNavGraph(
             composable(Screen.PaymentMethod.route) {
                 val parentEntry =
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
-                val viewModel = hiltViewModel<PaymentViewModel>(parentEntry)
+                val viewModel = hiltViewModel<SelectPaymentViewModel>(parentEntry)
 
-                PaymentRoute(
+                SelectPaymentRoute(
                     viewModel = viewModel,
                     onNavigateBack = { navController.navigateUp() }
                 )

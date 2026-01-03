@@ -1,6 +1,6 @@
-package com.example.easymart.presentation.ui.ordersuccess
+package com.example.easymart.presentation.ui.resultorder
 
-import com.example.easymart.presentation.ui.ordersuccess.components.InfoRow
+import com.example.easymart.presentation.ui.resultorder.components.InfoRow
 import com.example.easymart.presentation.ui.payment.mapper.PaymentMethodUiMapper
 
 
@@ -14,7 +14,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.example.easymart.domain.model.PaymentMethod
@@ -27,7 +26,7 @@ import com.example.easymart.presentation.theme.EasyMartTheme
 
 @Composable
 fun OrderSuccessScreen(
-    orderNumber: String,
+    orderId: Int,
     totalAmount: Long,
     paymentMethod: PaymentMethod,
     onViewOrderClick: () -> Unit,
@@ -100,7 +99,7 @@ fun OrderSuccessScreen(
 
                 InfoRow(
                     label = "Mã đơn hàng",
-                    value = orderNumber,
+                    value = "EM$orderId",
                     dimens = dimens
                 )
 
@@ -182,11 +181,11 @@ fun OrderSuccessScreen(
 fun OrderSuccessScreenPreview() {
     EasyMartTheme {
         OrderSuccessScreen(
-            orderNumber = "EM123456789",
+            orderId = 123456789,
             totalAmount = 1500000,
             paymentMethod = PaymentMethod.COD,
             onViewOrderClick = {},
-            onContinueShoppingClick = {}
+            onContinueShoppingClick = {},
         )
     }
 }

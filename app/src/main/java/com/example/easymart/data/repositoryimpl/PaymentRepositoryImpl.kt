@@ -31,14 +31,15 @@ class PaymentRepositoryImpl @Inject constructor(
         method: PaymentMethod
     ): Flow<PaymentResult> = flow {
         //thêm đơn hàng vào db local
-        orderDao.insertOrderWithItems(order = order.toEntity(), orderItems = order.items.map { it.toEntity() })
+        val orderId = orderDao.insertOrderWithItems(order = order.toEntity(), orderItems = order.items.map { it.toEntity() })
         val processor = when(method){
             PaymentMethod.COD -> codProcesser
             PaymentMethod.WALLET -> eWalletProcesser
             PaymentMethod.ONLINE_GATEWAY -> onlineGatewayProcesser
         }
-
-        processor.process(order).collect{ result ->
+        // tạo order với id được room tự động sinh
+        val newOrder = order.copy(id = orderId)
+        processor.process(newOrder).collect{ result ->
             emit(result)
         }
     }

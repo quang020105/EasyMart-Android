@@ -28,21 +28,24 @@ object PaymentModule {
     @Singleton
     @Provides
     fun provideCODProcessor(
-        orderDao: OrderDao
-    ): CODProcesser = CODProcesser(orderDao)
+        orderDao: OrderDao,
+        paymentDao: PaymentDao
+    ): CODProcesser = CODProcesser(orderDao, paymentDao)
 
     @Singleton
     @Provides
     fun provideEWalletProcessor(
         walletDao: WalletDao,
+        paymentDao: PaymentDao,
+        orderDao: OrderDao,
         eWalletSimulator: EWalletSimulator,
-        paymentDao: PaymentDao
-    ): EWalletProcessor = EWalletProcessor(walletDao, eWalletSimulator, paymentDao)
+    ): EWalletProcessor = EWalletProcessor(walletDao, paymentDao, orderDao, eWalletSimulator)
 
     @Singleton
     @Provides
     fun provideOnlineGatewayProcessor(
         getWay: FakeGateway,
-        paymentDao: PaymentDao
-    ): OnlineGatewayProcessor = OnlineGatewayProcessor(getWay, paymentDao)
+        paymentDao: PaymentDao,
+        orderDao: OrderDao
+    ): OnlineGatewayProcessor = OnlineGatewayProcessor(getWay, paymentDao, orderDao)
 }

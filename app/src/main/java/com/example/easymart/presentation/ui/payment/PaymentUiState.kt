@@ -6,7 +6,7 @@ import com.example.easymart.domain.model.PaymentResult
 
 data class PaymentUiState(
     val selectedMethod: PaymentMethod? = null,
-    val isProcessing: Boolean = false,
-    val lastResult: PaymentResult? = null,
+//    val isProcessing: Boolean = false,
+//    val lastResult: PaymentResult? = null,
     val walletBalance: Long = 0L
 )

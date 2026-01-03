@@ -2,17 +2,23 @@ package com.example.easymart.domain.model
 
 //tập hợp đơn hàng
 data class Order(
-    val id: Int,
+    val id: Int = 0,
     val userId: Int,
     val orderNumber: String,
     val items: List<OrderItem> = emptyList(),
     val totalAmount: Long,
-    val status: OrderStatus = OrderStatus.PENDING,
+    val status: OrderStatus = OrderStatus.CREATED,
+    val paymentStatus: PaymentStatus = PaymentStatus.UNPAID,
+    val paymentMethod: PaymentMethod = PaymentMethod.COD,
     val shippingAddress: String = "",
-    val createdAt: String = "",
-    val payment: Payment? = null
+    val createdAt: String = ""
 )
 
 enum class OrderStatus {
-    PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED
+    CREATED, //đã tạo đơn
+    CONFIRMED, //đã xác nhận
+    PROCESSING, //đang chuẩn bị hàng
+    SHIPPED, //đang vận chuyển
+    DELIVERED, //đã giao hàng
+    CANCELLED // đã hủy
 }

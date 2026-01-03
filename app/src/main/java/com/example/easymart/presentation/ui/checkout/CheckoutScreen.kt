@@ -49,11 +49,12 @@ fun CheckoutScreen(
     address: Address? = null,
     paymentMethod: PaymentMethod? = null,
     cartItems: List<CartItem> = emptyList(),
-    onAddressClick: () -> Unit = {},
-    onPaymentClick: () -> Unit = {},
     subTotal: Double = 0.0,
     shipping: Double = 0.0,
     total: Double = 0.0,
+    isLoading: Boolean = false,
+    onAddressClick: () -> Unit = {},
+    onPaymentClick: () -> Unit = {},
     onConfirmClick: () -> Unit = {}
 ) {
     val dimens = LocalAppDimens.current
@@ -341,7 +342,8 @@ fun CheckoutScreen(
                 style = MaterialTheme.typography.titleLarge
             )
             RoundedActionButton(
-                text = "Thanh toán",
+                text = if (isLoading) "Đang xử lý" else "Thanh toán",
+                enabled = !isLoading,
                 onClick = onConfirmClick,
                 modifier = Modifier.padding(horizontal = dimens.spaceMd, vertical = dimens.spaceXs)
             )

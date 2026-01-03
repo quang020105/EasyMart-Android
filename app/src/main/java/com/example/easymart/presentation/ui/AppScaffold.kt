@@ -185,7 +185,18 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
                                     Text(text = "EasyMart")
                                 } else {
                                     IconButton(
-                                        onClick = { navController.navigateUp() }
+                                        onClick = {
+                                            //nếu back ở màn OrderSuccess thì về Home và xoá hết backstack
+                                            if(currentRoute == Screen.OrderSuccess.route){
+                                                navController.navigate(Screen.HomeGraph.route){
+                                                    popUpTo(Screen.HomeGraph.route){
+                                                        inclusive = true
+                                                    }
+                                                }
+                                            } else {
+                                                navController.navigateUp()
+                                            }
+                                        }
                                     ) {
                                         Icon(
                                             painter = painterResource(R.drawable.ic_back),

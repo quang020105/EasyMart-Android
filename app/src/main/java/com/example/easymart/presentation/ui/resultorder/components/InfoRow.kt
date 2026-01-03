@@ -1,4 +1,4 @@
-package com.example.easymart.presentation.ui.ordersuccess.components
+package com.example.easymart.presentation.ui.resultorder.components
 
 
 import androidx.compose.foundation.layout.Arrangement

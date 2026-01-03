@@ -10,7 +10,10 @@ data class Payment(
 )
 
 enum class PaymentStatus {
-    INIT, PROCESSING, PENDING, SUCCESS, FAILED
+    UNPAID, //chưa thanh toán
+    PROCESSING, // đang xử lý
+    SUCCESS, //thanh toán thành công
+    FAILED //thanh toán thất bại
 }
 
 enum class PaymentMethod {
@@ -18,7 +21,9 @@ enum class PaymentMethod {
 }
 
 sealed class PaymentResult {
-    data class Success(val orderId: Int, val status: PaymentStatus = PaymentStatus.SUCCESS) : PaymentResult()
+    data class Success(val orderId: Int, val status: PaymentStatus = PaymentStatus.SUCCESS) :
+        PaymentResult()
+
     data class Failed(val orderID: Int, val reason: String) : PaymentResult()
     data class Processing(val orderId: Int) : PaymentResult()
 }

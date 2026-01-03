@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 
 @Composable
-fun PaymentRoute (
-    viewModel: PaymentViewModel,
+fun SelectPaymentRoute (
+    viewModel: SelectPaymentViewModel,
     onNavigateBack: () -> Unit
 ){
     val uiState = viewModel.uiState.collectAsState()

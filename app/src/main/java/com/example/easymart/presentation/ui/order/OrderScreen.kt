@@ -39,7 +39,8 @@ fun OrderScreen(
 ) {
     //danh sách tab
     val tabs = listOf(
-        "Chờ xử lý" to OrderStatus.PENDING,
+        "Chờ xử lý" to OrderStatus.CREATED,
+        "Đã xác nhận" to OrderStatus.CONFIRMED,
         "Đang giao" to OrderStatus.SHIPPED,
         "Đã giao" to OrderStatus.DELIVERED,
         "Đã hủy" to OrderStatus.CANCELLED
