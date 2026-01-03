@@ -18,6 +18,9 @@ sealed class Screen(val route: String) {
 //            "order_success/$orderId/$total/$paymentMethod"
 //    }
     data object OrderSuccess : Screen("order_success")
+    data object PaymentFailed : Screen("payment_failed/{orderId}/{reason}") {
+        fun createRoute(orderId: Int, reason: String) = "payment_failed/$orderId/$reason"
+    }
     data object OnlinePaymentProcessing : Screen("online_payment_processing")
     data object ProductDetail : Screen("product/{productId}") {
         fun createRoute(productId: Int) = "product/$productId"

@@ -18,7 +18,8 @@ fun CheckOutRoute(
     onNavigateToAddress: () -> Unit,
     onNavigateToPayment: () -> Unit,
     onNavigateToSuccess: () -> Unit,
-    onNavigateToOnlineProcessing: () -> Unit
+    onNavigateToOnlineProcessing: () -> Unit,
+    onNavigateToPaymentFailed: (orderId: Int, reason: String) -> Unit
 ) {
     //lấy dữ liệu từ cart
     val selectedItems = cartViewModel.selectedItems.collectAsState(initial = emptyList())
@@ -52,6 +53,9 @@ fun CheckOutRoute(
 
                 is CheckoutUiEvent.ShowErrorMessage -> {
                     //todo
+                }
+                is CheckoutUiEvent.NavigateToPaymentFailed -> {
+                    onNavigateToPaymentFailed(event.orderId, event.reason)
                 }
                 else -> {}
             }

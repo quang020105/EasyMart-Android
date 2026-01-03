@@ -30,6 +30,7 @@ import com.example.easymart.presentation.ui.productdetail.ProductDetailViewModel
 import com.example.easymart.presentation.ui.profile.ProfileRoute
 import com.example.easymart.presentation.ui.resultorder.OnlinePaymentProcessingRoute
 import com.example.easymart.presentation.ui.resultorder.OrderSuccessRoute
+import com.example.easymart.presentation.ui.resultorder.PaymentFailedRoute
 import com.example.easymart.presentation.ui.search.SearchRoute
 import com.example.easymart.presentation.ui.signup.SignUpRoute
 import com.example.easymart.presentation.ui.splash.SplashScreen
@@ -157,6 +158,11 @@ fun AppNavGraph(
                         navController.navigate(
                             Screen.OnlinePaymentProcessing.route
                         )
+                    },
+                    onNavigateToPaymentFailed = { orderId, reason ->
+                        navController.navigate(
+                            Screen.PaymentFailed.createRoute(orderId, reason)
+                        )
                     }
                 )
             }
@@ -213,6 +219,25 @@ fun AppNavGraph(
                     }
                 )
 
+            }
+
+            composable(
+                route = "payment_failed/{orderId}/{reason}",
+                arguments = listOf(
+                    navArgument("orderId") { type = NavType.IntType },
+                    navArgument("reason") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val orderId = backStackEntry.arguments?.getInt("orderId") ?: -1
+                val message = backStackEntry.arguments?.getString("reason")
+                if (orderId != -1) {
+                    PaymentFailedRoute(
+                        message = message ?: "Thanh toán không thành công",
+                        onRetry = {},
+                        onChangePaymentMethod = {},
+                        onBackToCheckOut = {}
+                    )
+                }
             }
 
             composable(Screen.OnlinePaymentProcessing.route) {

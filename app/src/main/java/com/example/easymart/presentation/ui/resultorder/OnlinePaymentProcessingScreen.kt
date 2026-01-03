@@ -12,12 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.easymart.R
+import com.example.easymart.domain.model.PaymentResult
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 
 @Composable
 fun OnlinePaymentProcessingScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val dimens = LocalAppDimens.current
 

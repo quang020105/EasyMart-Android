@@ -93,7 +93,14 @@ class CheckoutViewModel @Inject constructor(
 
                         is PaymentResult.Failed -> {
                             _uiState.update { it.copy(isProcessing = false) }
-                            _uiEvent.emit(CheckoutUiEvent.ShowErrorMessage(result.reason))
+                            if(paymentMethod == PaymentMethod.ONLINE_GATEWAY){
+                                _uiEvent.emit(CheckoutUiEvent.NavigateToPaymentFailed(
+                                    result.orderID,
+                                    result.reason
+                                ))
+                            } else {
+                                _uiEvent.emit(CheckoutUiEvent.ShowErrorMessage(result.reason))
+                            }
                         }
                     }
                 }
