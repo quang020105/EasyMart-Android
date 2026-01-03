@@ -1,4 +1,5 @@
 [versions]
+accompanistNavigationAnimation = "0.36.0"
 agp = "8.13.0"
 algoliasearchClientKotlinJvm = "3.34.0"
 coilCompose = "2.7.0"
@@ -29,6 +30,7 @@ roomRuntime = "2.8.3"
 foundation = "1.9.4"
 
 [libraries]
+accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanistNavigationAnimation" }
 algoliasearch-client-kotlin-jvm = { module = "com.algolia:algoliasearch-client-kotlin-jvm", version.ref = "algoliasearchClientKotlinJvm" }
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }

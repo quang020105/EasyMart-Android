@@ -103,4 +103,7 @@ dependencies {
 
     //icons material3
     implementation(libs.androidx.compose.material.icons.extended)
+
+    //animation navigation
+    implementation(libs.accompanist.navigation.animation)
 }

@@ -46,7 +46,21 @@ fun AppNavGraph(
         startDestination = Screen.Splash.route,
         modifier = modifier
     ) {
-        composable(Screen.Splash.route) {
+//        composable(Screen.Splash.route) {
+//            SplashScreen(
+//                onContinue = {
+//                    navController.navigate(Screen.Home.route)
+//                },
+//                onLogin = {
+//                    navController.navigate(Screen.AuthGraph.route)
+//                }
+//            )
+//        }
+
+        composableWithAnim(
+            route = Screen.Splash.route,
+            anim = NavAnim.FADE
+        ) {
             SplashScreen(
                 onContinue = {
                     navController.navigate(Screen.Home.route)
@@ -60,48 +74,103 @@ fun AppNavGraph(
 
         //nav auth
         navigation(startDestination = Screen.Login.route, route = Screen.AuthGraph.route) {
-            composable(Screen.Login.route) {
+//            composable(Screen.Login.route) {
+//                LoginRoute(
+//                    onNavigateToSignUp = {
+//                        navController.navigate(Screen.SignUp.route)
+//                    },
+//                    onLoginClick = { _, _, _ ->
+//                        navController.navigate(Screen.HomeGraph.route) {
+//                            popUpTo(Screen.AuthGraph.route) {
+//                                inclusive = true
+//                            }
+//                        }
+//                    }
+//                )
+//            }
+
+            composableWithAnim(
+                route = Screen.Login.route,
+                anim = NavAnim.FADE
+            ) {
                 LoginRoute(
                     onNavigateToSignUp = {
                         navController.navigate(Screen.SignUp.route)
                     },
                     onLoginClick = { _, _, _ ->
                         navController.navigate(Screen.HomeGraph.route) {
-                            popUpTo(Screen.AuthGraph.route) {
-                                inclusive = true
-                            }
+                            popUpTo(Screen.AuthGraph.route) { inclusive = true }
                         }
                     }
                 )
             }
 
-            composable(Screen.SignUp.route) {
+
+//            composable(Screen.SignUp.route) {
+//                SignUpRoute(
+//                    onSignUpClick = { _, _, _, _ ->
+//                        navController.navigateUp()
+//                    },
+//                    onNavigateToLogin = {
+//                        navController.navigateUp()
+//                    }
+//                )
+//            }
+
+            composableWithAnim(
+                route = Screen.SignUp.route,
+                anim = NavAnim.FADE
+            ) {
                 SignUpRoute(
-                    onSignUpClick = { _, _, _, _ ->
-                        navController.navigateUp()
-                    },
-                    onNavigateToLogin = {
-                        navController.navigateUp()
-                    }
+                    onSignUpClick = { _, _, _, _ -> navController.navigateUp() },
+                    onNavigateToLogin = { navController.navigateUp() }
                 )
             }
+
         }
 
 
         //nav home
         navigation(startDestination = Screen.Home.route, route = Screen.HomeGraph.route) {
-            composable(Screen.Home.route) {
+//            composable(Screen.Home.route) {
+//                HomeRoute(
+//                    onNavigateToProduct = { product ->
+//                        navController.navigate(Screen.ProductDetail.createRoute(product.id))
+//                    }
+//                )
+//            }
+            composableWithAnim(
+                route = Screen.Home.route,
+                anim = NavAnim.NONE
+            ) {
                 HomeRoute(
                     onNavigateToProduct = { product ->
                         navController.navigate(Screen.ProductDetail.createRoute(product.id))
                     }
                 )
             }
-            composable(Screen.Cart.route) { backStackEntry ->
-                //dùng chung 1 viewModel cho màn cart và checkout
+
+//            composable(Screen.Cart.route) { backStackEntry ->
+//                //dùng chung 1 viewModel cho màn cart và checkout
+//                val parentEntry =
+//                    remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+//                val viewModel = hiltViewModel<CartViewModel>(parentEntry)
+//                CartRoute(
+//                    viewModel = viewModel,
+//                    onCheckOutClick = {
+//                        navController.navigate(Screen.Checkout.route)
+//                    }
+//                )
+//            }
+
+            composableWithAnim(
+                route = Screen.Cart.route,
+                anim = NavAnim.HORIZONTAL
+            ) { backStackEntry ->
                 val parentEntry =
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
                 val viewModel = hiltViewModel<CartViewModel>(parentEntry)
+
                 CartRoute(
                     viewModel = viewModel,
                     onCheckOutClick = {
@@ -109,35 +178,96 @@ fun AppNavGraph(
                     }
                 )
             }
-            composable(
-                Screen.ProductDetail.route,
+
+
+//            composable(
+//                Screen.ProductDetail.route,
+//                arguments = listOf(navArgument("productId") { type = NavType.IntType })
+//            ) { backStackEntry ->
+//                val productId = backStackEntry.arguments?.getInt("productId")
+//                if (productId == null) {
+//                    //todo
+//                } else {
+//                    val viewModel = hiltViewModel<ProductDetailViewModel>(backStackEntry)
+//                    LaunchedEffect(productId) {
+//                        viewModel.loadProduct(productId)
+//                    }
+//                    ProductDetailRoute(viewModel = viewModel)
+//                }
+//            }
+
+            composableWithAnim(
+                route = Screen.ProductDetail.route,
+                anim = NavAnim.HORIZONTAL,
                 arguments = listOf(navArgument("productId") { type = NavType.IntType })
             ) { backStackEntry ->
-                val productId = backStackEntry.arguments?.getInt("productId")
-                if (productId == null) {
-                    //todo
-                } else {
-                    val viewModel = hiltViewModel<ProductDetailViewModel>(backStackEntry)
-                    LaunchedEffect(productId) {
-                        viewModel.loadProduct(productId)
-                    }
-                    ProductDetailRoute(viewModel = viewModel)
+
+                val productId =
+                    backStackEntry.arguments?.getInt("productId") ?: return@composableWithAnim
+                val viewModel = hiltViewModel<ProductDetailViewModel>(backStackEntry)
+
+                LaunchedEffect(productId) {
+                    viewModel.loadProduct(productId)
                 }
+
+                ProductDetailRoute(viewModel = viewModel)
             }
 
-            composable(Screen.Checkout.route) { backStackEntry ->
-                //dùng chung viewModel
+
+//            composable(Screen.Checkout.route) { backStackEntry ->
+//                //dùng chung viewModel
+//                val parentEntry =
+//                    remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+//                val cartVM = hiltViewModel<CartViewModel>(parentEntry)
+//                val addressVM = hiltViewModel<AddressViewModel>(parentEntry)
+//                val paymentVM = hiltViewModel<SelectPaymentViewModel>(parentEntry)
+//                val checkoutVM = hiltViewModel<CheckoutViewModel>(parentEntry)
+//                CheckOutRoute(
+//                    checkoutViewModel = checkoutVM,
+//                    cartViewModel = cartVM,
+//                    addressViewModel = addressVM,
+//                    paymentViewModel = paymentVM,
+//                    onNavigateToAddress = {
+//                        navController.navigate(Screen.DeliveryAddress.route)
+//                    },
+//                    onNavigateToPayment = {
+//                        navController.navigate(Screen.PaymentMethod.route)
+//                    },
+//                    onNavigateToSuccess = {
+//                        navController.navigate(
+////                            Screen.OrderSuccess.createRoute(
+////                                orderId,
+////                                totalAmount,
+////                                paymentMethod.name
+////                            )
+//                            Screen.OrderSuccess.route
+//                        )
+//                    },
+//                    onNavigateToOnlineProcessing = {
+//                        navController.navigate(
+//                            Screen.OnlinePaymentProcessing.route
+//                        )
+//                    },
+//                    onNavigateToPaymentFailed = { orderId, reason ->
+//                        navController.navigate(
+//                            Screen.PaymentFailed.createRoute(orderId, reason)
+//                        )
+//                    }
+//                )
+//            }
+
+            composableWithAnim(
+                route = Screen.Checkout.route,
+                anim = NavAnim.HORIZONTAL
+            ) {
                 val parentEntry =
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
-                val cartVM = hiltViewModel<CartViewModel>(parentEntry)
-                val addressVM = hiltViewModel<AddressViewModel>(parentEntry)
-                val paymentVM = hiltViewModel<SelectPaymentViewModel>(parentEntry)
-                val checkoutVM = hiltViewModel<CheckoutViewModel>(parentEntry)
+
                 CheckOutRoute(
-                    checkoutViewModel = checkoutVM,
-                    cartViewModel = cartVM,
-                    addressViewModel = addressVM,
-                    paymentViewModel = paymentVM,
+                    checkoutViewModel = hiltViewModel(parentEntry),
+                    cartViewModel = hiltViewModel(parentEntry),
+                    addressViewModel = hiltViewModel(parentEntry),
+                    paymentViewModel = hiltViewModel(parentEntry),
                     onNavigateToAddress = {
                         navController.navigate(Screen.DeliveryAddress.route)
                     },
@@ -145,19 +275,10 @@ fun AppNavGraph(
                         navController.navigate(Screen.PaymentMethod.route)
                     },
                     onNavigateToSuccess = {
-                        navController.navigate(
-//                            Screen.OrderSuccess.createRoute(
-//                                orderId,
-//                                totalAmount,
-//                                paymentMethod.name
-//                            )
-                            Screen.OrderSuccess.route
-                        )
+                        navController.navigate(Screen.OrderSuccess.route)
                     },
                     onNavigateToOnlineProcessing = {
-                        navController.navigate(
-                            Screen.OnlinePaymentProcessing.route
-                        )
+                        navController.navigate(Screen.OnlinePaymentProcessing.route)
                     },
                     onNavigateToPaymentFailed = { orderId, reason ->
                         navController.navigate(
@@ -166,6 +287,7 @@ fun AppNavGraph(
                     }
                 )
             }
+
 
 //            composable(
 //                "${Screen.OrderSuccess.route}/{orderId}/{totalAmount}/{paymentMethod}",
@@ -195,66 +317,146 @@ fun AppNavGraph(
 //                    }
 //                )
 
-            composable(
-                Screen.OrderSuccess.route
-            ) { backStackEntry ->
+
+//            composable(
+//                Screen.OrderSuccess.route
+//            ) { backStackEntry ->
+//                val parentEntry =
+//                    remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+//                val viewModel = hiltViewModel<CheckoutViewModel>(parentEntry)
+//                val uiState = viewModel.uiState.collectAsState()
+//                val order = uiState.value.order
+//                OrderSuccessRoute(
+//                    orderId = order?.id ?: -1,
+//                    totalAmount = order?.totalAmount ?: 0L,
+//                    paymentMethod = order?.paymentMethod ?: PaymentMethod.COD,
+//                    onViewOrderClick = {
+//
+//                    },
+//                    onContinueShoppingClick = {
+//                        navController.navigate(Screen.Home.route) {
+//                            popUpTo(Screen.HomeGraph.route) {
+//                                inclusive = true
+//                            }
+//                        }
+//                    }
+//                )
+//
+//            }
+
+            composableWithAnim(
+                route = Screen.OrderSuccess.route,
+                anim = NavAnim.FADE
+            ) {
                 val parentEntry =
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
                 val viewModel = hiltViewModel<CheckoutViewModel>(parentEntry)
                 val uiState = viewModel.uiState.collectAsState()
                 val order = uiState.value.order
+
                 OrderSuccessRoute(
                     orderId = order?.id ?: -1,
                     totalAmount = order?.totalAmount ?: 0L,
                     paymentMethod = order?.paymentMethod ?: PaymentMethod.COD,
-                    onViewOrderClick = {
-
-                    },
+                    onViewOrderClick = {},
                     onContinueShoppingClick = {
                         navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.HomeGraph.route) {
-                                inclusive = true
-                            }
+                            popUpTo(Screen.HomeGraph.route) { inclusive = true }
                         }
                     }
                 )
-
             }
 
-            composable(
-                route = "payment_failed/{orderId}/{reason}",
+
+//            composable(
+//                route = Screen.PaymentFailed.route,
+//                arguments = listOf(
+//                    navArgument("orderId") { type = NavType.IntType },
+//                    navArgument("reason") { type = NavType.StringType }
+//                )
+//            ) { backStackEntry ->
+//                val orderId = backStackEntry.arguments?.getInt("orderId") ?: -1
+//                val message = backStackEntry.arguments?.getString("reason")
+//                if (orderId != -1) {
+//                    PaymentFailedRoute(
+//                        message = message ?: "Thanh toán không thành công",
+//                        onRetry = {},
+//                        onChangePaymentMethod = {},
+//                        onBackToCheckOut = {}
+//                    )
+//                }
+//            }
+
+            composableWithAnim(
+                route = Screen.PaymentFailed.route,
+                anim = NavAnim.FADE,
                 arguments = listOf(
                     navArgument("orderId") { type = NavType.IntType },
                     navArgument("reason") { type = NavType.StringType }
                 )
             ) { backStackEntry ->
-                val orderId = backStackEntry.arguments?.getInt("orderId") ?: -1
                 val message = backStackEntry.arguments?.getString("reason")
-                if (orderId != -1) {
-                    PaymentFailedRoute(
-                        message = message ?: "Thanh toán không thành công",
-                        onRetry = {},
-                        onChangePaymentMethod = {},
-                        onBackToCheckOut = {}
-                    )
-                }
+
+                PaymentFailedRoute(
+                    message = message ?: "Thanh toán không thành công",
+                    onRetry = {},
+                    onChangePaymentMethod = {},
+                    onBackToCheckOut = {}
+                )
             }
 
-            composable(Screen.OnlinePaymentProcessing.route) {
+//            composable(Screen.OnlinePaymentProcessing.route) {
+//                OnlinePaymentProcessingRoute(
+//                    onPaymentFinished = {
+//                        navController.navigate(
+//                            Screen.OrderSuccess.route
+//                        )
+//                    },
+//                )
+//            }
+            composableWithAnim(
+                route = Screen.OnlinePaymentProcessing.route,
+                anim = NavAnim.FADE
+            ) {
                 OnlinePaymentProcessingRoute(
                     onPaymentFinished = {
-                        navController.navigate(
-                            Screen.OrderSuccess.route
-                        )
-                    },
+                        navController.navigate(Screen.OrderSuccess.route)
+                    }
                 )
             }
 
 
-            composable(Screen.DeliveryAddress.route) { backStackEntry ->
+
+//            composable(Screen.DeliveryAddress.route) { backStackEntry ->
+//                val parentEntry =
+//                    remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+//                val viewModel = hiltViewModel<AddressViewModel>(parentEntry)
+//                DeliveryAddressRoute(
+//                    viewModel,
+//                    onAddressAddClick = {
+//                        navController.navigate(Screen.AddAddress.route)
+//                    },
+//                    onAddressEditClick = { addressId ->
+//                        navController.navigate(Screen.AddAddress.createRoute(addressId))
+//                    },
+//                    onAddressDeleteClick = { addressId ->
+//                        viewModel.deleteAddress(addressId)
+//                    },
+//                    onAddressClick = { address ->
+//                        viewModel.selectAddress(address)
+//                        navController.navigateUp()
+//                    }
+//                )
+//            }
+
+            composableWithAnim(
+                route = Screen.DeliveryAddress.route,
+                anim = NavAnim.MODAL
+            ) {
                 val parentEntry =
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
                 val viewModel = hiltViewModel<AddressViewModel>(parentEntry)
+
                 DeliveryAddressRoute(
                     viewModel,
                     onAddressAddClick = {
@@ -273,7 +475,22 @@ fun AppNavGraph(
                 )
             }
 
-            composable(Screen.PaymentMethod.route) {
+
+//            composable(Screen.PaymentMethod.route) {
+//                val parentEntry =
+//                    remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+//                val viewModel = hiltViewModel<SelectPaymentViewModel>(parentEntry)
+//
+//                SelectPaymentRoute(
+//                    viewModel = viewModel,
+//                    onNavigateBack = { navController.navigateUp() }
+//                )
+//            }
+
+            composableWithAnim(
+                route = Screen.PaymentMethod.route,
+                anim = NavAnim.MODAL
+            ) {
                 val parentEntry =
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
                 val viewModel = hiltViewModel<SelectPaymentViewModel>(parentEntry)
@@ -284,7 +501,25 @@ fun AppNavGraph(
                 )
             }
 
-            composable(Screen.AddAddress.route) { backStackEntry ->
+
+//            composable(Screen.AddAddress.route) { backStackEntry ->
+//                val parentEntry =
+//                    remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+//                val viewModel = hiltViewModel<AddressViewModel>(parentEntry)
+//
+//                LaunchedEffect(Unit) {
+//                    viewModel.resetForm()
+//                }
+//                AddAddressRoute(
+//                    viewModel = viewModel,
+//                    onNavigateBack = { navController.navigateUp() }
+//                )
+//            }
+
+            composableWithAnim(
+                route = Screen.AddAddress.route,
+                anim = NavAnim.MODAL
+            ) {
                 val parentEntry =
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
                 val viewModel = hiltViewModel<AddressViewModel>(parentEntry)
@@ -292,43 +527,83 @@ fun AppNavGraph(
                 LaunchedEffect(Unit) {
                     viewModel.resetForm()
                 }
+
                 AddAddressRoute(
                     viewModel = viewModel,
                     onNavigateBack = { navController.navigateUp() }
                 )
             }
 
-            composable(
+
+//            composable(
+//                route = "${Screen.AddAddress.route}/{addressId}",
+//                arguments = listOf(navArgument("addressId") {
+//                    type = NavType.IntType
+//                    defaultValue = -1
+//                    nullable = false
+//                })
+//            ) { backStackEntry ->
+//                val addressId = backStackEntry.arguments?.getInt("addressId") ?: -1
+//                val parentEntry =
+//                    remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+//                val viewModel = hiltViewModel<AddressViewModel>(parentEntry)
+//                if (addressId > 0) {
+//                    LaunchedEffect(addressId) {
+//                        viewModel.loadAddress(addressId)
+//                    }
+//                }
+//                AddAddressRoute(
+//                    viewModel = viewModel,
+//                    onNavigateBack = {
+//                        navController.navigateUp()
+//                    }
+//                )
+//            }
+
+            composableWithAnim(
                 route = "${Screen.AddAddress.route}/{addressId}",
-                arguments = listOf(navArgument("addressId") {
-                    type = NavType.IntType
-                    defaultValue = -1
-                    nullable = false
-                })
+                anim = NavAnim.MODAL,
+                arguments = listOf(
+                    navArgument("addressId") {
+                        type = NavType.IntType
+                        defaultValue = -1
+                    }
+                )
             ) { backStackEntry ->
+
                 val addressId = backStackEntry.arguments?.getInt("addressId") ?: -1
                 val parentEntry =
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
                 val viewModel = hiltViewModel<AddressViewModel>(parentEntry)
-                if (addressId > 0) {
-                    LaunchedEffect(addressId) {
-                        viewModel.loadAddress(addressId)
-                    }
+
+                LaunchedEffect(addressId) {
+                    if (addressId > 0) viewModel.loadAddress(addressId)
                 }
+
                 AddAddressRoute(
                     viewModel = viewModel,
-                    onNavigateBack = {
-                        navController.navigateUp()
-                    }
+                    onNavigateBack = { navController.navigateUp() }
                 )
             }
 
 
-            composable(Screen.Search.route) {
+//            composable(Screen.Search.route) {
+//                SearchRoute(
+//                    onNavigateBack = {
+//                        navController.navigateUp()
+//                    },
+//                    onNavigateToProduct = { product ->
+//                        navController.navigate(Screen.ProductDetail.createRoute(product.id))
+//                    }
+//                )
+//            }
+
+            composableWithAnim(
+                route = Screen.Search.route,
+                anim = NavAnim.HORIZONTAL
+            ) {
                 SearchRoute(
-                    onNavigateBack = {
-                        navController.navigateUp()
-                    },
+                    onNavigateBack = { navController.navigateUp() },
                     onNavigateToProduct = { product ->
                         navController.navigate(Screen.ProductDetail.createRoute(product.id))
                     }
@@ -339,7 +614,10 @@ fun AppNavGraph(
 
         //nav profile
         navigation(startDestination = Screen.Profile.route, route = Screen.ProfileGraph.route) {
-            composable(Screen.Profile.route) {
+            composableWithAnim(
+                Screen.Profile.route,
+                anim = NavAnim.NONE
+            ) {
                 ProfileRoute(
                     onOptionClick = { tag ->
                         when (tag) {
@@ -375,18 +653,35 @@ fun AppNavGraph(
 
         //nav category
         navigation(startDestination = Screen.Category.route, route = Screen.CategoryGraph.route) {
-            composable(Screen.Category.route) {
-
+//            composable(Screen.Category.route) {
+//
+//            }
+            composableWithAnim(
+                route = Screen.Category.route,
+                anim = NavAnim.NONE
+            ) {
+                // CategoryRoute()
             }
+
         }
 
         //nav search
         navigation(startDestination = Screen.Search.route, route = Screen.SearchGraph.route) {
-            composable(Screen.Search.route) {
-
+//            composable(Screen.Search.route) {
+//
+//            }
+            composableWithAnim(
+                route = Screen.Search.route,
+                anim = NavAnim.HORIZONTAL
+            ) {
+                // SearchRoute()
             }
+
         }
 
 
     }
 }
+
+
+
