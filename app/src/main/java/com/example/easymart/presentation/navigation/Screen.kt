@@ -39,7 +39,7 @@ sealed class Screen(val route: String) {
     }
 
     data object DeliveryAddress : Screen("delivery_address")
-    data object PaymentMethod : Screen("payment_method")
+    data object SelectPaymentMethod : Screen("payment_method")
     data object AddAddress : Screen("add_address") {
         fun createRoute(addressId: Int) = "add_address/$addressId"
     }

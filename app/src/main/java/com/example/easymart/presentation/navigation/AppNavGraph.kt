@@ -10,7 +10,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.easymart.domain.model.PaymentMethod
@@ -158,7 +157,7 @@ fun AppNavGraph(
                         navController.navigate(Screen.DeliveryAddress.route)
                     },
                     onNavigateToPayment = {
-                        navController.navigate(Screen.PaymentMethod.route)
+                        navController.navigate(Screen.SelectPaymentMethod.route)
                     },
                     onNavigateToSuccess = {
                         navController.navigate(Screen.OrderSuccess.route)
@@ -286,15 +285,16 @@ fun AppNavGraph(
 
 
             composableWithAnim(
-                route = Screen.PaymentMethod.route,
+                route = Screen.SelectPaymentMethod.route,
                 anim = NavAnim.MODAL
             ) {
                 val parentEntry =
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
-                val viewModel = hiltViewModel<SelectPaymentViewModel>(parentEntry)
+                //val viewModel = hiltViewModel<SelectPaymentViewModel>(parentEntry)
 
                 SelectPaymentRoute(
-                    viewModel = viewModel,
+                    selectPaymentViewModel = hiltViewModel(parentEntry),
+                    cartViewModel = hiltViewModel(parentEntry),
                     onNavigateBack = { navController.navigateUp() }
                 )
             }

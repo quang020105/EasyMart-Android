@@ -22,6 +22,7 @@ import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.common.components.RoundedActionButton
 import com.example.easymart.presentation.ui.payment.components.PaymentMethodItem
+import com.example.easymart.utils.toVNDString
 
 @Composable
 fun SelectPaymentMethodScreen(
@@ -47,7 +48,7 @@ fun SelectPaymentMethodScreen(
             )
 
             Text(
-                text = "${"%,.0f".format(totalAmount)} đ",
+                text = totalAmount.toVNDString(),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary
             )

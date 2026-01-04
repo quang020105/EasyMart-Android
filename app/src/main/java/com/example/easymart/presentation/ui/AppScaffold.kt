@@ -41,6 +41,7 @@ import androidx.room.util.query
 import com.example.easymart.R
 import com.example.easymart.presentation.navigation.AppNavGraph
 import com.example.easymart.presentation.navigation.Screen
+import com.example.easymart.presentation.navigation.getScreenConfig
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.cart.CartViewModel
 import com.example.easymart.presentation.ui.home.components.HomeTopbar
@@ -100,20 +101,26 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
         )
     )
 
-    val showTopBar = currentRoute !in topBottomHiddenRoutes
+//    val showTopBar = currentRoute !in topBottomHiddenRoutes
+//    val showBottomBar = currentRoute != null && currentRoute in bottomBarRoutes
+
+    val config = getScreenConfig(currentRoute)
+    val showTopBar = config?.showTopBar == true
+    val showBottomBar = config?.showBottomBar == true
+
+
     //kiểm tra xem màn hiện tại có nằm trong bất kì graph nào hay không
-    val showBottomBar = currentDestination?.let { dest ->
-        bottomNavItems.any { bnItem ->
-            dest.hierarchy.any {
-                it.route?.startsWith(bnItem.graphRoute) == true || it.route == bnItem.graphRoute
-            }
-        }
-    } ?: false
-
-    val showBottomBar2 = currentRoute != null && currentRoute in bottomBarRoutes
+//    val showBottomBar = currentDestination?.let { dest ->
+//        bottomNavItems.any { bnItem ->
+//            dest.hierarchy.any {
+//                it.route?.startsWith(bnItem.graphRoute) == true || it.route == bnItem.graphRoute
+//            }
+//        }
+//    } ?: false
 
 
-    Log.d("showBottomBar", "$showBottomBar")
+
+
 
     val dimens = LocalAppDimens.current
 
@@ -152,9 +159,9 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
 
                     else -> {
                         TopAppBar(
-                            title = { Text("Giỏ hành") },
+                            title = { Text(config.title ?: "") },
                             navigationIcon = {
-                                if (showBottomBar2) {
+                                if (showBottomBar) {
                                     Text(text = "EasyMart")
                                 } else {
                                     IconButton(
@@ -186,7 +193,7 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
             }
         },
         bottomBar = {
-            if (showBottomBar2) {
+            if (showBottomBar) {
                 NavigationBar(
                     modifier = Modifier
                         .fillMaxWidth()

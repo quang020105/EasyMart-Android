@@ -2,18 +2,21 @@ package com.example.easymart.presentation.ui.payment
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import com.example.easymart.presentation.ui.cart.CartViewModel
 
 @Composable
 fun SelectPaymentRoute (
-    viewModel: SelectPaymentViewModel,
+    selectPaymentViewModel: SelectPaymentViewModel,
+    cartViewModel: CartViewModel,
     onNavigateBack: () -> Unit
 ){
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState = selectPaymentViewModel.uiState.collectAsState()
+    val totalAmount = cartViewModel.total.collectAsState()
 
     SelectPaymentMethodScreen(
-        totalAmount = 0.0,
+        totalAmount = totalAmount.value,
         state = uiState.value,
-        onMethodSelected = { method -> viewModel.selectPaymentMethod(method) },
+        onMethodSelected = { method -> selectPaymentViewModel.selectPaymentMethod(method) },
         onConfirmClick = onNavigateBack
     )
 }
