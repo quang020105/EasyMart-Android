@@ -17,12 +17,13 @@ import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.Product
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
+import com.example.easymart.presentation.ui.mock.mockOrders
 
 @Composable
 fun OrderStatusPage(
     modifier: Modifier = Modifier,
     olderType: String, // Đơn hàng mới, Đang giao, Đã giao, Đã hủy
-    orders: List<OrderItem> = emptyList(),
+    orders: List<Order> = emptyList(),
 ) {
     val dimens = LocalAppDimens.current
     Box(
@@ -35,9 +36,9 @@ fun OrderStatusPage(
                 .fillMaxSize()
                 .padding(all = dimens.spaceMd)
         ) {
-            items(orders) { orderItem ->
+            items(orders) { order ->
                 OrderCard(
-                    orderItem = orderItem
+                    order = order
                 )
             }
         }
@@ -50,32 +51,7 @@ fun OrderStatusPagePreview() {
     EasyMartTheme {
         OrderStatusPage(
             olderType = "Đơn hàng mới",
-            orders = listOf(
-                OrderItem(
-                    id = 1,
-                    product = Product(
-                        id = 1,
-                        name = "Sample Product",
-                        description = "This is a sample product.",
-                        price = 50.0,
-                        imageUrl = "https://via.placeholder.com/150",
-                        imageRes = R.drawable.pic_shoe_1
-                    ),
-                    quantity = 2
-                ),
-                OrderItem(
-                    id = 2,
-                    product = Product(
-                        id = 4,
-                        name = "Nike Air Max 270",
-                        description = "This is a limited shoe product.",
-                        price = 8547.0,
-                        imageUrl = "https://via.placeholder.com/150",
-                        imageRes = R.drawable.pic_shoe_1
-                    ),
-                    quantity = 2
-                )
-            )
+            orders = mockOrders
         )
     }
 }

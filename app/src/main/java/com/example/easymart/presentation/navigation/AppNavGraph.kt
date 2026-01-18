@@ -22,6 +22,8 @@ import com.example.easymart.presentation.ui.deliveryaddress.AddressViewModel
 import com.example.easymart.presentation.ui.deliveryaddress.DeliveryAddressRoute
 import com.example.easymart.presentation.ui.home.HomeRoute
 import com.example.easymart.presentation.ui.login.LoginRoute
+import com.example.easymart.presentation.ui.order.OrderRoute
+import com.example.easymart.presentation.ui.order.OrderViewModel
 import com.example.easymart.presentation.ui.payment.SelectPaymentRoute
 import com.example.easymart.presentation.ui.payment.SelectPaymentViewModel
 import com.example.easymart.presentation.ui.productdetail.ProductDetailRoute
@@ -210,13 +212,9 @@ fun AppNavGraph(
                 val parentEntry =
                     remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
                 val viewModel = hiltViewModel<CheckoutViewModel>(parentEntry)
-                val uiState = viewModel.uiState.collectAsState()
-                val order = uiState.value.order
 
                 OrderSuccessRoute(
-                    orderId = order?.id ?: -1,
-                    totalAmount = order?.totalAmount ?: 0L,
-                    paymentMethod = order?.paymentMethod ?: PaymentMethod.COD,
+                    checkoutViewModel = viewModel,
                     onViewOrderClick = {},
                     onContinueShoppingClick = {
                         navController.navigate(Screen.Home.route) {
@@ -394,6 +392,20 @@ fun AppNavGraph(
                             }
                         }
                     }
+                )
+            }
+
+            //màn đơn hàng của tôi
+            composableWithAnim(
+                route = Screen.Order.route,
+                anim = NavAnim.HORIZONTAL
+            ){
+                val viewModel = hiltViewModel<OrderViewModel>()
+                OrderRoute(
+                    viewModel,
+                    onNavigateToOrderDetail = {},
+                    onNavigateToTrack = {},
+                    onNavigateToBuyAgain = {}
                 )
             }
         }

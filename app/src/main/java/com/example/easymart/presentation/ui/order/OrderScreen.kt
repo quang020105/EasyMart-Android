@@ -3,12 +3,15 @@ package com.example.easymart.presentation.ui.order
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
@@ -17,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +30,7 @@ import com.example.easymart.domain.model.OrderItem
 import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.Product
 import com.example.easymart.presentation.theme.EasyMartTheme
+import com.example.easymart.presentation.ui.mock.mockOrders
 import com.example.easymart.presentation.ui.order.components.OrderStatusPage
 import kotlinx.coroutines.launch
 
@@ -35,13 +40,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun OrderScreen(
     modifier: Modifier = Modifier,
-    orders: List<Order> = emptyList(),
+    uiState: OrderListUiState
 ) {
     //danh sách tab
     val tabs = listOf(
-        "Chờ xử lý" to OrderStatus.CREATED,
+        "Chờ xác nhận" to OrderStatus.CREATED,
         "Đã xác nhận" to OrderStatus.CONFIRMED,
-        "Đang giao" to OrderStatus.SHIPPED,
+        "Chờ lấy hàng" to OrderStatus.PROCESSING,
+        "Đang giao" to OrderStatus.SHIPPING,
         "Đã giao" to OrderStatus.DELIVERED,
         "Đã hủy" to OrderStatus.CANCELLED
     )
@@ -51,54 +57,159 @@ fun OrderScreen(
     //giữ trạng thái tab được chọn
     val selectedIndex by derivedStateOf { pagerState.currentPage }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.background)
-    ) {
-        ScrollableTabRow(
-            selectedTabIndex = selectedIndex,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-        ) {
-            tabs.forEachIndexed { index, pair ->
-                val (title, _) = pair
-                Tab(
-                    selected = selectedIndex == index,
-                    onClick = {
-                        scope.launch { pagerState.animateScrollToPage(index) }
-                    },
-                    text = { Text(text = title) }
-                )
+
+    when(uiState) {
+        is OrderListUiState.Loading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.background),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
-
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier.fillMaxSize()
-        ) {pager ->
-            val status = tabs[pager].second
-            val listForPage = orders.filter { it.status == status }
-            if(listForPage.isNotEmpty()){
-                OrderStatusPage(
-                    orders = listForPage.first().items,
-                    olderType = tabs[pager].first
-                )
-            } else {
+        is OrderListUiState.Error -> {
+            // Hiển thị giao diện lỗi
+            val message = uiState.message
+//            Column(
+//                modifier = modifier
+//                    .fillMaxSize()
+//                    .background(color = MaterialTheme.colorScheme.background)
+//                    .padding(16.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally,
+//                verticalArrangement = Arrangement.Center
+//            ) {
+//                Text(
+//                    text = message,
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    color = MaterialTheme.colorScheme.onBackground,
+//                    textAlign = TextAlign.Center
+//                )
+//                Spacer(modifier = Modifier.height(12.dp))
+//                Button(onClick = { viewModel.retry() }) {
+//                    Text(text = "Thử lại")
+//                }
+//            }
+        }
+        is OrderListUiState.Empty -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.background),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
-                    text = "Không có đơn hàng nào",
+                    text = "Rỗng",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = MaterialTheme.colorScheme.background)
-                        .wrapContentHeight(),
                     textAlign = TextAlign.Center
                 )
             }
         }
+        is OrderListUiState.Success -> {
+            val orders = uiState.orders
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.background)
+            ) {
+                ScrollableTabRow(
+                    selectedTabIndex = selectedIndex,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                ) {
+                    tabs.forEachIndexed { index, pair ->
+                        val (title, _) = pair
+                        Tab(
+                            selected = selectedIndex == index,
+                            onClick = {
+                                scope.launch { pagerState.animateScrollToPage(index) }
+                            },
+                            text = { Text(text = title) }
+                        )
+                    }
+                }
+
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize()
+                ) {pager ->
+                    val status = tabs[pager].second
+                    val listForPage = orders.filter { it.status == status }
+                    if(listForPage.isNotEmpty()){
+                        OrderStatusPage(
+                            orders = listForPage,
+                            olderType = tabs[pager].first
+                        )
+                    } else {
+                        Text(
+                            text = "Không có đơn hàng nào",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.background)
+                                .wrapContentHeight(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+        }
+
     }
+
+
+//    Column(
+//        modifier = modifier
+//            .fillMaxSize()
+//            .background(color = MaterialTheme.colorScheme.background)
+//    ) {
+//        ScrollableTabRow(
+//            selectedTabIndex = selectedIndex,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .wrapContentHeight()
+//        ) {
+//            tabs.forEachIndexed { index, pair ->
+//                val (title, _) = pair
+//                Tab(
+//                    selected = selectedIndex == index,
+//                    onClick = {
+//                        scope.launch { pagerState.animateScrollToPage(index) }
+//                    },
+//                    text = { Text(text = title) }
+//                )
+//            }
+//        }
+//
+//        HorizontalPager(
+//            state = pagerState,
+//            modifier = Modifier.fillMaxSize()
+//        ) {pager ->
+//            val status = tabs[pager].second
+//            val listForPage = orders.filter { it.status == status }
+//            if(listForPage.isNotEmpty()){
+//                OrderStatusPage(
+//                    orders = listForPage,
+//                    olderType = tabs[pager].first
+//                )
+//            } else {
+//                Text(
+//                    text = "Không có đơn hàng nào",
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    color = MaterialTheme.colorScheme.onBackground,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .background(color = MaterialTheme.colorScheme.background)
+//                        .wrapContentHeight(),
+//                    textAlign = TextAlign.Center
+//                )
+//            }
+//        }
+//    }
 }
 
 @Preview(showBackground = true)
@@ -106,85 +217,8 @@ fun OrderScreen(
 fun OrderScreenPreview() {
     EasyMartTheme {
         OrderScreen(
-            orders = listOf(
-                Order(
-                    id = 1,
-                    items = listOf(
-                        OrderItem(
-                            id = 1,
-                            product = Product(
-                                id = 4,
-                                name = "Nike Air Max 270",
-                                description = "This is a limited shoe product.",
-                                price = 8547.0,
-                                imageUrl = "https://via.placeholder.com/150",
-                                imageRes = R.drawable.pic_shoe_1
-                            ),
-                            quantity = 2
-                        ),
-                        OrderItem(
-                            id = 1,
-                            product = Product(
-                                id = 4,
-                                name = "Nike Air Max 270",
-                                description = "This is a limited shoe product.",
-                                price = 8547.0,
-                                imageUrl = "https://via.placeholder.com/150",
-                                imageRes = R.drawable.pic_shoe_1
-                            ),
-                            quantity = 2
-                        )
-                    ),
-                    totalAmount = 130L,
-                    status = OrderStatus.SHIPPED,
-                    userId = 1,
-                    orderNumber = "ruru"
-                ),
-                Order(
-                    id = 2,
-                    items = listOf(
-                        OrderItem(
-                            id = 1,
-                            product = Product(
-                                id = 4,
-                                name = "Nike Air Max 270",
-                                description = "This is a limited shoe product.",
-                                price = 8547.0,
-                                imageUrl = "https://via.placeholder.com/150",
-                                imageRes = R.drawable.pic_shoe_1
-                            ),
-                            quantity = 2
-                        ),
-                        OrderItem(
-                            id = 5,
-                            product = Product(
-                                id = 4,
-                                name = "Nike Air Max 270",
-                                description = "This is a limited shoe product.",
-                                price = 8547.0,
-                                imageUrl = "https://via.placeholder.com/150",
-                                imageRes = R.drawable.pic_shoe_1
-                            ),
-                            quantity = 2
-                        ),
-                        OrderItem(
-                            id = 4,
-                            product = Product(
-                                id = 4,
-                                name = "Nike Air Max 270",
-                                description = "This is a limited shoe product.",
-                                price = 8547.0,
-                                imageUrl = "https://via.placeholder.com/150",
-                                imageRes = R.drawable.pic_shoe_1
-                            ),
-                            quantity = 2
-                        )
-                    ),
-                    totalAmount = 130L,
-                    status = OrderStatus.DELIVERED,
-                    userId = 1,
-                    orderNumber = "ruru"
-                )
+            uiState = OrderListUiState.Success(
+                orders = mockOrders
             )
         )
     }

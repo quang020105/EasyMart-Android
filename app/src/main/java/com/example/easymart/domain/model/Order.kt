@@ -18,7 +18,7 @@ enum class OrderStatus {
     CREATED, //đã tạo đơn
     CONFIRMED, //đã xác nhận
     PROCESSING, //đang chuẩn bị hàng
-    SHIPPED, //đang vận chuyển
+    SHIPPING, //đang vận chuyển
     DELIVERED, //đã giao hàng
     CANCELLED // đã hủy
 }

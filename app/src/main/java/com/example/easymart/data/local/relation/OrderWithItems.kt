@@ -1,7 +1,10 @@
-package com.example.easymart.data.local.entity
+package com.example.easymart.data.local.relation
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.example.easymart.data.local.entity.OrderEntity
+import com.example.easymart.data.local.entity.OrderItemEntity
+import com.example.easymart.data.local.entity.PaymentEntity
 
 //nối các bảng
 data class OrderWithItems (

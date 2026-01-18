@@ -39,6 +39,7 @@ val md_onInfo = Color(0xFFFFFFFF)
 
 //màu nền
 val md_background = Color(0xFFFEFBFF)
+//val md_background = Color(0xFFF5F5F7)
 val md_onBackground = Color(0xFF1A1C1E)
 //màu nền card, sheet, bottomBar
 val md_surface = Color(0xFFFEFBFF)

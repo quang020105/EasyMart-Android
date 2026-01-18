@@ -10,6 +10,7 @@ import com.example.easymart.data.remote.api.ProductApi
 import com.example.easymart.data.repositoryimpl.AddressRepositoryImpl
 import com.example.easymart.data.repositoryimpl.CartRepositoryImpl
 import com.example.easymart.data.repositoryimpl.LocationRepositoryImpl
+import com.example.easymart.data.repositoryimpl.OrderRepositoryImpl
 import com.example.easymart.data.repositoryimpl.PaymentRepositoryImpl
 import com.example.easymart.data.repositoryimpl.ProductRepositoryImpl
 import com.example.easymart.data.repositoryimpl.SearchRepositoryImpl
@@ -19,6 +20,7 @@ import com.example.easymart.domain.payment.process.OnlineGatewayProcessor
 import com.example.easymart.domain.repository.AddressRepository
 import com.example.easymart.domain.repository.CartRepository
 import com.example.easymart.domain.repository.LocationRepository
+import com.example.easymart.domain.repository.OrderRepository
 import com.example.easymart.domain.repository.PaymentRepository
 import com.example.easymart.domain.repository.ProductRepository
 import com.example.easymart.domain.repository.SearchRepository
@@ -67,4 +69,9 @@ object RepositoryModule {
         onlineGatewayProc: OnlineGatewayProcessor
     ): PaymentRepository =
         PaymentRepositoryImpl(orderDao, walletDao, codProc, eWalletProc, onlineGatewayProc)
+
+    @Provides
+    @Singleton
+    fun provideOrderRepository(dao: OrderDao): OrderRepository = OrderRepositoryImpl(dao)
+
 }

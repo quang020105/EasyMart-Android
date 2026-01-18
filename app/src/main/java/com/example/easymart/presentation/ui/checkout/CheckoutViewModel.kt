@@ -1,5 +1,6 @@
 package com.example.easymart.presentation.ui.checkout
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.easymart.data.mapper.cartToOrderItem
@@ -10,6 +11,7 @@ import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentResult
 import com.example.easymart.domain.model.PaymentStatus
+import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
 import com.example.easymart.domain.usecase.payment.ProcessPaymentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,6 +27,7 @@ import kotlin.time.Clock
 @HiltViewModel
 class CheckoutViewModel @Inject constructor(
     private val processPaymentUseCase: ProcessPaymentUseCase,
+    private val orderAutoProcessUseCase: OrderAutoProcessUseCase,
     //private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CheckoutUiState())
@@ -38,6 +41,7 @@ class CheckoutViewModel @Inject constructor(
         address: Address?,
         paymentMethod: PaymentMethod?
     ) {
+        Log.d("CheckoutViewModel", "$address, $paymentMethod")
         if (address == null) {
             viewModelScope.launch {
                 _uiEvent.emit(CheckoutUiEvent.ShowErrorMessage(message = "Vui lòng chọn địa chỉ"))
@@ -117,6 +121,17 @@ class CheckoutViewModel @Inject constructor(
     fun selectPaymentClick() {
         viewModelScope.launch {
             _uiEvent.emit(CheckoutUiEvent.NavigateSelectPaymentMethod)
+        }
+    }
+
+    // gọi workManager để tự động chuyển trạng thái đơn hàng (nếu đặt hàng thành công)
+    fun startAutoProcessOrder(){
+        val order = uiState.value.order
+        if(order != null){
+            viewModelScope.launch {
+                Log.d("CheckoutViewModel", "startAutoProcessOrder: ${order.id}")
+                orderAutoProcessUseCase.start(orderId = order.id)
+            }
         }
     }
 }

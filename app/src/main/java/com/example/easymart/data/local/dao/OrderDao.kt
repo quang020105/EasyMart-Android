@@ -7,9 +7,10 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.example.easymart.data.local.entity.OrderEntity
 import com.example.easymart.data.local.entity.OrderItemEntity
-import com.example.easymart.data.local.entity.OrderWithItems
+import com.example.easymart.data.local.relation.OrderWithItems
 import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.PaymentStatus
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface OrderDao {
@@ -19,7 +20,10 @@ interface OrderDao {
 
     @Transaction
     @Query("SELECT * FROM orders where userId = :userId order by createdAt desc")
-    suspend fun getAllOrdersWithItems(userId: Int): List<OrderWithItems>
+    fun getObserveAllOrdersWithItems(userId: String): Flow<List<OrderWithItems>>
+
+    @Query("SELECT * FROM order_items WHERE id = :orderItemId")
+    suspend fun getOrderItemById(orderItemId: Int): OrderItemEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrder(order: OrderEntity): Long

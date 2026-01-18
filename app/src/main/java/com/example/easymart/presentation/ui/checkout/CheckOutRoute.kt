@@ -63,7 +63,9 @@ fun CheckOutRoute(
     }
 
 
-    Log.d("HomeRoute", "CartViewModel instance hash=${cartViewModel.hashCode()}")
+    //Log.d("HomeRoute", "CartViewModel instance hash=${cartViewModel.hashCode()}")
+    Log.d("CheckOutRoute", "selectedMethod: ${selectPaymentUiState.value.selectedMethod}")
+
 
     CheckoutScreen(
         address = selectedAddress.value,

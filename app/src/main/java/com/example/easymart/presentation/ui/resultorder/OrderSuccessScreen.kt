@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.easymart.presentation.theme.EasyMartTheme
+import com.example.easymart.utils.toVNDString
 
 @Composable
 fun OrderSuccessScreen(
@@ -141,7 +142,7 @@ fun OrderSuccessScreen(
 
                 InfoRow(
                     label = "Tổng thanh toán",
-                    value = "${"%,d".format(totalAmount)} đ",
+                    value = totalAmount.toDouble().toVNDString(),
                     dimens = dimens,
                     valueColor = MaterialTheme.colorScheme.primary,
                     bold = true

@@ -1,5 +1,6 @@
 package com.example.easymart.data.repositoryimpl
 
+import android.util.Log
 import com.example.easymart.data.local.dao.OrderDao
 import com.example.easymart.data.local.dao.WalletDao
 import com.example.easymart.data.mapper.toEntity
@@ -30,6 +31,7 @@ class PaymentRepositoryImpl @Inject constructor(
         order: Order,
         method: PaymentMethod
     ): Flow<PaymentResult> = flow {
+        Log.d("PaymentRepositoryImpl", "Order in Repo: $order")
         //thêm đơn hàng vào db local
         val orderId = orderDao.insertOrderWithItems(order = order.toEntity(), orderItems = order.items.map { it.toEntity() })
         val processor = when(method){

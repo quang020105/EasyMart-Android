@@ -34,7 +34,7 @@ class CODProcesser @Inject constructor(
 
         orderDao.updateOrderAndPaymentStatus(
             orderId = order.id,
-            status = OrderStatus.CONFIRMED,
+            status = OrderStatus.CREATED,
             paymentStatus = PaymentStatus.UNPAID
         )
         emit(PaymentResult.Success(orderId = order.id, status = PaymentStatus.UNPAID))
