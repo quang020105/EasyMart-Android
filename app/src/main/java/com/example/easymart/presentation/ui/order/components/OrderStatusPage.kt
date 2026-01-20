@@ -22,8 +22,10 @@ import com.example.easymart.presentation.ui.mock.mockOrders
 @Composable
 fun OrderStatusPage(
     modifier: Modifier = Modifier,
-    olderType: String, // Đơn hàng mới, Đang giao, Đã giao, Đã hủy
     orders: List<Order> = emptyList(),
+    onPrimaryAction: (order: Order) -> Unit = {},
+    onSecondaryAction: () -> Unit = {},
+    onViewDetail: (orderId: Int) -> Unit = {},
 ) {
     val dimens = LocalAppDimens.current
     Box(
@@ -38,7 +40,10 @@ fun OrderStatusPage(
         ) {
             items(orders) { order ->
                 OrderCard(
-                    order = order
+                    order = order,
+                    onPrimaryAction = onPrimaryAction,
+                    onSecondaryAction = onSecondaryAction,
+                    onOpenDetail  = onViewDetail
                 )
             }
         }
@@ -50,7 +55,6 @@ fun OrderStatusPage(
 fun OrderStatusPagePreview() {
     EasyMartTheme {
         OrderStatusPage(
-            olderType = "Đơn hàng mới",
             orders = mockOrders
         )
     }

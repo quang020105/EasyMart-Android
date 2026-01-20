@@ -34,6 +34,9 @@ sealed class Screen(val route: String) {
     data object ProfileGraph : Screen("profile_graph")
     data object Profile : Screen("profile")
     data object Order : Screen("order")
+    data object OrderDetail : Screen("order_detail/{orderId}") {
+        fun createRoute(orderId: Int) = "order_detail/$orderId"
+    }
     data object ItemOrderStatus : Screen("order_status/{status}") {
         fun createRoute(status: String) = "order_status/$status"
     }

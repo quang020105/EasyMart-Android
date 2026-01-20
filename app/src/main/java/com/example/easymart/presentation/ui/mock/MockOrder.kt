@@ -1,5 +1,6 @@
 package com.example.easymart.presentation.ui.mock
 
+import com.example.easymart.domain.model.Address
 import com.example.easymart.domain.model.Order
 import com.example.easymart.domain.model.OrderItem
 import com.example.easymart.domain.model.OrderStatus
@@ -23,8 +24,12 @@ val mockOrders = listOf(
         status = OrderStatus.DELIVERED,
         paymentStatus = PaymentStatus.UNPAID,
         paymentMethod = PaymentMethod.COD,
-        shippingAddress = "Hà Nội",
-        createdAt = "2026-01-10"
+        shippingAddress = Address(
+            name = "Nguyen Van A",
+            phone = "0123456789",
+            addressString = "Hà Nội"
+        ),
+        createdAt = System.currentTimeMillis()
     ),
 
     Order(
@@ -44,11 +49,15 @@ val mockOrders = listOf(
             )
         ),
         totalAmount = 2_500_000,
-        status = OrderStatus.PROCESSING,
+        status = OrderStatus.CONFIRMED,
         paymentStatus = PaymentStatus.SUCCESS,
         paymentMethod = PaymentMethod.ONLINE_GATEWAY,
-        shippingAddress = "TP. Hồ Chí Minh",
-        createdAt = "2026-01-09"
+        shippingAddress = Address(
+            name = "Nguyen Van A",
+            phone = "0123456789",
+            addressString = "Hà Nội"
+        ),
+        createdAt = System.currentTimeMillis()
     ),
 
     Order(
@@ -66,8 +75,12 @@ val mockOrders = listOf(
         status = OrderStatus.SHIPPING,
         paymentStatus = PaymentStatus.SUCCESS,
         paymentMethod = PaymentMethod.COD,
-        shippingAddress = "Đà Nẵng",
-        createdAt = "2026-01-08"
+        shippingAddress = Address(
+            name = "Trung Nguyen",
+            phone = "0123456533",
+            addressString = "Đà Nẵng"
+        ),
+        createdAt = System.currentTimeMillis()
     ),
 
     Order(
@@ -85,8 +98,12 @@ val mockOrders = listOf(
         status = OrderStatus.DELIVERED,
         paymentStatus = PaymentStatus.SUCCESS,
         paymentMethod = PaymentMethod.ONLINE_GATEWAY,
-        shippingAddress = "Nghệ An",
-        createdAt = "2026-01-06"
+        shippingAddress = Address(
+            name = "Le Thi B",
+            phone = "0987654321",
+            addressString = "TP HCM"
+        ),
+        createdAt = System.currentTimeMillis()
     ),
 
     Order(
@@ -104,7 +121,11 @@ val mockOrders = listOf(
         status = OrderStatus.CANCELLED,
         paymentStatus = PaymentStatus.UNPAID,
         paymentMethod = PaymentMethod.COD,
-        shippingAddress = "Hải Phòng",
-        createdAt = "2026-01-05"
+        shippingAddress = Address(
+            name = "Pham Van C",
+            phone = "0912345678",
+            addressString = "Hải Phòng"
+        ),
+        createdAt = System.currentTimeMillis()
     )
 )

@@ -40,7 +40,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun OrderScreen(
     modifier: Modifier = Modifier,
-    uiState: OrderListUiState
+    uiState: OrderListUiState,
+    onPrimaryAction: (order: Order) -> Unit = {},
+    onSecondaryAction: () -> Unit = {},
+    onViewDetail: (orderId: Int) -> Unit = {},
 ) {
     //danh sách tab
     val tabs = listOf(
@@ -141,7 +144,9 @@ fun OrderScreen(
                     if(listForPage.isNotEmpty()){
                         OrderStatusPage(
                             orders = listForPage,
-                            olderType = tabs[pager].first
+                            onPrimaryAction = onPrimaryAction,
+                            onSecondaryAction = onSecondaryAction,
+                            onViewDetail = onViewDetail
                         )
                     } else {
                         Text(

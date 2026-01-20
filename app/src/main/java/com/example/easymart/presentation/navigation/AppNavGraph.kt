@@ -1,6 +1,7 @@
 package com.example.easymart.presentation.navigation
 
 import android.annotation.SuppressLint
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,6 +25,8 @@ import com.example.easymart.presentation.ui.home.HomeRoute
 import com.example.easymart.presentation.ui.login.LoginRoute
 import com.example.easymart.presentation.ui.order.OrderRoute
 import com.example.easymart.presentation.ui.order.OrderViewModel
+import com.example.easymart.presentation.ui.orderdetail.OrderDetailRoute
+import com.example.easymart.presentation.ui.orderdetail.OrderDetailViewModel
 import com.example.easymart.presentation.ui.payment.SelectPaymentRoute
 import com.example.easymart.presentation.ui.payment.SelectPaymentViewModel
 import com.example.easymart.presentation.ui.productdetail.ProductDetailRoute
@@ -395,19 +398,6 @@ fun AppNavGraph(
                 )
             }
 
-            //màn đơn hàng của tôi
-            composableWithAnim(
-                route = Screen.Order.route,
-                anim = NavAnim.HORIZONTAL
-            ){
-                val viewModel = hiltViewModel<OrderViewModel>()
-                OrderRoute(
-                    viewModel,
-                    onNavigateToOrderDetail = {},
-                    onNavigateToTrack = {},
-                    onNavigateToBuyAgain = {}
-                )
-            }
         }
 
 
@@ -431,6 +421,40 @@ fun AppNavGraph(
             }
 
         }
+
+
+        //màn đơn hàng của tôi
+        composableWithAnim(
+            route = Screen.Order.route,
+            anim = NavAnim.HORIZONTAL
+        ){
+            val viewModel = hiltViewModel<OrderViewModel>()
+            OrderRoute(
+                viewModel,
+                onNavigateToOrderDetail = { orderId ->
+                    navController.navigate(Screen.OrderDetail.createRoute(orderId))
+                },
+                onNavigateToTrack = {},
+                onNavigateToBuyAgain = {}
+            )
+        }
+
+        //chi tiết đơn hàng
+        composableWithAnim(
+            route = Screen.OrderDetail.route,
+            anim = NavAnim.HORIZONTAL,
+            arguments = listOf(
+                navArgument("orderId") { type = NavType.IntType }
+            )
+        ){
+            val viewModel = hiltViewModel<OrderDetailViewModel>()
+            val orderId = it.arguments?.getInt("orderId") ?: return@composableWithAnim
+            LaunchedEffect(orderId) {
+                viewModel.loadOrderDetail(orderId)
+            }
+            OrderDetailRoute(viewModel)
+        }
+
     }
 }
 

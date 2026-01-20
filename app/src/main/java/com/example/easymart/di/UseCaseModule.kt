@@ -21,6 +21,7 @@ import com.example.easymart.domain.usecase.location.GetProvincesUseCase
 import com.example.easymart.domain.usecase.location.GetWardsUseCase
 import com.example.easymart.domain.usecase.order.CancelOrderUseCase
 import com.example.easymart.domain.usecase.order.GetObserveAllOrdersUseCase
+import com.example.easymart.domain.usecase.order.GetOrderDetailUseCase
 import com.example.easymart.domain.usecase.order.GetOrderItemUseCase
 import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
 import com.example.easymart.domain.usecase.payment.GetWalletBalanceUseCase
@@ -126,4 +127,10 @@ object UseCaseModule {
     fun provideGetOrderItemUseCase(
         orderRepo: OrderRepository
     ) = GetOrderItemUseCase(orderRepo)
+
+    @Provides
+    fun provideGetOrderDetailUseCase(
+        orderRepo: OrderRepository
+    ) = GetOrderDetailUseCase(orderRepo)
+
 }

@@ -10,8 +10,8 @@ data class Order(
     val status: OrderStatus = OrderStatus.CREATED,
     val paymentStatus: PaymentStatus = PaymentStatus.UNPAID,
     val paymentMethod: PaymentMethod = PaymentMethod.COD,
-    val shippingAddress: String = "",
-    val createdAt: String = ""
+    val shippingAddress: Address,
+    val createdAt: Long = System.currentTimeMillis(),
 )
 
 enum class OrderStatus {

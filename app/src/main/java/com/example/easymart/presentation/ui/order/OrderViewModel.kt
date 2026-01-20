@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.easymart.domain.model.Order
+import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.usecase.order.GetObserveAllOrdersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -47,6 +48,25 @@ class OrderViewModel @Inject constructor(
                          }
                          Log.d("OrderViewModel", "observeOrders: $orders")
                     }
+          }
+     }
+
+     fun onViewOrderDetail(orderId: Int){
+          viewModelScope.launch {
+               _uiEvent.send(OrderUiEvent.NavigateToOrderDetail(orderId))
+          }
+     }
+
+     fun onPrimaryActionForOrder(order: Order){
+          viewModelScope.launch {
+               when(order.status){
+                    OrderStatus.DELIVERED, OrderStatus.CANCELLED  -> _uiEvent.send(OrderUiEvent.NavigateToBuyAgain(order.id))
+                    OrderStatus.SHIPPING-> _uiEvent.send(OrderUiEvent.NavigateToTrack(order.id))
+                    OrderStatus.CREATED,  OrderStatus.CONFIRMED  -> {
+                            //todo: hủy đơn
+                    }
+                    else -> {}
+               }
           }
      }
 }

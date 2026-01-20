@@ -16,7 +16,7 @@ fun Order.toEntity(): OrderEntity {
         userId = userId,
         totalAmount = totalAmount,
         orderNumber = orderNumber,
-        shippingAddress = shippingAddress,
+        shippingAddress = shippingAddress.toEmbedded(),
         orderStatus = status,
         paymentStatus = paymentStatus,
         paymentMethod = paymentMethod,
@@ -36,8 +36,8 @@ fun OrderEntity.toDomain(
         status = OrderStatus.valueOf(orderStatus.name),
         paymentMethod = paymentMethod,
         paymentStatus = paymentStatus,
-        shippingAddress = shippingAddress,
-        createdAt = createdAt.toString(),
+        shippingAddress = shippingAddress.toDomain(),
+        createdAt = createdAt,
     )
 }
 
@@ -81,8 +81,8 @@ fun OrderWithItems.toDomain(): Order {
         status = OrderStatus.valueOf(order.orderStatus.name),
         paymentStatus = order.paymentStatus,
         paymentMethod = order.paymentMethod,
-        shippingAddress = order.shippingAddress,
-        createdAt = order.createdAt.toString()
+        shippingAddress = order.shippingAddress.toDomain(),
+        createdAt = order.createdAt
     )
 }
 

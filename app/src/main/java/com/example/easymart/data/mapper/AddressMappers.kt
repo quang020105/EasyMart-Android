@@ -1,5 +1,6 @@
 package com.example.easymart.data.mapper
 
+import com.example.easymart.data.local.entity.AddressEmbedded
 import com.example.easymart.data.local.entity.AddressEntity
 import com.example.easymart.domain.model.Address
 
@@ -29,5 +30,22 @@ fun Address.toEntity(): AddressEntity {
         provinceCode = provinceCode,
         districtCode = districtCode,
         wardCode = wardCode
+    )
+}
+
+
+fun Address.toEmbedded(): AddressEmbedded {
+    return AddressEmbedded(
+        name = name,
+        phone = phone,
+        addressString = addressString,
+    )
+}
+
+fun AddressEmbedded.toDomain(): Address {
+    return Address(
+        name = name,
+        phone = phone,
+        addressString = addressString,
     )
 }

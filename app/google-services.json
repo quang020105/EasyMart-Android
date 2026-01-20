@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "549457314881",
+    "project_id": "atomic-vault-448115-r9",
+    "storage_bucket": "atomic-vault-448115-r9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549457314881:android:d679a8ed7513479e23f2c0",
+        "android_client_info": {
+          "package_name": "com.example.easymart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlTGFzE5-oKW6wHz4x0OeHj3eeNgAksDk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549457314881:android:dd63c3e13e339fc123f2c0",
+        "android_client_info": {
+          "package_name": "com.example.thibnglixet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlTGFzE5-oKW6wHz4x0OeHj3eeNgAksDk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

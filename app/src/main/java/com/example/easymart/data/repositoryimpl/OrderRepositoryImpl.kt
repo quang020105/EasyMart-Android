@@ -17,7 +17,12 @@ class OrderRepositoryImpl @Inject constructor(
         orderDao.getObserveAllOrdersWithItems(userId).map { list -> list.map { it.toDomain() } }
 
 
-    override suspend fun getOrderById(orderItemId: Int): OrderItem? =
+    override suspend fun getOrderItemById(orderItemId: Int): OrderItem? =
         orderDao.getOrderItemById(orderItemId)?.toDomain()
 
+    override suspend fun getOrderById(orderId: Int): Order? {
+        orderDao.getOrderWithItems(orderId).let {
+            return it.toDomain()
+        }
+    }
 }

@@ -50,11 +50,11 @@ import com.example.easymart.presentation.ui.common.components.ItemProductRecomme
 import com.example.easymart.presentation.ui.home.components.ProductRow
 import com.example.easymart.presentation.ui.mock.mockProducts
 import com.example.easymart.presentation.ui.mock.mockSimpleProduct
+import com.example.easymart.utils.toDisplayString
 
 @Composable
 fun PaymentMethodItem(
     method: PaymentMethod = PaymentMethod.COD,
-    title: String = "",
     description: String = "",
     icon: ImageVector,
     selected: Boolean = false,
@@ -98,7 +98,7 @@ fun PaymentMethodItem(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    title,
+                    method.toDisplayString(),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(Modifier.height(dimens.spaceSm))
@@ -125,7 +125,7 @@ fun PaymentMethodItem(
 fun PaymentMethodItemPreview(){
     EasyMartTheme {
         PaymentMethodItem(
-            title = "Thanh toán khi nhận hàng",
+            method = PaymentMethod.COD,
             description = "Thanh toán khi nhận hàng",
             icon = Icons.Default.LocalShipping,
         )

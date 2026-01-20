@@ -64,7 +64,6 @@ fun SelectPaymentMethodScreen(
 
             PaymentMethodItem(
                 method = PaymentMethod.ONLINE_GATEWAY,
-                title = "Thanh toán Online",
                 description = "Thẻ ngân hàng, VNPay, MoMo...",
                 icon = Icons.Default.CreditCard,
                 selected = state.selectedMethod == PaymentMethod.ONLINE_GATEWAY,
@@ -73,7 +72,6 @@ fun SelectPaymentMethodScreen(
 
             PaymentMethodItem(
                 method = PaymentMethod.COD,
-                title = "Thanh toán khi nhận hàng",
                 description = "Trả tiền mặt cho shipper",
                 icon = Icons.Default.LocalShipping,
                 selected = state.selectedMethod == PaymentMethod.COD,
@@ -82,7 +80,6 @@ fun SelectPaymentMethodScreen(
 
             PaymentMethodItem(
                 method = PaymentMethod.WALLET,
-                title = "Ví điện tử",
                 description = "Số dư hiện tại: 500.000 đ",
                 icon = Icons.Default.AccountBalanceWallet,
                 selected = state.selectedMethod == PaymentMethod.WALLET,

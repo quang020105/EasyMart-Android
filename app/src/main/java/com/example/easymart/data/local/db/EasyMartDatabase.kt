@@ -16,7 +16,7 @@ import com.example.easymart.data.local.entity.WalletEntity
 
 @Database(
     entities = [CartItemEntity::class, AddressEntity::class, WalletEntity::class, OrderEntity::class, OrderItemEntity::class, PaymentEntity::class],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 abstract class EasyMartDatabase : RoomDatabase() {

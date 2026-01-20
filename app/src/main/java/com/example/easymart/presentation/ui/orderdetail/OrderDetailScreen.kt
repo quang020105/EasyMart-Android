@@ -1,14 +1,19 @@
 package com.example.easymart.presentation.ui.orderdetail
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -19,62 +24,99 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.easymart.domain.model.Order
 import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
+import com.example.easymart.presentation.ui.mock.mockOrders
 import com.example.easymart.presentation.ui.order.extension.toColor
+import com.example.easymart.presentation.ui.orderdetail.components.OrderHeader
+import com.example.easymart.presentation.ui.orderdetail.components.OrderPrimaryContent
+import com.example.easymart.presentation.ui.orderdetail.components.ShippingInfo
 import com.example.easymart.utils.toDisplayString
 
 @Composable
-fun OrderHeader(
-    orderId: Long,
-    createdAt: String,
-    status: OrderStatus,
+fun OrderDetailScreen(
+    uiState: OrderDetailUiState,
     modifier: Modifier = Modifier
 ) {
     val dimens = LocalAppDimens.current
-    Card (
+    Surface(
         modifier = modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(dimens.radiusMedium),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-        elevation = CardDefaults.cardElevation(defaultElevation = dimens.spaceXs)
-    ){
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = dimens.spaceMd, horizontal = dimens.spaceSm),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.background
+            )
+    ) {
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Đơn hàng #$orderId",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
-                )
-                Spacer(modifier = Modifier.height(dimens.spaceXs))
-                Text(
-                    text = "Đặt ngày $createdAt",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
+
+        when (uiState) {
+            is OrderDetailUiState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colorScheme.background),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Đang tải đơn hàng...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
 
-            // Badge
-            Surface(
-                shape = RoundedCornerShape(dimens.spaceMd),
-                color = status.toColor(),
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .height(dimens.spaceLg)
-                    .padding(start = dimens.spaceSm)
-            ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = dimens.spaceMd)) {
+            is OrderDetailUiState.Error -> {
+                val message = uiState.message
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(dimens.spaceMd),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
                     Text(
-                        text = status.toDisplayString(),
-                        style = MaterialTheme.typography.labelLarge.copy(color = Color.White, fontSize = dimens.textSmall)
+                        text = message,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center
                     )
+                    //Spacer(modifier = Modifier.height(12.dp))
+//                    Button(onClick = onRetry) {
+//                        Text(text = "Thử lại")
+//                    }
+                }
+            }
+
+
+            is OrderDetailUiState.Success -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    contentPadding = PaddingValues(dimens.spaceSm),
+                    verticalArrangement = Arrangement.spacedBy(dimens.spaceMd)
+                ) {
+                    item {
+                        OrderHeader(
+                            orderId = uiState.order.id.toLong(),
+                            createdAt = uiState.order.createdAt,
+                            status = uiState.order.status
+                        )
+                    }
+                    item {
+                        ShippingInfo(
+                            name = uiState.order.shippingAddress.name,
+                            addressString = uiState.order.shippingAddress.addressString,
+                            phone = uiState.order.shippingAddress.phone
+                        )
+                    }
+                    item {
+                        OrderPrimaryContent(
+                            order = uiState.order
+                        )
+                    }
                 }
             }
         }
@@ -83,14 +125,12 @@ fun OrderHeader(
 
 @Preview
 @Composable
-fun OrderHeaderPreview() {
+fun OrderDetailScreenPreview() {
     EasyMartTheme {
-        OrderHeader(
-            orderId = 123456,
-            createdAt = "2024-06-15",
-            status = OrderStatus.SHIPPING
+        OrderDetailScreen(
+            uiState = OrderDetailUiState.Success(
+                order = mockOrders[1]
+            )
         )
     }
 }
-
-

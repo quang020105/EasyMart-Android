@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id ("kotlin-kapt")               // cần cho annotation processing (kapt)
     id ("com.google.dagger.hilt.android") // áp dụng plugin Hilt cho module app
+    id("com.google.gms.google-services")   // bật dịch vụ của google (firebase)
     //id ("com.google.devtools.ksp")       // <-- bật KSP cho module này
 }
 
@@ -35,9 +36,16 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+//    kotlinOptions {
+//        jvmTarget = "11"
+//    }
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        }
     }
+
+
     buildFeatures {
         compose = true
     }
@@ -114,4 +122,9 @@ dependencies {
     // Hilt + WorkManager
     implementation(libs.androidx.hilt.work)
     kapt(libs.androidx.hilt.compiler)
+
+    //firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+
 }

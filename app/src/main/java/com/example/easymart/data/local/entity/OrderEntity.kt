@@ -1,5 +1,6 @@
 package com.example.easymart.data.local.entity
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.easymart.domain.model.OrderStatus
@@ -16,6 +17,7 @@ data class OrderEntity(
     val orderStatus: OrderStatus = OrderStatus.CREATED,
     val paymentStatus: PaymentStatus = PaymentStatus.UNPAID,
     val paymentMethod: PaymentMethod = PaymentMethod.COD,
-    val shippingAddress: String,
+    @Embedded(prefix = "shipping_") // nhúng địa chỉ giao hàng
+    val shippingAddress: AddressEmbedded,
     val createdAt: Long
 )

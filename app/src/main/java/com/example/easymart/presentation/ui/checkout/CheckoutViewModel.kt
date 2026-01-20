@@ -54,6 +54,12 @@ class CheckoutViewModel @Inject constructor(
             }
             return
         }
+
+        val shippingAddress = Address(
+            name = address.name,
+            phone = address.phone,
+            addressString = address.addressString,
+        )
         val order = Order(
             userId = 1, //getCurrentUserIdUseCase() chưa xử lý
             orderNumber = "",//chưa xử lý
@@ -62,8 +68,8 @@ class CheckoutViewModel @Inject constructor(
             status = OrderStatus.CREATED,
             paymentStatus = PaymentStatus.UNPAID,
             paymentMethod = paymentMethod,
-            shippingAddress = address.addressString,
-            createdAt = System.currentTimeMillis().toString()
+            shippingAddress = shippingAddress,
+            createdAt = System.currentTimeMillis()
         )
 
         viewModelScope.launch {

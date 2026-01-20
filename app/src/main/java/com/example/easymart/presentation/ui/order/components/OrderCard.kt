@@ -35,15 +35,17 @@ import com.example.easymart.presentation.ui.common.components.RoundedActionButto
 import com.example.easymart.presentation.ui.mock.mockOrders
 import com.example.easymart.presentation.ui.order.extension.toColor
 import com.example.easymart.presentation.ui.order.extension.toPrimaryActionText
+import com.example.easymart.utils.toDateTimeString
+import com.example.easymart.utils.toDisplayString
 import com.example.easymart.utils.toVNDString
 
 @Composable
 fun OrderCard(
     modifier: Modifier = Modifier,
     order: Order,
-    onPrimaryAction: () -> Unit = {},
+    onPrimaryAction: (order: Order) -> Unit = {},
     onSecondaryAction: () -> Unit = {},
-    onOpenDetail: () -> Unit = {}
+    onOpenDetail: (orderId: Int) -> Unit = {}
 ) {
     val dimens = LocalAppDimens.current
     Card(
@@ -76,7 +78,7 @@ fun OrderCard(
                     )
                     Spacer(modifier = Modifier.height(dimens.spaceXs))
                     Text(
-                        text = order.createdAt,
+                        text = order.createdAt.toDateTimeString(),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
@@ -92,23 +94,29 @@ fun OrderCard(
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = dimens.spaceSm, vertical = 6.dp),
-                        text = order.status.name,
+                        text = order.status.toDisplayString(),
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
 
-            Divider(modifier = Modifier.padding(vertical = dimens.spaceXs, horizontal = dimens.spaceSm))
+            Divider(
+                modifier = Modifier.padding(
+                    vertical = dimens.spaceXs,
+                    horizontal = dimens.spaceSm
+                )
+            )
 
 
             //các sản phẩm trong đơn hàng
             order.items.forEachIndexed { idx, item ->
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(horizontal = dimens.spaceSm, vertical = dimens.spaceXs),
                     verticalAlignment = Alignment.CenterVertically
-                ){
+                ) {
                     ProductCard(
                         modifier = Modifier
                             .size(dimens.cartImgSize)
@@ -131,19 +139,27 @@ fun OrderCard(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                     }
-
-
+                    //giá tiền sản phẩm
+                    Text(
+                        text = item.totalPrice.toVNDString(),
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                    )
                 }
             }
 
-            Divider(modifier = Modifier.padding(vertical = dimens.spaceXs, horizontal = dimens.spaceSm))
+            Divider(
+                modifier = Modifier.padding(
+                    vertical = dimens.spaceXs,
+                    horizontal = dimens.spaceSm
+                )
+            )
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = dimens.spaceSm, vertical = dimens.spaceXs),
-                verticalAlignment = Alignment.CenterVertically
-                , horizontalArrangement = Arrangement.End
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
             ) {
                 Text(
                     text = "Tổng: ${order.totalAmount.toDouble().toVNDString()}",
@@ -155,7 +171,7 @@ fun OrderCard(
                 order.status.toPrimaryActionText()?.let { actionText ->
                     RoundedActionButton(
                         text = actionText,
-                        onClick = onPrimaryAction,
+                        onClick = { onPrimaryAction(order) },
                         horizontalPadding = dimens.spaceLg,
                         textStyle = MaterialTheme.typography.bodySmall,
                         cornerRadius = dimens.radiusMedium,
@@ -167,7 +183,7 @@ fun OrderCard(
                 Spacer(modifier = Modifier.width(dimens.spaceSm))
                 RoundedActionButton(
                     text = "Xem chi tiết",
-                    onClick = onOpenDetail,
+                    onClick = {onOpenDetail(order.id)},
                     horizontalPadding = dimens.spaceLg,
                     textStyle = MaterialTheme.typography.bodySmall
                 )
