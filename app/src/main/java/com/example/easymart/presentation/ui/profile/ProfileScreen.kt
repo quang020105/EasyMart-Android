@@ -126,12 +126,11 @@ fun ProfileScreenPreview() {
     EasyMartTheme {
         ProfileScreen(
             user = User(
-                id = 1,
+                id = "1",
                 name = "John Doe",
                 email = "johnydangx2qn@gmail.com",
                 phone = "1234567890",
-                passwordHash = "password123",
-                createdAt = "2023-10-01"
+                createdAt = System.currentTimeMillis()
             )
         )
     }

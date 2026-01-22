@@ -34,104 +34,150 @@ import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.common.components.AppTextField
 import com.example.easymart.presentation.ui.common.components.PasswordField
 import com.example.easymart.presentation.ui.common.components.RoundedActionButton
+import com.example.easymart.presentation.ui.common.components.ViewLoading
 
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
-    onSignUpClick: (fullName: String, email: String, sdt: String, password: String) -> Unit = {_,_,_,_ ->},
+    formState: SignUpFormState = SignUpFormState(),
+    uiState: SignUpUiState = SignUpUiState.Idle,
+    onFullNameChange: (String) -> Unit = {},
+    onEmailChange: (String) -> Unit = {},
+    onPhoneChange: (String) -> Unit = {},
+    onPasswordChange: (String) -> Unit = {},
+    onConfirmPasswordChange: (String) -> Unit = {},
+    onSignUpClick: () -> Unit = {},
     onNavigateToLogin: () -> Unit
 ) {
     val dimens = LocalAppDimens.current
     val focusManager = LocalFocusManager.current
-    var fullName by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
-    var sdt by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var passwordConfirm by rememberSaveable { mutableStateOf("") }
-
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     Surface {
-        Column (
-            modifier = modifier.fillMaxSize().padding(all = dimens.space2xl),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            Spacer(modifier = Modifier.height(dimens.space2xl))
-            Text(
-                text = "Đăng kí",
-                modifier = Modifier.padding(bottom = dimens.spaceLg),
-                style = MaterialTheme.typography.displayMedium
-            )
+        if (uiState == SignUpUiState.Loading) {
+            ViewLoading(modifier = modifier)
 
-            AppTextField(
-                value = fullName,
-                onValueChange = { fullName = it },
-                modifier = Modifier.fillMaxWidth().padding(vertical = dimens.spaceSm),
-                label = { Text("Tên đầy đủ") },
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
-                keyBoardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-            )
-            AppTextField(
-                value = email,
-                onValueChange = { email = it},
-                modifier = Modifier.fillMaxWidth().padding(vertical = dimens.spaceSm),
-                label = {Text("Email")},
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
-                keyBoardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
-            )
-            AppTextField(
-                value = sdt,
-                onValueChange = { sdt = it},
-                modifier = Modifier.fillMaxWidth().padding(vertical = dimens.spaceSm),
-                label = {Text("Số điện thoại")},
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone, imeAction = ImeAction.Next),
-                keyBoardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
-            )
-            PasswordField(
-                password = password,
-                onPasswordChange = { password = it},
-                modifier = Modifier.fillMaxWidth().padding(vertical = dimens.spaceSm),
-                label = {Text("Mật khẩu")},
-                isError = false,
-                errorMessage = null,
+        } else {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(all = dimens.space2xl),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(dimens.space2xl))
+                Text(
+                    text = "Đăng kí",
+                    modifier = Modifier.padding(bottom = dimens.spaceLg),
+                    style = MaterialTheme.typography.displayMedium
+                )
+
+                AppTextField(
+                    value = formState.fullName,
+                    onValueChange = { onFullNameChange(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = dimens.spaceSm),
+                    label = { Text("Tên đầy đủ") },
+                    isError = formState.fullNameError != null,
+                    errorMessage = formState.fullNameError,
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Words,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyBoardActions = KeyboardActions(onNext = {
+                        focusManager.moveFocus(
+                            FocusDirection.Down
+                        )
+                    }),
+                )
+                AppTextField(
+                    value = formState.email,
+                    onValueChange = { onEmailChange(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = dimens.spaceSm),
+                    label = { Text("Email") },
+                    isError = formState.emailError != null,
+                    errorMessage = formState.emailError,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyBoardActions = KeyboardActions(onNext = {
+                        focusManager.moveFocus(
+                            FocusDirection.Down
+                        )
+                    })
+                )
+                AppTextField(
+                    value = formState.phone,
+                    onValueChange = { onPhoneChange(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = dimens.spaceSm),
+                    label = { Text("Số điện thoại") },
+                    isError = formState.phoneError != null,
+                    errorMessage = formState.phoneError,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Phone,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyBoardActions = KeyboardActions(onNext = {
+                        focusManager.moveFocus(
+                            FocusDirection.Down
+                        )
+                    })
+                )
+                PasswordField(
+                    password = formState.password,
+                    onPasswordChange = { onPasswordChange(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = dimens.spaceSm),
+                    label = { Text("Mật khẩu") },
+                    isError = formState.passwordError != null,
+                    errorMessage = formState.passwordError,
+//                passwordVisible = passwordVisible,
+//                onPasswordVisibleChange = { passwordVisible = it },
+                    focusManager = LocalFocusManager.current
+                )
+                PasswordField(
+                    password = formState.confirmPassword,
+                    onPasswordChange = { onConfirmPasswordChange(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = dimens.spaceSm),
+                    label = { Text("Xác nhận mật khẩu") },
+                    isError = formState.confirmPasswordError != null,
+                    errorMessage = formState.confirmPasswordError,
                 passwordVisible = passwordVisible,
                 onPasswordVisibleChange = { passwordVisible = it },
-                focusManager = LocalFocusManager.current
-            )
-            PasswordField(
-                password = passwordConfirm,
-                onPasswordChange = { passwordConfirm = it},
-                modifier = Modifier.fillMaxWidth().padding(vertical = dimens.spaceSm),
-                label = {Text("Xác nhận mật khẩu")},
-                isError = false,
-                errorMessage = null,
-                passwordVisible = passwordVisible,
-                onPasswordVisibleChange = { passwordVisible = it },
-                focusManager = LocalFocusManager.current
-            )
-            Spacer(modifier = Modifier.height(dimens.spaceXl))
-            RoundedActionButton(
-                text = "Đăng kí",
-                onClick = {
-                    focusManager.clearFocus()
-                    onSignUpClick(fullName, email, sdt, password)
-                },
-                modifier = Modifier.fillMaxWidth(),
-                verticalPadding = dimens.spaceLg,
-                textStyle = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(modifier = Modifier.height(dimens.space2xl))
-            Text(
-                text = "Bạn đã có tài khoản?",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(dimens.spaceMd))
-            Text(
-                text = "Đăng nhập",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable { onNavigateToLogin() }
-            )
+                    focusManager = LocalFocusManager.current
+                )
+                Spacer(modifier = Modifier.height(dimens.spaceXl))
+                RoundedActionButton(
+                    text = "Đăng kí",
+                    onClick = {
+                        focusManager.clearFocus()
+                        onSignUpClick()
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalPadding = dimens.spaceLg,
+                    textStyle = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(dimens.space2xl))
+                Text(
+                    text = "Bạn đã có tài khoản?",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(dimens.spaceMd))
+                Text(
+                    text = "Đăng nhập",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable { onNavigateToLogin() }
+                )
+            }
         }
     }
 }
@@ -142,10 +188,7 @@ fun SignUpScreenPreview() {
     EasyMartTheme {
         SignUpScreen(
             modifier = Modifier.fillMaxSize(),
-            onSignUpClick = { fullName, email, sdt, password ->
-                // Handle sign up click
-                println("Sign up clicked with fullName: $fullName, email: $email, sdt: $sdt, password: $password")
-             },
+            onSignUpClick = { },
             onNavigateToLogin = { }
         )
     }

@@ -28,15 +28,6 @@ import com.example.easymart.presentation.ui.deliveryaddress.components.Searchabl
 @Composable
 fun AddAddressScreen(
     state: AddAddressUIState = AddAddressUIState(),
-//    provinces: List<Province> = emptyList(),
-//    districts: List<District> = emptyList(),
-//    wards: List<Ward> = emptyList(),
-//    selectedProvince: Province? = null,
-//    selectedDistrict: District? = null,
-//    selectedWard: Ward? = null,
-//    onProvinceSelected: (Province) -> Unit = {},
-//    onDistrictSelected: (District) -> Unit = {},
-//    onWardSelected: (Ward) -> Unit = {},
     isFormValid: Boolean = false,
     events: AddAddressUiEvents
 ) {

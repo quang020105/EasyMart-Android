@@ -3,6 +3,7 @@ package com.example.easymart.di
 import android.content.Context
 import com.example.easymart.data.local.dao.OrderDao
 import com.example.easymart.domain.repository.AddressRepository
+import com.example.easymart.domain.repository.AuthRepository
 import com.example.easymart.domain.repository.CartRepository
 import com.example.easymart.domain.repository.LocationRepository
 import com.example.easymart.domain.repository.OrderRepository
@@ -12,6 +13,10 @@ import com.example.easymart.domain.repository.SearchRepository
 import com.example.easymart.domain.usecase.address.GetAllAddressUseCase
 import com.example.easymart.domain.usecase.address.GetDefaultAddressUseCase
 import com.example.easymart.domain.usecase.address.InsertNewAddressUseCase
+import com.example.easymart.domain.usecase.auth.GetCurrentUserUseCase
+import com.example.easymart.domain.usecase.auth.LoginUseCase
+import com.example.easymart.domain.usecase.auth.LogoutUseCase
+import com.example.easymart.domain.usecase.auth.SignUpUseCase
 import com.example.easymart.domain.usecase.cart.AddToCartUseCase
 import com.example.easymart.domain.usecase.cart.ClearAllCartsUseCase
 import com.example.easymart.domain.usecase.cart.GetAllCartItemsUseCase
@@ -132,5 +137,25 @@ object UseCaseModule {
     fun provideGetOrderDetailUseCase(
         orderRepo: OrderRepository
     ) = GetOrderDetailUseCase(orderRepo)
+
+    @Provides
+    fun provideSignUpUseCase(
+        authRepo: AuthRepository
+    ) = SignUpUseCase(authRepo)
+
+    @Provides
+    fun provideLoginUseCase(
+        authRepo: AuthRepository
+    ) = LoginUseCase(authRepo)
+
+    @Provides
+    fun provideLogoutUseCase(
+        authRepo: AuthRepository
+    ) = LogoutUseCase(authRepo)
+
+    @Provides
+    fun provideGetCurrentUserUseCase(
+        authRepo: AuthRepository
+    ) = GetCurrentUserUseCase(authRepo)
 
 }

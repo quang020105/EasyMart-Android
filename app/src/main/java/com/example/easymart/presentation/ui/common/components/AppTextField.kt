@@ -67,11 +67,10 @@ fun AppTextField(
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colorScheme.error,
-                //style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(start = dimens.spaceMd)
             )
         }
-
     }
 }
 
@@ -84,7 +83,7 @@ fun AppTextFieldPreview() {
             onValueChange = {},
             label = { Text(text = "Email") },
             placeholder = { Text(text = "Nhập email hoặc mật khẩu") },
-            isError = false,
+            isError = true,
             errorMessage = "Email không hợp lệ",
         )
     }

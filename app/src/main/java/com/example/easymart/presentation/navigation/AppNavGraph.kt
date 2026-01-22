@@ -1,6 +1,8 @@
 package com.example.easymart.presentation.navigation
 
 import android.annotation.SuppressLint
+import android.net.Uri
+import android.util.Log
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.easymart.domain.model.PaymentMethod
+import com.example.easymart.presentation.auth.AuthViewModel
 import com.example.easymart.presentation.ui.cart.CartRoute
 import com.example.easymart.presentation.ui.cart.CartViewModel
 import com.example.easymart.presentation.ui.checkout.CheckOutRoute
@@ -23,6 +26,7 @@ import com.example.easymart.presentation.ui.deliveryaddress.AddressViewModel
 import com.example.easymart.presentation.ui.deliveryaddress.DeliveryAddressRoute
 import com.example.easymart.presentation.ui.home.HomeRoute
 import com.example.easymart.presentation.ui.login.LoginRoute
+import com.example.easymart.presentation.ui.login.LoginViewModel
 import com.example.easymart.presentation.ui.order.OrderRoute
 import com.example.easymart.presentation.ui.order.OrderViewModel
 import com.example.easymart.presentation.ui.orderdetail.OrderDetailRoute
@@ -37,6 +41,7 @@ import com.example.easymart.presentation.ui.resultorder.OrderSuccessRoute
 import com.example.easymart.presentation.ui.resultorder.PaymentFailedRoute
 import com.example.easymart.presentation.ui.search.SearchRoute
 import com.example.easymart.presentation.ui.signup.SignUpRoute
+import com.example.easymart.presentation.ui.signup.SignUpViewModel
 import com.example.easymart.presentation.ui.splash.SplashScreen
 
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -45,6 +50,8 @@ fun AppNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val authViewModel = hiltViewModel<AuthViewModel>()
+    val authState = authViewModel.authState.collectAsState()
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.route,
@@ -66,32 +73,82 @@ fun AppNavGraph(
 
 
         //nav auth
-        navigation(startDestination = Screen.Login.route, route = Screen.AuthGraph.route) {
+        navigation(
+            startDestination = "${Screen.Login.route}?next={next}",
+            route = Screen.AuthGraph.route
+        ) {
 
             composableWithAnim(
-                route = Screen.Login.route,
-                anim = NavAnim.FADE
-            ) {
+                route = "${Screen.Login.route}?next={next}",
+                anim = NavAnim.FADE,
+                arguments = listOf(navArgument("next") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                })
+            ) {backStackEntry ->
+                val next = backStackEntry.arguments?.getString("next") ?: ""
+                val loginViewModel = hiltViewModel<LoginViewModel>()
                 LoginRoute(
+                    viewModel = loginViewModel,
                     onNavigateToSignUp = {
-                        navController.navigate(Screen.SignUp.route)
+                        navController.navigate("${Screen.SignUp.route}?next=${Uri.encode(next)}")
                     },
-                    onLoginClick = { _, _, _ ->
-                        navController.navigate(Screen.HomeGraph.route) {
-                            popUpTo(Screen.AuthGraph.route) { inclusive = true }
+                    onLoginClick = { email, phone, password ->
+//                        navController.navigate(Screen.HomeGraph.route) {
+//                            popUpTo(Screen.AuthGraph.route) { inclusive = true }
+//                        }
+                        loginViewModel.login(email, password)
+                    },
+                    onLoginSuccess = { user ->
+                        authViewModel.onUserLoggedIn(user)
+                        if (next.isNotEmpty()) {
+                            //nếu có next thì điều hướng đến next
+                            navController.navigate(Uri.decode(next)) {
+                                popUpTo(Screen.AuthGraph.route) { inclusive = true }
+                            }
+                        } else {
+                            //ngược lại điều hướng về home
+                            navController.navigate(Screen.HomeGraph.route) {
+                                popUpTo(Screen.AuthGraph.route) { inclusive = true }
+                            }
                         }
                     }
+
                 )
             }
 
 
             composableWithAnim(
-                route = Screen.SignUp.route,
-                anim = NavAnim.FADE
-            ) {
+                route = "${Screen.SignUp.route}?next={next}",
+                anim = NavAnim.FADE,
+                arguments = listOf(navArgument("next") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                })
+            ) { backStackEntry ->
+                val next = backStackEntry.arguments?.getString("next") ?: ""
+                val signUpViewModel = hiltViewModel<SignUpViewModel>()
                 SignUpRoute(
-                    onSignUpClick = { _, _, _, _ -> navController.navigateUp() },
-                    onNavigateToLogin = { navController.navigateUp() }
+                    viewModel = signUpViewModel,
+                    onSignUpClick = {
+                        //Log.d("SignUpRoute", "Đã đăng kí: $email, $phone, $password, $name")
+                        signUpViewModel.signUp()
+                    },
+                    onNavigateToLogin = { navController.navigate("${Screen.Login.route}?next=${Uri.encode(next)}") },
+                    onSignUpSuccess = { user ->
+                        authViewModel.onUserLoggedIn(user)
+                        if (next.isNotEmpty()) {
+                            //nếu có next thì điều hướng đến next
+                            navController.navigate(Uri.decode(next)) {
+                                popUpTo(Screen.AuthGraph.route) { inclusive = true }
+                            }
+                        } else {
+                            //ngược lại điều hướng về home
+                            navController.navigate(Screen.HomeGraph.route) {
+                                popUpTo(Screen.AuthGraph.route) { inclusive = true }
+                            }
+                        }
+                    }
                 )
             }
 
@@ -122,7 +179,10 @@ fun AppNavGraph(
                 CartRoute(
                     viewModel = viewModel,
                     onCheckOutClick = {
-                        navController.navigate(Screen.Checkout.route)
+                        navController.requireLoginThenNavigate(
+                            authState.value,
+                            Screen.Checkout.route
+                        )
                     }
                 )
             }
@@ -159,10 +219,16 @@ fun AppNavGraph(
                     addressViewModel = hiltViewModel(parentEntry),
                     paymentViewModel = hiltViewModel(parentEntry),
                     onNavigateToAddress = {
-                        navController.navigate(Screen.DeliveryAddress.route)
+                        navController.requireLoginThenNavigate(
+                            authState.value,
+                            Screen.DeliveryAddress.route
+                        )
                     },
                     onNavigateToPayment = {
-                        navController.navigate(Screen.SelectPaymentMethod.route)
+                        navController.requireLoginThenNavigate(
+                            authState.value,
+                            Screen.SelectPaymentMethod.route
+                        )
                     },
                     onNavigateToSuccess = {
                         navController.navigate(Screen.OrderSuccess.route)
@@ -269,10 +335,16 @@ fun AppNavGraph(
                 DeliveryAddressRoute(
                     viewModel,
                     onAddressAddClick = {
-                        navController.navigate(Screen.AddAddress.route)
+                        navController.requireLoginThenNavigate(
+                            authState.value,
+                            Screen.AddAddress.route
+                        )
                     },
                     onAddressEditClick = { addressId ->
-                        navController.navigate(Screen.AddAddress.createRoute(addressId))
+                        navController.requireLoginThenNavigate(
+                            authState.value,
+                            Screen.AddAddress.createRoute(addressId)
+                        )
                     },
                     onAddressDeleteClick = { addressId ->
                         viewModel.deleteAddress(addressId)
@@ -380,8 +452,10 @@ fun AppNavGraph(
                             }
 
                             "orders" -> {
-                                navController.navigate(Screen.Order.route) {
-                                }
+                                navController.requireLoginThenNavigate(
+                                    authState.value,
+                                    Screen.Order.route
+                                )
                             }
 
                             "address" -> {
@@ -427,12 +501,15 @@ fun AppNavGraph(
         composableWithAnim(
             route = Screen.Order.route,
             anim = NavAnim.HORIZONTAL
-        ){
+        ) {
             val viewModel = hiltViewModel<OrderViewModel>()
             OrderRoute(
                 viewModel,
                 onNavigateToOrderDetail = { orderId ->
-                    navController.navigate(Screen.OrderDetail.createRoute(orderId))
+                    navController.requireLoginThenNavigate(
+                        authState.value,
+                        Screen.OrderDetail.createRoute(orderId)
+                    )
                 },
                 onNavigateToTrack = {},
                 onNavigateToBuyAgain = {}
@@ -446,7 +523,7 @@ fun AppNavGraph(
             arguments = listOf(
                 navArgument("orderId") { type = NavType.IntType }
             )
-        ){
+        ) {
             val viewModel = hiltViewModel<OrderDetailViewModel>()
             val orderId = it.arguments?.getInt("orderId") ?: return@composableWithAnim
             LaunchedEffect(orderId) {

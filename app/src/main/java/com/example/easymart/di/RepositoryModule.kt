@@ -9,6 +9,7 @@ import com.example.easymart.data.remote.api.LocationApi
 import com.example.easymart.data.remote.api.ProductApi
 import com.example.easymart.data.repositoryimpl.AddressRepositoryImpl
 import com.example.easymart.data.repositoryimpl.CartRepositoryImpl
+import com.example.easymart.data.repositoryimpl.FirebaseAuthRepositoryImpl
 import com.example.easymart.data.repositoryimpl.LocationRepositoryImpl
 import com.example.easymart.data.repositoryimpl.OrderRepositoryImpl
 import com.example.easymart.data.repositoryimpl.PaymentRepositoryImpl
@@ -18,13 +19,17 @@ import com.example.easymart.domain.payment.process.CODProcesser
 import com.example.easymart.domain.payment.process.EWalletProcessor
 import com.example.easymart.domain.payment.process.OnlineGatewayProcessor
 import com.example.easymart.domain.repository.AddressRepository
+import com.example.easymart.domain.repository.AuthRepository
 import com.example.easymart.domain.repository.CartRepository
 import com.example.easymart.domain.repository.LocationRepository
 import com.example.easymart.domain.repository.OrderRepository
 import com.example.easymart.domain.repository.PaymentRepository
 import com.example.easymart.domain.repository.ProductRepository
 import com.example.easymart.domain.repository.SearchRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -73,5 +78,12 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideOrderRepository(dao: OrderDao): OrderRepository = OrderRepositoryImpl(dao)
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        auth: FirebaseAuth,
+        firestore: FirebaseFirestore
+    ): AuthRepository = FirebaseAuthRepositoryImpl(auth, firestore)
 
 }
