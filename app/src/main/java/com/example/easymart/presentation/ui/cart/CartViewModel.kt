@@ -64,6 +64,9 @@ class CartViewModel @Inject constructor(
     private val _event = MutableSharedFlow<CartEvent>()
     val event = _event.asSharedFlow()
 
+    // Lưu danh sách productIds đã chọn khi vào checkout (để restore sau khi login)
+    private var pendingSelectedProductIds: Set<Int>? = null
+
     init {
         observeCart()
     }
@@ -79,12 +82,47 @@ class CartViewModel @Inject constructor(
                 .collect { items ->
                     //tránh reset lại check đã chọn khi reset UI do room cập nhật
                     _uiState.update { state ->
-                        state.copy(
-                            items = items.map { domain ->
-                                val prev = state.items.find { it.id == domain.id }
-                                domain.copy(isChecked = prev?.isChecked ?: false)
+                        val updatedItems = items.map { domain ->
+                            val prev = state.items.find { it.product.id == domain.product.id }
+                            
+                            // Ưu tiên restore từ pendingSelectedProductIds (sau khi login)
+                            // Nếu không có pendingSelectedProductIds, giữ lại trạng thái checked cũ
+                            val shouldBeChecked = when {
+                                pendingSelectedProductIds != null -> {
+                                    // Nếu có pendingSelectedProductIds, restore dựa trên đó
+                                    pendingSelectedProductIds!!.contains(domain.product.id)
+                                }
+                                prev != null -> {
+                                    // Giữ lại trạng thái checked cũ nếu item đã tồn tại
+                                    prev.isChecked
+                                }
+                                else -> {
+                                    // Mặc định không checked cho item mới
+                                    false
+                                }
                             }
-                        )
+                            
+                            domain.copy(isChecked = shouldBeChecked)
+                        }
+                        
+                        // Chỉ clear pendingSelectedProductIds khi đã restore thành công
+                        // (tức là tất cả các productIds trong pendingSelectedProductIds đã có trong items)
+                        if (pendingSelectedProductIds != null && items.isNotEmpty()) {
+                            val currentProductIds = items.map { it.product.id }.toSet()
+                            val allRestored = pendingSelectedProductIds!!.all { productId ->
+                                currentProductIds.contains(productId)
+                            }
+                            
+                            if (allRestored) {
+                                Log.d("CartViewModel", "All selected items restored, clearing pendingSelectedProductIds")
+                                pendingSelectedProductIds = null
+                            } else {
+                                val missingIds = pendingSelectedProductIds!!.filter { !currentProductIds.contains(it) }
+                                Log.d("CartViewModel", "Waiting for items to be merged. Missing productIds: $missingIds")
+                            }
+                        }
+                        
+                        state.copy(items = updatedItems)
                     }
                 }
 //            observeCartUS(userId).collect { items ->
@@ -102,23 +140,6 @@ class CartViewModel @Inject constructor(
     }
 
     fun addProductToCart(product: Product, quantity: Int = 1) {
-//        viewModelScope.launch {
-//            val userId = getCurrentUserUseCase()?.id
-//            try {
-//                val newCartItem = CartItem(
-//                    id = product.id,
-//                    product = product,
-//                    quantity = quantity,
-//                    price = product.price,
-//                )
-//                addToCartUS(userId, newCartItem)
-//                _event.emit(CartEvent.ShowMessage("Đã thêm vào giỏ hàng"))
-//            } catch (e: Exception) {
-//                _event.emit(CartEvent.ShowMessage("Không thể thêm sản phẩm vào giỏ hàng"))
-//                Log.e("CartViewModelError", "${e.message}")
-//            }
-//        }
-
         viewModelScope.launch {
             val userId = getCurrentUserUseCase()?.id
             runCatching {
@@ -172,6 +193,53 @@ class CartViewModel @Inject constructor(
                 items = state.items.map { it.copy(isChecked = isChecked) },
                 checkedAll = isChecked
             )
+        }
+    }
+
+    /**
+     * Lưu danh sách sản phẩm đã chọn khi vào checkout
+     * (để restore sau khi login thành công)
+     */
+    fun saveSelectedItemsForCheckout() {
+        val selectedProductIds = _uiState.value.items
+            .filter { it.isChecked }
+            .map { it.product.id }
+            .toSet()
+        
+        if (selectedProductIds.isNotEmpty()) {
+            pendingSelectedProductIds = selectedProductIds
+            Log.d("CartViewModel", "Saved selected items for checkout: $selectedProductIds")
+        }
+    }
+
+    /**
+     * Restore lại trạng thái checked cho các sản phẩm đã chọn sau khi login
+     * Method này được gọi từ CheckOutRoute để đảm bảo restore ngay khi vào checkout
+     * Không clear pendingSelectedProductIds ở đây, để observeCart có thể restore lại nếu items chưa đầy đủ
+     */
+    fun restoreSelectedItemsAfterLogin() {
+        val pendingIds = pendingSelectedProductIds ?: return
+        val currentItems = _uiState.value.items
+        
+        if (currentItems.isEmpty()) {
+            return
+        }
+        
+        val currentProductIds = currentItems.map { it.product.id }.toSet()
+        val itemsToRestore = pendingIds.filter { currentProductIds.contains(it) }
+        
+        if (itemsToRestore.isNotEmpty()) {
+            _uiState.update { state ->
+                state.copy(
+                    items = state.items.map { item ->
+                        if (pendingIds.contains(item.product.id)) {
+                            item.copy(isChecked = true)
+                        } else {
+                            item
+                        }
+                    }
+                )
+            }
         }
     }
 }

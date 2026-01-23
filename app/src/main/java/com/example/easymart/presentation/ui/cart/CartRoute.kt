@@ -33,7 +33,11 @@ fun CartRoute(
     CartScreen(
         cartItems = uiState.items,
         selectedItems = uiState.selectedItems,
-        onCheckOutClick = onCheckOutClick,
+        onCheckOutClick = {
+            // Lưu danh sách sản phẩm đã chọn trước khi điều hướng sang checkout
+            viewModel.saveSelectedItemsForCheckout()
+            onCheckOutClick()
+        },
         onCartItemClick = onCartItemClick,
         subtotal = uiState.subtotal,
         shipping = uiState.shipping,
