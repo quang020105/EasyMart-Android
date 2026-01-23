@@ -5,6 +5,7 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.easymart.domain.usecase.auth.LoginUseCase
+import com.example.easymart.domain.usecase.cart.MergeGuestCartIntoUserUseCase
 import com.example.easymart.presentation.ui.signup.SignUpUiEvent
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthException
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val mergeCartUseCase: MergeGuestCartIntoUserUseCase
 ) : ViewModel() {
 
     private val _formState = MutableStateFlow(LoginFormState())
@@ -61,6 +63,8 @@ class LoginViewModel @Inject constructor(
             result
                 .onSuccess { user ->
                     _events.send(LoginUiEvent.LoginSuccess(user))
+                    //gộp giỏ hàng guest vào user
+                    mergeCartUseCase(user.id)
                 }
                 .onFailure { e ->
                     val message = mapExceptionToMessage(e)

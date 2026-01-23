@@ -133,11 +133,11 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
                         val entry = navBackStackEntry
                         if (entry != null) {
                             val viewModel = hiltViewModel<CartViewModel>(entry)
-                            val cartItems = viewModel.cartItems.collectAsState()
+                            val uiState by viewModel.uiState.collectAsState()
                             HomeTopbar(
                                 onCartClick = { navController.navigate(Screen.Cart.route) },
                                 onSearchClick = { navController.navigate(Screen.Search.route) },
-                                cartCount = cartItems.value.size
+                                cartCount = uiState.items.size
                             )
                         }
                     }

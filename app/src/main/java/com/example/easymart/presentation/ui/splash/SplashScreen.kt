@@ -25,7 +25,7 @@ fun SplashScreen(
 ) {
     LaunchedEffect(Unit) {
         delay(1000)
-        onLogin()
+        onContinue()
     }
 
     Box(

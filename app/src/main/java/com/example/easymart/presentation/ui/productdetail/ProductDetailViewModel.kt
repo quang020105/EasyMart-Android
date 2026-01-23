@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.easymart.domain.model.CartItem
 import com.example.easymart.domain.model.Product
+import com.example.easymart.domain.usecase.auth.GetCurrentUserUseCase
 import com.example.easymart.domain.usecase.cart.AddToCartUseCase
 import com.example.easymart.domain.usecase.product.GetAllProductUseCase
 import com.example.easymart.domain.usecase.product.GetProductUseCase
@@ -23,7 +24,8 @@ import kotlin.math.abs
 class ProductDetailViewModel @Inject constructor(
     private val getProductUseCase: GetProductUseCase,
     private val addToCartUseCase: AddToCartUseCase,
-    private val getAllProductUseCase: GetAllProductUseCase
+    private val getAllProductUseCase: GetAllProductUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProductDetailUiState())
     val uiState = _uiState.asStateFlow()
@@ -116,19 +118,37 @@ class ProductDetailViewModel @Inject constructor(
     }
 
     fun addProductToCart(product: Product, quantity: Int = 1) {
+//        viewModelScope.launch {
+//            try {
+//                val newCartItem = CartItem(
+//                    id = product.id,
+//                    product = product,
+//                    quantity = quantity,
+//                    price = product.price,
+//                )
+//                addToCartUseCase(newCartItem)
+//                _event.emit(ProductDetailUiEvent.ShowMessage("Đã thêm vào giỏ hàng"))
+//            } catch (e: Exception) {
+//                _event.emit(ProductDetailUiEvent.ShowMessage("Không thể thêm sản phẩm vào giỏ hàng"))
+//                Log.e("CartViewModelError", "${e.message}")
+//            }
+//        }
+
         viewModelScope.launch {
-            try {
+            val userId = getCurrentUserUseCase()?.id
+            runCatching {
                 val newCartItem = CartItem(
                     id = product.id,
                     product = product,
                     quantity = quantity,
                     price = product.price,
                 )
-                addToCartUseCase(newCartItem)
+                addToCartUseCase(userId, newCartItem)
+            }.onSuccess {
                 _event.emit(ProductDetailUiEvent.ShowMessage("Đã thêm vào giỏ hàng"))
-            } catch (e: Exception) {
+            }.onFailure {
                 _event.emit(ProductDetailUiEvent.ShowMessage("Không thể thêm sản phẩm vào giỏ hàng"))
-                Log.e("CartViewModelError", "${e.message}")
+                Log.e("CartViewModelError", "${it.message}")
             }
         }
     }

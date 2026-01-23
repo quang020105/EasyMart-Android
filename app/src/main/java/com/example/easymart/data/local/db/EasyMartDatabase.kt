@@ -8,6 +8,7 @@ import com.example.easymart.data.local.dao.OrderDao
 import com.example.easymart.data.local.dao.PaymentDao
 import com.example.easymart.data.local.dao.WalletDao
 import com.example.easymart.data.local.entity.AddressEntity
+import com.example.easymart.data.local.entity.CartEntity
 import com.example.easymart.data.local.entity.CartItemEntity
 import com.example.easymart.data.local.entity.OrderEntity
 import com.example.easymart.data.local.entity.OrderItemEntity
@@ -15,8 +16,8 @@ import com.example.easymart.data.local.entity.PaymentEntity
 import com.example.easymart.data.local.entity.WalletEntity
 
 @Database(
-    entities = [CartItemEntity::class, AddressEntity::class, WalletEntity::class, OrderEntity::class, OrderItemEntity::class, PaymentEntity::class],
-    version = 12,
+    entities = [CartEntity::class, CartItemEntity::class, AddressEntity::class, WalletEntity::class, OrderEntity::class, OrderItemEntity::class, PaymentEntity::class],
+    version = 13,
     exportSchema = false
 )
 abstract class EasyMartDatabase : RoomDatabase() {

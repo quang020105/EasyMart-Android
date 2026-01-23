@@ -1,11 +1,15 @@
 package com.example.easymart.data.repositoryimpl
 
+import com.example.easymart.data.mapper.toDomain
 import com.example.easymart.data.remote.dto.FirebaseUserDto
 import com.example.easymart.domain.model.User
 import com.example.easymart.domain.repository.AuthRepository
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -81,10 +85,19 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         )
     }
 
+
+    //lắng nghe thay đổi user
+    override fun observeCurrentUser(): Flow<User?> = callbackFlow{
+        val listener = FirebaseAuth.AuthStateListener { auth ->
+            trySend(auth.currentUser?.toDomain())
+        }
+       auth.addAuthStateListener(listener)
+        awaitClose { auth.removeAuthStateListener(listener) }
+    }
+
     override suspend fun logout(): Result<Unit> {
         return runCatching {
             auth.signOut()
         }
     }
-
 }

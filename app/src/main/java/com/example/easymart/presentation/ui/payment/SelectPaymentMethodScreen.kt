@@ -27,7 +27,7 @@ import com.example.easymart.utils.toVNDString
 @Composable
 fun SelectPaymentMethodScreen(
     totalAmount: Double,
-    state: PaymentUiState,
+    uiState: PaymentUiState,
     onMethodSelected: (PaymentMethod) -> Unit,
     onConfirmClick: () -> Unit
 ) {
@@ -66,7 +66,7 @@ fun SelectPaymentMethodScreen(
                 method = PaymentMethod.ONLINE_GATEWAY,
                 description = "Thẻ ngân hàng, VNPay, MoMo...",
                 icon = Icons.Default.CreditCard,
-                selected = state.selectedMethod == PaymentMethod.ONLINE_GATEWAY,
+                selected = uiState.selectedMethod == PaymentMethod.ONLINE_GATEWAY,
                 onClick = { onMethodSelected(PaymentMethod.ONLINE_GATEWAY) }
             )
 
@@ -74,7 +74,7 @@ fun SelectPaymentMethodScreen(
                 method = PaymentMethod.COD,
                 description = "Trả tiền mặt cho shipper",
                 icon = Icons.Default.LocalShipping,
-                selected = state.selectedMethod == PaymentMethod.COD,
+                selected = uiState.selectedMethod == PaymentMethod.COD,
                 onClick = { onMethodSelected(PaymentMethod.COD) }
             )
 
@@ -82,7 +82,7 @@ fun SelectPaymentMethodScreen(
                 method = PaymentMethod.WALLET,
                 description = "Số dư hiện tại: 500.000 đ",
                 icon = Icons.Default.AccountBalanceWallet,
-                selected = state.selectedMethod == PaymentMethod.WALLET,
+                selected = uiState.selectedMethod == PaymentMethod.WALLET,
                 onClick = { onMethodSelected(PaymentMethod.WALLET) }
             )
 

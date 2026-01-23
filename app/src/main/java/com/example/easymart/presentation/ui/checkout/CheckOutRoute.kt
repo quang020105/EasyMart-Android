@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.presentation.ui.cart.CartViewModel
 import com.example.easymart.presentation.ui.deliveryaddress.AddressViewModel
@@ -22,16 +23,17 @@ fun CheckOutRoute(
     onNavigateToPaymentFailed: (orderId: Int, reason: String) -> Unit
 ) {
     //lấy dữ liệu từ cart
-    val selectedItems = cartViewModel.selectedItems.collectAsState(initial = emptyList())
-    val subTotal = cartViewModel.subtotal.collectAsState()
-    val shipping = cartViewModel.shipping.collectAsState()
-    val total = cartViewModel.total.collectAsState()
+    val cartUiState by cartViewModel.uiState.collectAsState()
+
     //lấy địa chỉ đã chọn
-    val selectedAddress = addressViewModel.selectedAddress.collectAsState()
+    val selectedAddress by addressViewModel.selectedAddress.collectAsState()
+
     //trạng thái ui của checkout
-    val uiState = checkoutViewModel.uiState.collectAsState()
+    val uiState by checkoutViewModel.uiState.collectAsState()
+
     //trạng thái ui của selectPayment
-    val selectPaymentUiState = paymentViewModel.uiState.collectAsState()
+    val selectPaymentUiState by paymentViewModel.uiState.collectAsState()
+
     LaunchedEffect(Unit) {
         checkoutViewModel.uiEvent.collect { event ->
             when (event) {
@@ -64,23 +66,23 @@ fun CheckOutRoute(
 
 
     //Log.d("HomeRoute", "CartViewModel instance hash=${cartViewModel.hashCode()}")
-    Log.d("CheckOutRoute", "selectedMethod: ${selectPaymentUiState.value.selectedMethod}")
+    Log.d("CheckOutRoute", "selectedMethod: ${selectPaymentUiState.selectedMethod}")
 
 
     CheckoutScreen(
-        address = selectedAddress.value,
-        paymentMethod = selectPaymentUiState.value.selectedMethod,
-        cartItems = selectedItems.value,
-        subTotal = subTotal.value,
-        shipping = shipping.value,
-        total = total.value,
+        address = selectedAddress,
+        paymentMethod = selectPaymentUiState.selectedMethod,
+        cartItems = cartUiState.items,
+        subTotal = cartUiState.subtotal,
+        shipping = cartUiState.shipping,
+        total = cartUiState.total,
         onAddressClick = { checkoutViewModel.selectAddressClick() },
         onPaymentClick = { checkoutViewModel.selectPaymentClick() },
-        isLoading = uiState.value.isProcessing,
+        isLoading = uiState.isProcessing,
         onConfirmClick = { checkoutViewModel.pay(
-            cartItems = selectedItems.value,
-            address = selectedAddress.value,
-            paymentMethod = selectPaymentUiState.value.selectedMethod ?: PaymentMethod.COD
+            cartItems = cartUiState.items,
+            address = selectedAddress,
+            paymentMethod = selectPaymentUiState.selectedMethod ?: PaymentMethod.COD
         )}
     )
 }

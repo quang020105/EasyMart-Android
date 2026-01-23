@@ -5,6 +5,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.easymart.domain.model.Product
@@ -16,12 +17,7 @@ fun CartRoute(
     onCheckOutClick: () -> Unit,
     onCartItemClick: (Product) -> Unit = {},
 ){
-    val cartItems = viewModel.cartItems.collectAsState()
-    val selectedItems = viewModel.selectedItems.collectAsState(initial = emptyList())
-    val subTotal = viewModel.subtotal.collectAsState()
-    val shipping = viewModel.shipping.collectAsState()
-    val total = viewModel.total.collectAsState()
-    val checkedAll = viewModel.checkedAll.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
@@ -32,20 +28,20 @@ fun CartRoute(
         }
     }
 
-    Log.d("HomeRoute", "ShowMessage: ${cartItems.value}")
+    //Log.d("HomeRoute", "ShowMessage: ${cartItems.value}")
     Log.d("HomeRoute", "CartViewModel instance hash=${viewModel.hashCode()}")
     CartScreen(
-        cartItems = cartItems.value,
-        selectedItems = selectedItems.value,
+        cartItems = uiState.items,
+        selectedItems = uiState.selectedItems,
         onCheckOutClick = onCheckOutClick,
         onCartItemClick = onCartItemClick,
-        subtotal = subTotal.value,
-        shipping = shipping.value,
-        total = total.value,
+        subtotal = uiState.subtotal,
+        shipping = uiState.shipping,
+        total = uiState.total,
         onPlusClick = { cartItem -> viewModel.updateQuantity(cartItem,1)},
         onMinusClick = { cartItem -> viewModel.updateQuantity(cartItem, -1)},
         onCheckedChange = { cartItem, checked -> viewModel.onCheckChanged(cartItem.id, checked)},
         onChangeCheckedAll = { checked -> viewModel.onCheckedChangeAll(checked)},
-        allChecked = checkedAll.value
+        allChecked = uiState.checkedAll
     )
 }

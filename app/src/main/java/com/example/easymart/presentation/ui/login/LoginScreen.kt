@@ -81,7 +81,7 @@ fun LoginScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = dimens.spaceSm),
-                    label = { Text("Email hoặc số điện thoại") },
+                    label = { Text("Email") },
                     isError = formState.emailError != null,
                     errorMessage = formState.emailError,
                     keyboardOptions = KeyboardOptions(

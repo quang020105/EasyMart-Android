@@ -443,9 +443,10 @@ fun AppNavGraph(
                     onOptionClick = { tag ->
                         when (tag) {
                             "logout" -> {
+                                authViewModel.logout()
                                 navController.navigate(Screen.AuthGraph.route)
                                 {
-                                    popUpTo(Screen.HomeGraph.route) {
+                                    popUpTo(0) { //clear toàn bộ backstack
                                         inclusive = true
                                     }
                                 }

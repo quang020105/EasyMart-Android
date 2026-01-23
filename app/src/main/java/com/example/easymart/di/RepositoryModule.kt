@@ -4,6 +4,7 @@ import com.example.easymart.data.local.dao.AddressDao
 import com.example.easymart.data.local.dao.CartDao
 import com.example.easymart.data.local.dao.OrderDao
 import com.example.easymart.data.local.dao.WalletDao
+import com.example.easymart.data.local.datasource.CartLocalDataSource
 import com.example.easymart.data.remote.api.BackendApi
 import com.example.easymart.data.remote.api.LocationApi
 import com.example.easymart.data.remote.api.ProductApi
@@ -51,7 +52,7 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideCartRepository(dao: CartDao): CartRepository = CartRepositoryImpl(dao)
+    fun provideCartRepository(dao: CartDao, localDS: CartLocalDataSource): CartRepository = CartRepositoryImpl(dao, localDS)
 
     @Provides
     @Singleton

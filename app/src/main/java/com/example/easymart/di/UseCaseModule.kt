@@ -16,10 +16,12 @@ import com.example.easymart.domain.usecase.address.InsertNewAddressUseCase
 import com.example.easymart.domain.usecase.auth.GetCurrentUserUseCase
 import com.example.easymart.domain.usecase.auth.LoginUseCase
 import com.example.easymart.domain.usecase.auth.LogoutUseCase
+import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
 import com.example.easymart.domain.usecase.auth.SignUpUseCase
 import com.example.easymart.domain.usecase.cart.AddToCartUseCase
 import com.example.easymart.domain.usecase.cart.ClearAllCartsUseCase
-import com.example.easymart.domain.usecase.cart.GetAllCartItemsUseCase
+import com.example.easymart.domain.usecase.cart.MergeGuestCartIntoUserUseCase
+import com.example.easymart.domain.usecase.cart.ObserveCartUseCase
 import com.example.easymart.domain.usecase.cart.UpdateCartQuantityUseCase
 import com.example.easymart.domain.usecase.location.GetDistrictsUseCase
 import com.example.easymart.domain.usecase.location.GetProvincesUseCase
@@ -40,18 +42,22 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object UseCaseModule {
+
+    //product
     @Provides
     fun provideGetProductsUseCase(productRepo: ProductRepository): GetAllProductUseCase =
         GetAllProductUseCase(productRepo)
 
+
+    //cart
+
     @Provides
-    fun provideGetCartItemsUseCase(cartRepo: CartRepository): GetAllCartItemsUseCase =
-        GetAllCartItemsUseCase(cartRepo)
+    fun provideGetCartItemsUseCase(cartRepo: CartRepository): ObserveCartUseCase =
+        ObserveCartUseCase(cartRepo)
 
     @Provides
     fun provideAddToCartUseCase(cartRepo: CartRepository): AddToCartUseCase =
@@ -64,6 +70,14 @@ object UseCaseModule {
     @Provides
     fun provideClearAllCartItemsUseCase(cartRepo: CartRepository): ClearAllCartsUseCase =
         ClearAllCartsUseCase(cartRepo)
+
+    @Provides
+    fun provideMergeCartUseCase(cartRepo: CartRepository): MergeGuestCartIntoUserUseCase =
+        MergeGuestCartIntoUserUseCase(cartRepo)
+
+
+
+    //search
 
     @Provides
     fun provideSearchProductUseCase(searchRepo: SearchRepository): SearchProductUseCase =
@@ -90,6 +104,8 @@ object UseCaseModule {
         GetDefaultAddressUseCase(addressRepo)
 
 
+    //location
+
     @Provides
     fun provideGetProvincesUseCase(locationRepo: LocationRepository): GetProvincesUseCase =
         GetProvincesUseCase(locationRepo)
@@ -111,7 +127,9 @@ object UseCaseModule {
     fun provideWalletBalanceUseCase(paymentRepo: PaymentRepository): GetWalletBalanceUseCase =
         GetWalletBalanceUseCase(paymentRepo)
 
+
     //workManager giả lập xử lý đơn
+
     @Provides
     fun provideOrderAutoProcessUseCase(
         @ApplicationContext context: Context
@@ -122,6 +140,9 @@ object UseCaseModule {
         orderDao: OrderDao,
         orderAutoProcessUC: OrderAutoProcessUseCase
     ) = CancelOrderUseCase(orderDao, orderAutoProcessUC)
+
+
+    // order
 
     @Provides
     fun provideGetObserveAllOrdersUseCase(
@@ -137,6 +158,9 @@ object UseCaseModule {
     fun provideGetOrderDetailUseCase(
         orderRepo: OrderRepository
     ) = GetOrderDetailUseCase(orderRepo)
+
+
+    // auth
 
     @Provides
     fun provideSignUpUseCase(
@@ -157,5 +181,9 @@ object UseCaseModule {
     fun provideGetCurrentUserUseCase(
         authRepo: AuthRepository
     ) = GetCurrentUserUseCase(authRepo)
+
+    @Provides
+    fun provideObserveUserUseCase(authRepo: AuthRepository): ObserveCurrentUserUseCase =
+        ObserveCurrentUserUseCase(authRepo)
 
 }
