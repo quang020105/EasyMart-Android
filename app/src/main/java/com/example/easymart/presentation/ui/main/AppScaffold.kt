@@ -1,7 +1,5 @@
-package com.example.easymart.presentation.ui
+package com.example.easymart.presentation.ui.main
 
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,14 +8,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,16 +24,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.room.util.query
 import com.example.easymart.R
 import com.example.easymart.presentation.navigation.AppNavGraph
 import com.example.easymart.presentation.navigation.Screen
@@ -45,7 +37,8 @@ import com.example.easymart.presentation.navigation.getScreenConfig
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.cart.CartViewModel
 import com.example.easymart.presentation.ui.home.components.HomeTopbar
-import com.example.easymart.presentation.ui.search.SearchScreen
+import com.example.easymart.presentation.ui.main.bottomnav.BottomNavItem
+import com.example.easymart.presentation.ui.main.bottomnav.EasyMartBottomBar
 import com.example.easymart.presentation.ui.search.SearchViewModel
 import com.example.easymart.presentation.ui.search.components.SearchTopbar
 
@@ -76,30 +69,31 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
 
     val bottomNavItems = listOf(
         BottomNavItem(
-            "home",
-            "Trang chủ",
+            route = Screen.Home.route,
+            label = "Trang chủ",
             icon = R.drawable.ic_home,
-            graphRoute = Screen.HomeGraph.route
+            graphRoute = Screen.HomeGraph.route,
         ),
         BottomNavItem(
-            "category",
-            "Danh mục",
+            route = Screen.Category.route,
+            label = "Danh mục",
             icon = R.drawable.ic_category,
             graphRoute = Screen.CategoryGraph.route
         ),
         BottomNavItem(
-            "search",
-            "Tìm kiếm",
+            route = Screen.Search.route,
+            label = "Tìm kiếm",
             icon = R.drawable.ic_search,
             graphRoute = Screen.SearchGraph.route
         ),
         BottomNavItem(
-            "profile",
-            "Cá nhân",
+            route = Screen.Profile.route,
+            label = "Cá nhân",
             icon = R.drawable.ic_person,
             graphRoute = Screen.ProfileGraph.route
         )
     )
+
 
 //    val showTopBar = currentRoute !in topBottomHiddenRoutes
 //    val showBottomBar = currentRoute != null && currentRoute in bottomBarRoutes
@@ -117,9 +111,6 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
 //            }
 //        }
 //    } ?: false
-
-
-
 
 
     val dimens = LocalAppDimens.current
@@ -167,9 +158,9 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
                                     IconButton(
                                         onClick = {
                                             //nếu back ở màn OrderSuccess thì về Home và xoá hết backstack
-                                            if(currentRoute == Screen.OrderSuccess.route){
-                                                navController.navigate(Screen.HomeGraph.route){
-                                                    popUpTo(Screen.HomeGraph.route){
+                                            if (currentRoute == Screen.OrderSuccess.route) {
+                                                navController.navigate(Screen.HomeGraph.route) {
+                                                    popUpTo(Screen.HomeGraph.route) {
                                                         inclusive = true
                                                     }
                                                 }
@@ -194,57 +185,78 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
         },
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = dimens.radiusSmall,
-                                topEnd = dimens.radiusSmall
-                            )
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
-                            shape = RoundedCornerShape(dimens.radiusSmall)
-                        ),
-                    containerColor = Color.White,
 
-                    ) {
-                    val currentGraphRoute = bottomNavItems.find { item ->
-                        currentDestination?.hierarchy?.any {
-                            it.route?.startsWith(item.graphRoute) == true || it.route == item.graphRoute
-                        } == true
-                    }?.graphRoute
+                val currentGraphRoute = bottomNavItems.find { item ->
+                    currentDestination?.hierarchy?.any {
+                        it.route?.startsWith(item.graphRoute) == true || it.route == item.graphRoute
+                    } == true
+                }?.graphRoute
 
-                    bottomNavItems.forEach { item ->
-                        NavigationBarItem(
-                            icon = {
-                                Icon(
-                                    painter = painterResource(id = item.icon),
-                                    contentDescription = item.label,
-                                    modifier = Modifier.size(dimens.iconBottomSize)
-                                )
-                            },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.primary,
-                                unselectedIconColor = MaterialTheme.colorScheme.outline,
-                                indicatorColor = Color.White
-                            ),
-                            onClick = {
-                                navController.navigate(item.graphRoute) {
-                                    launchSingleTop = true
-                                    restoreState = true
-                                    popUpTo(Screen.HomeGraph.route) {
-                                        saveState = true
-                                    }
-                                }
-                            },
-                            selected = currentGraphRoute == item.graphRoute
-                        )
+                EasyMartBottomBar(
+                    items = bottomNavItems,
+                    currentGraphRoute = currentGraphRoute,
+                    onItemClick = { item ->
+                        navController.navigate(item.graphRoute) {
+                            launchSingleTop = true
+                            restoreState = true
+                            popUpTo(Screen.HomeGraph.route) {
+                                saveState = true
+                            }
+                        }
                     }
-                }
+                )
+
+//                NavigationBar(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(100.dp)
+//                        .clip(
+//                            RoundedCornerShape(
+//                                topStart = dimens.radiusSmall,
+//                                topEnd = dimens.radiusSmall
+//                            )
+//                        )
+//                        .border(
+//                            width = 1.dp,
+//                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
+//                            shape = RoundedCornerShape(dimens.radiusSmall)
+//                        ),
+//                    containerColor = Color.White,
+//
+//                    ) {
+//                    val currentGraphRoute = bottomNavItems.find { item ->
+//                        currentDestination?.hierarchy?.any {
+//                            it.route?.startsWith(item.graphRoute) == true || it.route == item.graphRoute
+//                        } == true
+//                    }?.graphRoute
+//
+//                    bottomNavItems.forEach { item ->
+//                        NavigationBarItem(
+//                            icon = {
+//                                Icon(
+//                                    painter = painterResource(id = item.icon),
+//                                    contentDescription = item.label,
+//                                    modifier = Modifier.size(dimens.iconBottomSize)
+//                                )
+//                            },
+//                            colors = NavigationBarItemDefaults.colors(
+//                                selectedIconColor = MaterialTheme.colorScheme.primary,
+//                                unselectedIconColor = MaterialTheme.colorScheme.outline,
+//                                indicatorColor = Color.White
+//                            ),
+//                            onClick = {
+//                                navController.navigate(item.graphRoute) {
+//                                    launchSingleTop = true
+//                                    restoreState = true
+//                                    popUpTo(Screen.HomeGraph.route) {
+//                                        saveState = true
+//                                    }
+//                                }
+//                            },
+//                            selected = currentGraphRoute == item.graphRoute
+//                        )
+//                    }
+//                }
 
             }
         }
@@ -256,9 +268,9 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
 }
 
 //các thể hiện của BottomNavItem
-data class BottomNavItem(
-    val id: String,
-    val label: String,
-    val icon: Int,
-    val graphRoute: String
-)
+//data class BottomNavItem(
+//    val id: String,
+//    val label: String,
+//    val icon: Int,
+//    val graphRoute: String
+//)
