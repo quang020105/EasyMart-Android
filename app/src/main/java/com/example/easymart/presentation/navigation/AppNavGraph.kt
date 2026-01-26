@@ -2,8 +2,6 @@ package com.example.easymart.presentation.navigation
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.util.Log
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,7 +13,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.presentation.auth.AuthViewModel
 import com.example.easymart.presentation.ui.cart.CartRoute
 import com.example.easymart.presentation.ui.cart.CartViewModel
@@ -32,10 +29,10 @@ import com.example.easymart.presentation.ui.order.OrderViewModel
 import com.example.easymart.presentation.ui.orderdetail.OrderDetailRoute
 import com.example.easymart.presentation.ui.orderdetail.OrderDetailViewModel
 import com.example.easymart.presentation.ui.payment.SelectPaymentRoute
-import com.example.easymart.presentation.ui.payment.SelectPaymentViewModel
 import com.example.easymart.presentation.ui.productdetail.ProductDetailRoute
 import com.example.easymart.presentation.ui.productdetail.ProductDetailViewModel
 import com.example.easymart.presentation.ui.profile.ProfileRoute
+import com.example.easymart.presentation.ui.profile.ProfileViewModel
 import com.example.easymart.presentation.ui.resultorder.OnlinePaymentProcessingRoute
 import com.example.easymart.presentation.ui.resultorder.OrderSuccessRoute
 import com.example.easymart.presentation.ui.resultorder.PaymentFailedRoute
@@ -439,11 +436,12 @@ fun AppNavGraph(
                 Screen.Profile.route,
                 anim = NavAnim.NONE
             ) {
+                val viewModel = hiltViewModel<ProfileViewModel>()
                 ProfileRoute(
-                    onOptionClick = { tag ->
+                    viewModel = viewModel,
+                    onNavigate = { tag ->
                         when (tag) {
-                            "logout" -> {
-                                authViewModel.logout()
+                            "login" -> {
                                 navController.navigate(Screen.AuthGraph.route)
                                 {
                                     popUpTo(0) { //clear toàn bộ backstack
@@ -467,6 +465,14 @@ fun AppNavGraph(
                             }
 
                             "settings" -> {
+                            }
+                        }
+                    },
+                    onLogoutSuccess = {
+                        navController.navigate(Screen.AuthGraph.route)
+                        {
+                            popUpTo(0) { //clear toàn bộ backstack
+                                inclusive = true
                             }
                         }
                     }

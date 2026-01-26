@@ -89,7 +89,19 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     //lắng nghe thay đổi user
     override fun observeCurrentUser(): Flow<User?> = callbackFlow{
         val listener = FirebaseAuth.AuthStateListener { auth ->
-            trySend(auth.currentUser?.toDomain())
+            val firebaseUser = auth.currentUser
+            //nếu user null thì gửi null
+            if (firebaseUser == null) {
+                trySend(null)
+                return@AuthStateListener
+            }
+
+            firestore.collection("usersEM").document(firebaseUser.uid)
+                .addSnapshotListener { snapshot, _ ->
+                    val userDto = snapshot?.toObject(FirebaseUserDto::class.java)
+                    trySend(userDto?.toDomain())
+                }
+
         }
        auth.addAuthStateListener(listener)
         awaitClose { auth.removeAuthStateListener(listener) }

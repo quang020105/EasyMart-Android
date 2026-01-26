@@ -62,7 +62,7 @@ fun ProfileScreen(
 
         // Name
         Text(
-            text = user?.name ?: "",
+            text = user?.name ?: "Bạn chưa đăng nhập",
             modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = dimens.spaceLg),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground
@@ -109,12 +109,21 @@ fun ProfileScreen(
             onClick = onOptionClick
         )
 
-        ProfileRowItem(
-            iconRes = R.drawable.ic_logout,
-            title = stringResource(R.string.label_logout),
-            tag = "logout",
-            onClick = onOptionClick
-        )
+        if(user != null) {
+            ProfileRowItem(
+                iconRes = R.drawable.ic_logout,
+                title = stringResource(R.string.label_logout),
+                tag = "logout",
+                onClick = onOptionClick
+            )
+        } else {
+            ProfileRowItem(
+                iconRes = R.drawable.ic_login,
+                title = stringResource(R.string.label_login),
+                tag = "login",
+                onClick = onOptionClick
+            )
+        }
 
 
     }

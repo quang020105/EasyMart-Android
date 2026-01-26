@@ -34,9 +34,9 @@ fun CheckOutRoute(
     //trạng thái ui của selectPayment
     val selectPaymentUiState by paymentViewModel.uiState.collectAsState()
 
-    // Restore selected items sau khi login thành công và vào checkout
-    // Restore khi số lượng items thay đổi (sau khi merge cart hoàn thành)
-    //Sử dụng size thay vì toàn bộ items để tránh trigger quá nhiều lần
+//     Restore selected items sau khi login thành công và vào checkout
+//     Restore khi số lượng items thay đổi (sau khi merge cart hoàn thành)
+//    Sử dụng size thay vì toàn bộ items để tránh trigger quá nhiều lần
 
     LaunchedEffect(cartUiState.items.size, cartUiState.selectedItems.size) {
         // Chỉ restore nếu có items

@@ -17,4 +17,5 @@
     <string name="desc_payment_wallet">Số dư hiện tại: %s</string>
     <string name="title_payment_online">Thanh toán Online</string>
     <string name="desc_payment_online">Thẻ ngân hàng, VNPay, MoMo...</string>
+    <string name="label_login">Đăng nhập</string>
 </resources>
