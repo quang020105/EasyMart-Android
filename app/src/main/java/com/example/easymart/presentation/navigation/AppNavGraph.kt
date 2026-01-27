@@ -2,10 +2,16 @@ package com.example.easymart.presentation.navigation
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -14,6 +20,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.easymart.presentation.auth.AuthViewModel
+import com.example.easymart.presentation.common.AppEventBus
+import com.example.easymart.presentation.common.ui.LoginRequiredBottomSheet
+import com.example.easymart.presentation.common.ui.UiEvent
 import com.example.easymart.presentation.ui.cart.CartRoute
 import com.example.easymart.presentation.ui.cart.CartViewModel
 import com.example.easymart.presentation.ui.checkout.CheckOutRoute
@@ -41,14 +50,32 @@ import com.example.easymart.presentation.ui.signup.SignUpRoute
 import com.example.easymart.presentation.ui.signup.SignUpViewModel
 import com.example.easymart.presentation.ui.splash.SplashScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedGetBackStackEntry")
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    ///quản lí trạng thái đăng nhập
     val authViewModel = hiltViewModel<AuthViewModel>()
     val authState = authViewModel.authState.collectAsState()
+
+    //quản lý bottom sheet
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showLoginSheet by remember { mutableStateOf(false) }
+    var pendingRoute by remember { mutableStateOf<String?>(null) }
+
+    // xử lí hiển thị bottom sheet đăng nhập khi có sự kiện yêu cầu đăng nhập
+    LaunchedEffect(Unit) {
+        AppEventBus.events.collect { event ->
+            if (event is UiEvent.RequireLogin) {
+                pendingRoute = event.targetRoute
+                showLoginSheet = true
+            }
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.route,
@@ -539,6 +566,26 @@ fun AppNavGraph(
             OrderDetailRoute(viewModel)
         }
 
+    }
+
+
+    // bottom sheet yêu cầu đăng nhập
+    if(showLoginSheet && pendingRoute != null){
+        ModalBottomSheet(
+            onDismissRequest = { showLoginSheet = false },
+            sheetState = sheetState
+        ) {
+            LoginRequiredBottomSheet(
+                onLoginClick = {
+                    val encoded = Uri.encode(pendingRoute)
+                    navController.navigate("${Screen.Login.route}?next=$encoded")
+                    showLoginSheet = false
+                },
+                onDismiss = {
+                    showLoginSheet = false
+                }
+            )
+        }
     }
 }
 
