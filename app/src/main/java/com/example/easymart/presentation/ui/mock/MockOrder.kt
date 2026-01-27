@@ -11,7 +11,7 @@ val mockOrders = listOf(
 
     Order(
         id = 1,
-        userId = 101,
+        userId = "101",
         orderNumber = "ORD-001",
         items = listOf(
             OrderItem(
@@ -34,7 +34,7 @@ val mockOrders = listOf(
 
     Order(
         id = 2,
-        userId = 101,
+        userId = "101",
         orderNumber = "ORD-002",
         items = listOf(
             OrderItem(
@@ -62,7 +62,7 @@ val mockOrders = listOf(
 
     Order(
         id = 3,
-        userId = 101,
+        userId = "101",
         orderNumber = "ORD-003",
         items = listOf(
             OrderItem(
@@ -85,7 +85,7 @@ val mockOrders = listOf(
 
     Order(
         id = 4,
-        userId = 101,
+        userId = "101",
         orderNumber = "ORD-004",
         items = listOf(
             OrderItem(
@@ -108,7 +108,7 @@ val mockOrders = listOf(
 
     Order(
         id = 5,
-        userId = 101,
+        userId = "102",
         orderNumber = "ORD-005",
         items = listOf(
             OrderItem(

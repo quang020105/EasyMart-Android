@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.easymart.domain.model.Order
 import com.example.easymart.domain.model.OrderStatus
+import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
 import com.example.easymart.domain.usecase.order.GetObserveAllOrdersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OrderViewModel @Inject constructor(
-     private val getObserveAllOrdersUseCase: GetObserveAllOrdersUseCase
+     private val getObserveAllOrdersUseCase: GetObserveAllOrdersUseCase,
+     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
 ): ViewModel() {
      private val _uiState: MutableStateFlow<OrderListUiState> = MutableStateFlow(OrderListUiState.Loading)
      val uiState: StateFlow<OrderListUiState> = _uiState.asStateFlow()
@@ -28,13 +30,26 @@ class OrderViewModel @Inject constructor(
      val uiEvent = _uiEvent.receiveAsFlow()
 
      init {
-          observeOrders()
+          observeOrdersByUser()
+     }
+
+     // lắng nghe người dùng hiện tại
+     private fun observeOrdersByUser() {
+          viewModelScope.launch {
+               observeCurrentUserUseCase().collect { user ->
+                    if(user == null){
+                         _uiState.value = OrderListUiState.Empty
+                         return@collect
+                    }
+                    observeOrders(user.id)
+               }
+          }
      }
 
      // lắng nghe danh sách đơn hàng
-     private fun observeOrders(){
+     private fun observeOrders(userId: String){
           viewModelScope.launch {
-               getObserveAllOrdersUseCase("1") //chưa xủ lý userId
+               getObserveAllOrdersUseCase(userId) //chưa xủ lý userId
                     .onStart { _uiState.value = OrderListUiState.Loading }
                     .catch { throwable ->
                          _uiState.value =

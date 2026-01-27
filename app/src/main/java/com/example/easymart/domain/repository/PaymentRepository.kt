@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PaymentRepository {
     fun processPayment(order: Order, method: PaymentMethod): Flow<PaymentResult>
-    suspend fun getWalletBalance(userId: Int): Long
-    suspend fun deductWallet(userId: Int, amount: Long): Boolean
+    suspend fun getWalletBalance(userId: String): Long
+    suspend fun deductWallet(userId: String, amount: Long): Boolean
     suspend fun saveOrderLocally(order: Order, status: PaymentStatus)
 }

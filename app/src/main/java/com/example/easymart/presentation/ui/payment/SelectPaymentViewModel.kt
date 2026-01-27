@@ -45,7 +45,7 @@ class SelectPaymentViewModel @Inject constructor(
 //        _uiState.update { it.copy(lastResult = null) }
 //    }
 
-    fun loadWalletBalance(userId: Int) {
+    fun loadWalletBalance(userId: String) {
         viewModelScope.launch {
             val balance = getWalletBalanceUseCase(userId = userId)
             _uiState.update { it.copy(walletBalance = balance) }

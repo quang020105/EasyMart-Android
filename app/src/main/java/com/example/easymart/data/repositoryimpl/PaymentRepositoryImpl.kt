@@ -46,11 +46,11 @@ class PaymentRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getWalletBalance(userId: Int): Long {
+    override suspend fun getWalletBalance(userId: String): Long {
         return walletDao.getBalance(userId) ?: 0L
     }
 
-    override suspend fun deductWallet(userId: Int, amount: Long): Boolean {
+    override suspend fun deductWallet(userId: String, amount: Long): Boolean {
         TODO("Not yet implemented")
     }
 

@@ -11,7 +11,7 @@ import com.example.easymart.domain.model.PaymentStatus
 data class OrderEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val userId: Int,
+    val userId: String,
     val orderNumber: String,
     val totalAmount: Long,
     val orderStatus: OrderStatus = OrderStatus.CREATED,

@@ -91,7 +91,7 @@ fun CheckOutRoute(
         onPaymentClick = { checkoutViewModel.selectPaymentClick() },
         isLoading = uiState.isProcessing,
         onConfirmClick = { checkoutViewModel.pay(
-            cartItems = cartUiState.items,
+            cartItems = cartUiState.selectedItems,
             address = selectedAddress,
             paymentMethod = selectPaymentUiState.selectedMethod ?: PaymentMethod.COD
         )}

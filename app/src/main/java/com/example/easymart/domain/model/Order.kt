@@ -3,7 +3,7 @@ package com.example.easymart.domain.model
 //tập hợp đơn hàng
 data class Order(
     val id: Int = 0,
-    val userId: Int,
+    val userId: String,
     val orderNumber: String,
     val items: List<OrderItem> = emptyList(),
     val totalAmount: Long,

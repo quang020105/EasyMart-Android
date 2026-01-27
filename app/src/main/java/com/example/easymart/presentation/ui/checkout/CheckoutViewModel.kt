@@ -11,6 +11,7 @@ import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentResult
 import com.example.easymart.domain.model.PaymentStatus
+import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
 import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
 import com.example.easymart.domain.usecase.payment.ProcessPaymentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +29,7 @@ import kotlin.time.Clock
 class CheckoutViewModel @Inject constructor(
     private val processPaymentUseCase: ProcessPaymentUseCase,
     private val orderAutoProcessUseCase: OrderAutoProcessUseCase,
-    //private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CheckoutUiState())
     val uiState: StateFlow<CheckoutUiState> = _uiState
@@ -36,11 +37,36 @@ class CheckoutViewModel @Inject constructor(
     private val _uiEvent = MutableSharedFlow<CheckoutUiEvent?>()
     val uiEvent: SharedFlow<CheckoutUiEvent?> = _uiEvent
 
+    init {
+        observeCurrentUser()
+    }
+
+    private fun observeCurrentUser() {
+        viewModelScope.launch {
+            observeCurrentUserUseCase().collect { user ->
+                _uiState.update {
+                    it.copy(currentUserId = user?.id)
+                }
+            }
+        }
+    }
+
     fun pay(
         cartItems: List<CartItem>,
         address: Address?,
         paymentMethod: PaymentMethod?
     ) {
+
+        val userId = uiState.value.currentUserId
+        if (userId == null) {
+            viewModelScope.launch {
+                _uiEvent.emit(
+                    CheckoutUiEvent.ShowErrorMessage("Bạn cần đăng nhập để thanh toán")
+                )
+            }
+            return
+        }
+
         Log.d("CheckoutViewModel", "$address, $paymentMethod")
         if (address == null) {
             viewModelScope.launch {
@@ -61,7 +87,7 @@ class CheckoutViewModel @Inject constructor(
             addressString = address.addressString,
         )
         val order = Order(
-            userId = 1, //getCurrentUserIdUseCase() chưa xử lý
+            userId = userId, //getCurrentUserIdUseCase() chưa xử lý
             orderNumber = "",//chưa xử lý
             items = cartItems.map { it.cartToOrderItem() },
             totalAmount = cartItems.sumOf { it.totalPrice }.toLong(),

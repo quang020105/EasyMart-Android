@@ -5,6 +5,6 @@ import com.example.easymart.domain.model.PaymentMethod
 
 data class CheckoutUiState(
     val isProcessing: Boolean = false,
-    val errorMessage: String? = null,
+    val currentUserId: String? = null,
     val order: Order? = null,
 )

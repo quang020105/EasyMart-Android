@@ -6,7 +6,7 @@ import androidx.room.Query
 @Dao
 interface WalletDao {
     @Query("SELECT balance from wallets where userId = :userId")
-    suspend fun getBalance(userId: Int): Long?
+    suspend fun getBalance(userId: String): Long?
     @Query("UPDATE wallets SET balance = :newBalance WHERE userId = :userId")
-    suspend fun updateBalance(userId: Int, newBalance: Long)
+    suspend fun updateBalance(userId: String, newBalance: Long)
 }
