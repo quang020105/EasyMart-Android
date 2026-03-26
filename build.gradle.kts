@@ -16,5 +16,6 @@ buildscript {
     }
     dependencies {
         classpath(libs.gradle)
+        classpath ("com.google.gms:google-services:4.4.0")
     }
 }

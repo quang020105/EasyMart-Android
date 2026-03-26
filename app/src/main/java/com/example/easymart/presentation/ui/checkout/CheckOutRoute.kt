@@ -1,15 +1,25 @@
 package com.example.easymart.presentation.ui.checkout
 
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
+import android.widget.Toast
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import com.example.easymart.domain.model.PaymentMethod
+import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.presentation.ui.cart.CartViewModel
 import com.example.easymart.presentation.ui.deliveryaddress.AddressViewModel
 import com.example.easymart.presentation.ui.payment.SelectPaymentViewModel
+import androidx.core.net.toUri
+import kotlinx.coroutines.launch
 
+@SuppressLint("QueryPermissionsNeeded")
 @Composable
 fun CheckOutRoute(
     checkoutViewModel: CheckoutViewModel,
@@ -22,6 +32,8 @@ fun CheckOutRoute(
     onNavigateToOnlineProcessing: () -> Unit,
     onNavigateToPaymentFailed: (orderId: Int, reason: String) -> Unit
 ) {
+    val context = LocalContext.current
+
     //lấy dữ liệu từ cart
     val cartUiState by cartViewModel.uiState.collectAsState()
 
@@ -53,7 +65,30 @@ fun CheckOutRoute(
                 }
 
                 is CheckoutUiEvent.NavigateToOnlineProcessing -> {
+                    val checkoutUrl = event.checkoutUrl
+                    if (checkoutUrl.isNullOrBlank() || event.orderCode == null) {
+                        Toast.makeText(context, "Checkout URL PayOS không hợp lệ", Toast.LENGTH_SHORT).show()
+                        return@collect
+                    }
+
+                    // Mở PayOS bằng Chrome Custom Tabs
+                    val customTabsIntent = CustomTabsIntent.Builder().build()
+                    customTabsIntent.launchUrl(context, Uri.parse(checkoutUrl))
+
+                    // Điều hướng sang màn hình processing và poll trạng thái
                     onNavigateToOnlineProcessing()
+
+                    // Polling trạng thái (đơn giản cho demo)
+                    val status = checkoutViewModel.pollPayOsAndUpdate(
+                        orderCode = event.orderCode,
+                        localOrderId = event.localOrderId
+                    )
+
+                    when (status) {
+                        PaymentStatus.SUCCESS -> onNavigateToSuccess()
+                        PaymentStatus.FAILED -> onNavigateToPaymentFailed(event.localOrderId, "Thanh toán thất bại")
+                        else -> Unit
+                    }
                 }
 
                 is CheckoutUiEvent.NavigateToSelectAddress -> {

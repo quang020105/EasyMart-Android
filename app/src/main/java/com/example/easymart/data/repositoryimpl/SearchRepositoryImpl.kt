@@ -10,10 +10,9 @@ import com.example.easymart.domain.repository.SearchRepository
 import com.example.easymart.data.remote.provider.AlgoliaProvider
 import com.google.gson.Gson
 import javax.inject.Inject
-import javax.inject.Named
 
 class SearchRepositoryImpl @Inject constructor(
-    private val backendApi: com.example.easymart.data.remote.api.BackendApi,
+    private val backendApi: com.example.easymart.data.remote.api.AlgoliaApi,
     private val gson: Gson
 ) : SearchRepository {
     private val indexName = "products"

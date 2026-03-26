@@ -33,6 +33,8 @@ import com.example.easymart.domain.usecase.order.GetOrderItemUseCase
 import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
 import com.example.easymart.domain.usecase.payment.GetWalletBalanceUseCase
 import com.example.easymart.domain.usecase.payment.ProcessPaymentUseCase
+import com.example.easymart.domain.usecase.payment.PollPayOsPaymentStatusUseCase
+import com.example.easymart.domain.usecase.payment.UpdateLocalOrderPaymentStatusUseCase
 import com.example.easymart.domain.usecase.product.GetAllProductUseCase
 import com.example.easymart.domain.usecase.product.GetProductUseCase
 import com.example.easymart.domain.usecase.search.GetSuggestionUseCase
@@ -126,6 +128,14 @@ object UseCaseModule {
     @Provides
     fun provideWalletBalanceUseCase(paymentRepo: PaymentRepository): GetWalletBalanceUseCase =
         GetWalletBalanceUseCase(paymentRepo)
+
+    @Provides
+    fun providePollPayOsPaymentStatusUseCase(paymentRepo: PaymentRepository): PollPayOsPaymentStatusUseCase =
+        PollPayOsPaymentStatusUseCase(paymentRepo)
+
+    @Provides
+    fun provideUpdateLocalOrderPaymentStatusUseCase(paymentRepo: PaymentRepository): UpdateLocalOrderPaymentStatusUseCase =
+        UpdateLocalOrderPaymentStatusUseCase(paymentRepo)
 
 
     //workManager giả lập xử lý đơn

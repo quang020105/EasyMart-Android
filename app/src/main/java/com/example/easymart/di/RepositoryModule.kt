@@ -5,8 +5,9 @@ import com.example.easymart.data.local.dao.CartDao
 import com.example.easymart.data.local.dao.OrderDao
 import com.example.easymart.data.local.dao.WalletDao
 import com.example.easymart.data.local.datasource.CartLocalDataSource
-import com.example.easymart.data.remote.api.BackendApi
+import com.example.easymart.data.remote.api.AlgoliaApi
 import com.example.easymart.data.remote.api.LocationApi
+import com.example.easymart.data.remote.api.PaymentApi
 import com.example.easymart.data.remote.api.ProductApi
 import com.example.easymart.data.repositoryimpl.AddressRepositoryImpl
 import com.example.easymart.data.repositoryimpl.CartRepositoryImpl
@@ -16,7 +17,7 @@ import com.example.easymart.data.repositoryimpl.OrderRepositoryImpl
 import com.example.easymart.data.repositoryimpl.PaymentRepositoryImpl
 import com.example.easymart.data.repositoryimpl.ProductRepositoryImpl
 import com.example.easymart.data.repositoryimpl.SearchRepositoryImpl
-import com.example.easymart.domain.payment.process.CODProcesser
+import com.example.easymart.domain.payment.process.CODProcessor
 import com.example.easymart.domain.payment.process.EWalletProcessor
 import com.example.easymart.domain.payment.process.OnlineGatewayProcessor
 import com.example.easymart.domain.repository.AddressRepository
@@ -30,7 +31,6 @@ import com.example.easymart.domain.repository.SearchRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -61,7 +61,7 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideSearchRepository(
-        backendApi: BackendApi,
+        backendApi: AlgoliaApi,
         @Named("searchProductGson") gson: Gson
     ): SearchRepository = SearchRepositoryImpl(backendApi, gson)
 
@@ -70,11 +70,12 @@ object RepositoryModule {
     fun providePaymentRepository(
         orderDao: OrderDao,
         walletDao: WalletDao,
-        codProc: CODProcesser,
+        codProc: CODProcessor,
+        paymentApi: PaymentApi,
         eWalletProc: EWalletProcessor,
         onlineGatewayProc: OnlineGatewayProcessor
     ): PaymentRepository =
-        PaymentRepositoryImpl(orderDao, walletDao, codProc, eWalletProc, onlineGatewayProc)
+        PaymentRepositoryImpl(orderDao, walletDao, paymentApi,  codProc,eWalletProc,onlineGatewayProc)
 
     @Provides
     @Singleton

@@ -50,4 +50,15 @@ sealed class Screen(val route: String) {
     //graph search
     data object SearchGraph : Screen("search_graph")
     data object Search : Screen("search")
+
+    // PayOS deep link
+    data object PayOsReturn : Screen("payos_return?orderCode={orderCode}&localOrderId={localOrderId}&status={status}") {
+        fun createRoute(orderCode: Long?, localOrderId: Int?, status: String?) =
+            "payos_return?orderCode=${orderCode ?: ""}&localOrderId=${localOrderId ?: ""}&status=${status ?: ""}"
+    }
+
+    data object PayOsCancel : Screen("payos_cancel?orderCode={orderCode}&localOrderId={localOrderId}&status={status}") {
+        fun createRoute(orderCode: Long?, localOrderId: Int?, status: String?) =
+            "payos_cancel?orderCode=${orderCode ?: ""}&localOrderId=${localOrderId ?: ""}&status=${status ?: ""}"
+    }
 }

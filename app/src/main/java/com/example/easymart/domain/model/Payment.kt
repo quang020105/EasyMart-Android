@@ -13,7 +13,8 @@ enum class PaymentStatus {
     UNPAID, //chưa thanh toán
     PROCESSING, // đang xử lý
     SUCCESS, //thanh toán thành công
-    FAILED //thanh toán thất bại
+    FAILED, //thanh toán thất bại
+    PENDING //đang chờ xác nhận từ cổng thanh toán
 }
 
 enum class PaymentMethod {
@@ -21,7 +22,23 @@ enum class PaymentMethod {
 }
 
 sealed class PaymentResult {
-    data class Success(val orderId: Int, val status: PaymentStatus = PaymentStatus.SUCCESS) :
+    data class Pending(
+        val localOrderId: Int
+    ) : PaymentResult()
+
+    data class Redirect(
+        val localOrderId: Int,
+        val deeplink: String?,
+        val qrImageUrl: String?,
+        val orderCode: Long? = null
+    ) : PaymentResult()
+
+    data class Success(
+        val orderId: Int,
+        val status: PaymentStatus = PaymentStatus.SUCCESS,
+        val serverOrderId: Int? = null,
+        val providerRef: String? = null
+    ) :
         PaymentResult()
 
     data class Failed(val orderID: Int, val reason: String) : PaymentResult()

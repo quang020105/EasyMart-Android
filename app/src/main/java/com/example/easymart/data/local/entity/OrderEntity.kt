@@ -19,5 +19,6 @@ data class OrderEntity(
     val paymentMethod: PaymentMethod = PaymentMethod.COD,
     @Embedded(prefix = "shipping_") // nhúng địa chỉ giao hàng
     val shippingAddress: AddressEmbedded,
+    val serverOrderId: Int? = null,    // server trả về
     val createdAt: Long
 )

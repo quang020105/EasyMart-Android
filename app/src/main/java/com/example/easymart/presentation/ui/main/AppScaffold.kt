@@ -1,5 +1,6 @@
 package com.example.easymart.presentation.ui.main
 
+import android.net.Uri
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -44,7 +46,7 @@ import com.example.easymart.presentation.ui.search.components.SearchTopbar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
+fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepLink: Uri? = null) {
     // theo dõi backstack entry hiện tại
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     //lấy destination hiện tại
@@ -114,6 +116,23 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1) {
 
 
     val dimens = LocalAppDimens.current
+
+    LaunchedEffect(startDeepLink) {
+        val link = startDeepLink ?: return@LaunchedEffect
+        val path = link.pathSegments.firstOrNull() ?: return@LaunchedEffect
+        val orderCode = link.getQueryParameter("orderCode")?.toLongOrNull()
+        val localOrderId = link.getQueryParameter("localOrderId")?.toIntOrNull()
+        val status = link.getQueryParameter("status")
+
+        when (path.lowercase()) {
+            "return" -> navController.navigate(
+                Screen.PayOsReturn.createRoute(orderCode, localOrderId, status)
+            )
+            "cancel" -> navController.navigate(
+                Screen.PayOsCancel.createRoute(orderCode, localOrderId, status)
+            )
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

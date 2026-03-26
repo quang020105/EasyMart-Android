@@ -3,7 +3,7 @@ package com.example.easymart.di
 import com.example.easymart.data.local.dao.OrderDao
 import com.example.easymart.data.local.dao.PaymentDao
 import com.example.easymart.data.local.dao.WalletDao
-import com.example.easymart.domain.payment.process.CODProcesser
+import com.example.easymart.domain.payment.process.CODProcessor
 import com.example.easymart.domain.payment.process.EWalletProcessor
 import com.example.easymart.domain.payment.process.OnlineGatewayProcessor
 import com.example.easymart.domain.payment.simulator.EWalletSimulator
@@ -30,7 +30,7 @@ object PaymentModule {
     fun provideCODProcessor(
         orderDao: OrderDao,
         paymentDao: PaymentDao
-    ): CODProcesser = CODProcesser(orderDao, paymentDao)
+    ): CODProcessor = CODProcessor(orderDao, paymentDao)
 
     @Singleton
     @Provides

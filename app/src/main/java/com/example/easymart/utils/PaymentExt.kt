@@ -16,6 +16,7 @@ fun PaymentStatus.toDisplayString(): String {
     return when (this) {
         PaymentStatus.UNPAID -> "Chưa thanh toán"
         PaymentStatus.PROCESSING -> "Đang xử lý"
+        PaymentStatus.PENDING -> "Đang chờ"
         PaymentStatus.SUCCESS -> "Đã thanh toán"
         PaymentStatus.FAILED -> "Thanh toán thất bại"
     }

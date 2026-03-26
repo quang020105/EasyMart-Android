@@ -1,7 +1,8 @@
 package com.example.easymart.di
 
-import com.example.easymart.data.remote.api.BackendApi
+import com.example.easymart.data.remote.api.AlgoliaApi
 import com.example.easymart.data.remote.api.LocationApi
+import com.example.easymart.data.remote.api.PaymentApi
 import com.example.easymart.data.remote.api.ProductApi
 import com.example.easymart.data.remote.dto.ProductDto
 import com.example.easymart.data.remote.provider.ProductDtoDeserializer
@@ -24,6 +25,11 @@ object NetworkModule {
     private const val PRODUCT_BASE_URL = "https://fakestoreapi.com/"
     private const val ALGOLIA_BASE_URL = "http://10.0.2.2:8080/"
     private const val LOCATION_BASE_URL = "https://provinces.open-api.vn/"
+    //private const val PAYMENT_BASE_URL = "http://10.0.2.2:8081/"
+    //private const val PAYMENT_BASE_URL = "http://127.0.0.1:8081/"
+    //private const val PAYMENT_BASE_URL = "http://192.168.77.102:3000/"
+    private const val PAYMENT_BASE_URL = "http://127.0.0.1:3000/"
+
 
 //    @Provides
 //    @Singleton
@@ -87,6 +93,17 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @Named("payment")
+    fun providePaymentRetrofit(ok: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(PAYMENT_BASE_URL)
+            .client(ok)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
     fun provideProductApi(@Named("products") retrofit: Retrofit): ProductApi =
         retrofit.create(ProductApi::class.java)
 
@@ -97,6 +114,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAlgoliaApi(@Named("algolia") retrofit: Retrofit): BackendApi =
-        retrofit.create(BackendApi::class.java)
+    fun provideAlgoliaApi(@Named("algolia") retrofit: Retrofit): AlgoliaApi =
+        retrofit.create(AlgoliaApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providePaymentApi(@Named("payment") retrofit: Retrofit): PaymentApi =
+        retrofit.create(PaymentApi::class.java)
 }

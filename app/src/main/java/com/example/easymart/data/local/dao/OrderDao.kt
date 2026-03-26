@@ -49,4 +49,18 @@ interface OrderDao {
     //dùng khi cập nhật cả trạng thái đơn hàng và trạng thái thanh toán(khi xử lý thanh toán)
     @Query("UPDATE orders set orderStatus = :status, paymentStatus = :paymentStatus WHERE id = :orderId")
     suspend fun updateOrderAndPaymentStatus(orderId: Int, status: OrderStatus, paymentStatus: PaymentStatus)
+
+
+    // server
+    @Query("UPDATE orders SET serverOrderId = :serverOrderId WHERE id = :localId")
+    suspend fun updateServerOrderId(localId: Int, serverOrderId: Int)
+
+    @Query("UPDATE orders SET paymentStatus = :status WHERE serverOrderId = :serverOrderId")
+    suspend fun updatePaymentStatusByServerId(serverOrderId: Int, status: String)
+
+    @Query("SELECT * FROM orders WHERE serverOrderId = :serverOrderId LIMIT 1")
+    suspend fun getByServerOrderId(serverOrderId: Int): OrderEntity?
+
+    @Query("SELECT * FROM orders WHERE id = :localId LIMIT 1")
+    suspend fun getByLocalId(localId: Int): OrderEntity?
 }

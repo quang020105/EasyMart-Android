@@ -14,6 +14,8 @@ import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
 import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
 import com.example.easymart.domain.usecase.payment.ProcessPaymentUseCase
+import com.example.easymart.domain.usecase.payment.PollPayOsPaymentStatusUseCase
+import com.example.easymart.domain.usecase.payment.UpdateLocalOrderPaymentStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +31,9 @@ import kotlin.time.Clock
 class CheckoutViewModel @Inject constructor(
     private val processPaymentUseCase: ProcessPaymentUseCase,
     private val orderAutoProcessUseCase: OrderAutoProcessUseCase,
-    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val pollPayOsPaymentStatusUseCase: PollPayOsPaymentStatusUseCase,
+    private val updateLocalOrderPaymentStatusUseCase: UpdateLocalOrderPaymentStatusUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CheckoutUiState())
     val uiState: StateFlow<CheckoutUiState> = _uiState
@@ -98,6 +102,16 @@ class CheckoutViewModel @Inject constructor(
             createdAt = System.currentTimeMillis()
         )
 
+        for ((index, item) in cartItems.withIndex()) {
+            Log.d(
+                "CheckoutViewModel",
+                "Item #$index | id=${item.id} | name=${item.product.name} | qty=${item.quantity} | " +
+                        "price=${item.price} | totalPrice=${item.totalPrice}"
+            )
+        }
+
+
+
         viewModelScope.launch {
             //gọi usecase để xử lý thanh toán
             processPaymentUseCase(order, paymentMethod)
@@ -107,6 +121,19 @@ class CheckoutViewModel @Inject constructor(
                 }
                 .collect { result ->
                     when (result) {
+                        is PaymentResult.Pending -> {
+                            _uiState.update { it.copy(isProcessing = true) }
+                        }
+                        is PaymentResult.Redirect -> {
+                            _uiState.update { it.copy(isProcessing = false) }
+                            _uiEvent.emit(
+                                CheckoutUiEvent.NavigateToOnlineProcessing(
+                                    checkoutUrl = result.deeplink,
+                                    orderCode = result.orderCode,
+                                    localOrderId = result.localOrderId
+                                )
+                            )
+                        }
                         is PaymentResult.Processing -> {
                             _uiState.update {
                                 it.copy(isProcessing = true)
@@ -118,8 +145,14 @@ class CheckoutViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(isProcessing = false, order = order)
                             }
-                            if(paymentMethod == PaymentMethod.ONLINE_GATEWAY){
-                                _uiEvent.emit(CheckoutUiEvent.NavigateToOnlineProcessing)
+                            if (paymentMethod == PaymentMethod.ONLINE_GATEWAY) {
+                                _uiEvent.emit(
+                                    CheckoutUiEvent.NavigateToOnlineProcessing(
+                                        checkoutUrl = null,
+                                        orderCode = null,
+                                        localOrderId = result.orderId
+                                    )
+                                )
                             } else {
                                 _uiEvent.emit(
                                     CheckoutUiEvent.NavigateToSuccess
@@ -165,5 +198,17 @@ class CheckoutViewModel @Inject constructor(
                 orderAutoProcessUseCase.start(orderId = order.id)
             }
         }
+    }
+
+    suspend fun pollPayOsAndUpdate(orderCode: Long, localOrderId: Int): PaymentStatus {
+        val status = pollPayOsPaymentStatusUseCase(orderCode)
+        if (status == PaymentStatus.SUCCESS || status == PaymentStatus.FAILED) {
+            updateLocalOrderPaymentStatusUseCase(localOrderId, status)
+        }
+        return status
+    }
+
+    suspend fun markPayOsCancelled(localOrderId: Int) {
+        updateLocalOrderPaymentStatusUseCase(localOrderId, PaymentStatus.FAILED)
     }
 }

@@ -19,6 +19,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.presentation.auth.AuthViewModel
 import com.example.easymart.presentation.common.AppEventBus
 import com.example.easymart.presentation.common.ui.LoginRequiredBottomSheet
@@ -341,9 +342,7 @@ fun AppNavGraph(
                 anim = NavAnim.FADE
             ) {
                 OnlinePaymentProcessingRoute(
-                    onPaymentFinished = {
-                        navController.navigate(Screen.OrderSuccess.route)
-                    }
+                    onPaymentFinished = { }
                 )
             }
 
@@ -566,6 +565,65 @@ fun AppNavGraph(
             OrderDetailRoute(viewModel)
         }
 
+        composableWithAnim(
+            route = Screen.PayOsReturn.route,
+            anim = NavAnim.FADE,
+            arguments = listOf(
+                navArgument("orderCode") { type = NavType.StringType; defaultValue = "" },
+                navArgument("localOrderId") { type = NavType.StringType; defaultValue = "" },
+                navArgument("status") { type = NavType.StringType; defaultValue = "" }
+            )
+        ) { backStackEntry ->
+            val parentEntry = remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+            val viewModel = hiltViewModel<CheckoutViewModel>(parentEntry)
+            val orderCode = backStackEntry.arguments?.getString("orderCode")?.toLongOrNull()
+            val localOrderId = backStackEntry.arguments?.getString("localOrderId")?.toIntOrNull()
+
+            LaunchedEffect(orderCode, localOrderId) {
+                if (orderCode != null && localOrderId != null) {
+                    val status = viewModel.pollPayOsAndUpdate(orderCode, localOrderId)
+                    if (status == PaymentStatus.SUCCESS) {
+                        navController.navigate(Screen.OrderSuccess.route) {
+                            popUpTo(Screen.HomeGraph.route)
+                        }
+                    } else if (status == PaymentStatus.FAILED) {
+                        navController.navigate(
+                            Screen.PaymentFailed.createRoute(localOrderId, "Thanh toán thất bại")
+                        )
+                    } else {
+                        navController.navigate(Screen.OnlinePaymentProcessing.route)
+                    }
+                } else {
+                    navController.navigate(Screen.OnlinePaymentProcessing.route)
+                }
+            }
+        }
+
+        composableWithAnim(
+            route = Screen.PayOsCancel.route,
+            anim = NavAnim.FADE,
+            arguments = listOf(
+                navArgument("orderCode") { type = NavType.StringType; defaultValue = "" },
+                navArgument("localOrderId") { type = NavType.StringType; defaultValue = "" },
+                navArgument("status") { type = NavType.StringType; defaultValue = "" }
+            )
+        ) { backStackEntry ->
+            val parentEntry = remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+            val viewModel = hiltViewModel<CheckoutViewModel>(parentEntry)
+            val localOrderId = backStackEntry.arguments?.getString("localOrderId")?.toIntOrNull()
+
+            LaunchedEffect(localOrderId) {
+                if (localOrderId != null) {
+                    viewModel.markPayOsCancelled(localOrderId)
+                    navController.navigate(
+                        Screen.PaymentFailed.createRoute(localOrderId, "Bạn đã hủy thanh toán")
+                    )
+                } else {
+                    navController.navigate(Screen.PaymentFailed.createRoute(-1, "Bạn đã hủy thanh toán"))
+                }
+            }
+        }
+
     }
 
 
@@ -588,6 +646,12 @@ fun AppNavGraph(
         }
     }
 }
+
+
+
+
+
+
 
 
 

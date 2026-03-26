@@ -3,6 +3,7 @@ package com.example.easymart.data.mapper
 import com.example.easymart.data.local.entity.OrderEntity
 import com.example.easymart.data.local.entity.OrderItemEntity
 import com.example.easymart.data.local.relation.OrderWithItems
+import com.example.easymart.data.remote.dto.OrderItemDto
 import com.example.easymart.domain.model.CartItem
 import com.example.easymart.domain.model.Order
 import com.example.easymart.domain.model.OrderItem
@@ -85,6 +86,23 @@ fun OrderWithItems.toDomain(): Order {
         createdAt = order.createdAt
     )
 }
+
+fun OrderItem.toDto(): OrderItemDto {
+    return OrderItemDto(
+        productId = product.id,
+        quantity = quantity,
+        price = product.price
+    )
+}
+
+fun OrderItemDto.toDomain(product: Product): OrderItem {
+    return OrderItem(
+        id = 0, // backend không quản lý id item local
+        product = product,
+        quantity = quantity
+    )
+}
+
 
 fun CartItem.cartToOrderItem(): OrderItem {
     return OrderItem(

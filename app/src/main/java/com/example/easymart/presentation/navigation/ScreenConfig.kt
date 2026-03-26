@@ -28,6 +28,8 @@ private val screenConfigs: List<Pair<String, ScreenConfig>> = listOf(
     "order_success" to ScreenConfig(title = "Đặt hàng thành công", showTopBar = true),
     "payment_failed" to ScreenConfig(title = "Thanh toán thất bại", showTopBar = true),
     "online_payment_processing" to ScreenConfig(showTopBar = false, showBottomBar = false),
+    "payos_return" to ScreenConfig(showTopBar = false, showBottomBar = false),
+    "payos_cancel" to ScreenConfig(showTopBar = false, showBottomBar = false),
 
     // product detail:
     "product" to ScreenConfig(showTopBar = true, showBottomBar = false)
