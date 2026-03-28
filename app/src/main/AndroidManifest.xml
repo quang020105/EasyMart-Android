@@ -40,11 +40,23 @@
         <activity
             android:name=".presentation.ui.MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.EasyMart">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- PayOS deeplink callbacks -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="easymart"
+                    android:host="payos"
+                    android:pathPrefix="/return" />
             </intent-filter>
 
             <intent-filter>
@@ -53,7 +65,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="easymart"
-                    android:host="payos" />
+                    android:host="payos"
+                    android:pathPrefix="/cancel" />
             </intent-filter>
         </activity>
     </application>

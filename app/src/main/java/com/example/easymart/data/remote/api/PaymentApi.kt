@@ -39,6 +39,13 @@ interface PaymentApi {
         @Body body: PayOsCreatePaymentRequest
     ): PayOsCreatePaymentResponse
 
+    // NEW: endpoint chuẩn cho polling
+    @GET("payment-status/{orderCode}")
+    suspend fun getPayOsPaymentStatus(
+        @Path("orderCode") orderCode: Long
+    ): PayOsOrderStatusResponse
+
+    // giữ lại endpoint debug cũ
     @GET("order/{orderCode}")
     suspend fun getPayOsOrderStatus(
         @Path("orderCode") orderCode: Long

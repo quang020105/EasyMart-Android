@@ -7,7 +7,7 @@ sealed class CheckoutUiEvent {
     data class NavigateToOnlineProcessing(
         val checkoutUrl: String?,
         val orderCode: Long?,
-        val localOrderId: Int
+        val localOrderId: Int?
     ) : CheckoutUiEvent()
     object NavigateToSelectAddress: CheckoutUiEvent()
     object NavigateSelectPaymentMethod: CheckoutUiEvent()

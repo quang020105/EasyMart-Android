@@ -21,7 +21,10 @@ sealed class Screen(val route: String) {
     data object PaymentFailed : Screen("payment_failed/{orderId}/{reason}") {
         fun createRoute(orderId: Int, reason: String) = "payment_failed/$orderId/$reason"
     }
-    data object OnlinePaymentProcessing : Screen("online_payment_processing")
+    data object OnlinePaymentProcessing : Screen("online_payment_processing?orderCode={orderCode}&localOrderId={localOrderId}") {
+        fun createRoute(orderCode: Long?, localOrderId: Int?) =
+            "online_payment_processing?orderCode=${orderCode ?: ""}&localOrderId=${localOrderId ?: ""}"
+    }
     data object ProductDetail : Screen("product/{productId}") {
         fun createRoute(productId: Int) = "product/$productId"
     }

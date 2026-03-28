@@ -3,14 +3,13 @@ package com.example.easymart.data.repositoryimpl
 import android.util.Log
 import com.example.easymart.data.local.dao.OrderDao
 import com.example.easymart.data.local.dao.WalletDao
-import com.example.easymart.data.mapper.toDto
 import com.example.easymart.data.mapper.toEntity
 import com.example.easymart.data.remote.api.PaymentApi
 import com.example.easymart.data.remote.dto.PayOsItemDto
-import com.example.easymart.data.remote.dto.payment.CreateOrderRequest
 import com.example.easymart.data.remote.dto.payment.PayOsCreatePaymentRequest
 import com.example.easymart.data.remote.dto.payment.RegisterDeviceTokenRequest
 import com.example.easymart.domain.model.Order
+import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentResult
 import com.example.easymart.domain.model.PaymentStatus
@@ -19,7 +18,6 @@ import com.example.easymart.domain.payment.process.EWalletProcessor
 import com.example.easymart.domain.payment.process.OnlineGatewayProcessor
 import com.example.easymart.domain.repository.PaymentRepository
 import com.example.easymart.utils.toVNDLong
-import com.example.easymart.utils.toVNDString
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,8 +31,7 @@ class PaymentRepositoryImpl @Inject constructor(
     private val codProcessor: CODProcessor,
     private val eWalletProcesser: EWalletProcessor,
     private val onlineGatewayProcesser: OnlineGatewayProcessor,
-): PaymentRepository {
-
+) : PaymentRepository {
     private val paymentEvents = MutableSharedFlow<PaymentEvent>(extraBufferCapacity = 1)
 
     override fun observePaymentEvents(): Flow<PaymentEvent> = paymentEvents
@@ -43,20 +40,6 @@ class PaymentRepositoryImpl @Inject constructor(
         order: Order,
         method: PaymentMethod
     ): Flow<PaymentResult> = flow {
-//        Log.d("PaymentRepositoryImpl", "Order in Repo: $order")
-//        //thêm đơn hàng vào db local
-//        val orderId = orderDao.insertOrderWithItems(order = order.toEntity(), orderItems = order.items.map { it.toEntity() })
-//        val processor = when(method){
-//            PaymentMethod.COD -> codProcesser
-//            PaymentMethod.WALLET -> eWalletProcesser
-//            PaymentMethod.ONLINE_GATEWAY -> onlineGatewayProcesser
-//        }
-//        // tạo order với id được room tự động sinh
-//        val newOrder = order.copy(id = orderId)
-//        processor.process(newOrder).collect{ result ->
-//            emit(result)
-//        }
-
         val localOrderId = orderDao.insertOrderWithItems(
             order = order.toEntity(),
             orderItems = order.items.map { it.toEntity() }
@@ -74,8 +57,6 @@ class PaymentRepositoryImpl @Inject constructor(
             PaymentMethod.ONLINE_GATEWAY -> {
                 emit(PaymentResult.Pending(localOrderId))
 
-
-                // PayOS: tạo link thanh toán trực tuyến
                 val payOsResp = paymentApi.createPayOsPayment(
                     PayOsCreatePaymentRequest(
                         amount = order.totalAmount.toVNDLong(),
@@ -90,10 +71,8 @@ class PaymentRepositoryImpl @Inject constructor(
                         }
                     )
                 )
-                Log.d("PaymentRepositoryImpl", "Tổng tiền PayOS nhận: " + order.totalAmount.toString())
 
-                // lưu serverOrderId nếu cần (tạm thời để null, hoặc map nếu backend có order server riêng)
-                // orderDao.updateServerOrderId(localOrderId, payOsResp.orderCode.toInt())
+                Log.d("PaymentRepositoryImpl", "PayOS checkoutUrl=${payOsResp.checkoutUrl} orderCode=${payOsResp.orderCode}")
 
                 emit(
                     PaymentResult.Redirect(
@@ -149,10 +128,12 @@ class PaymentRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getPayOsOrderStatus(orderCode: Long): PaymentStatus {
-        val status = paymentApi.getPayOsOrderStatus(orderCode).status
+        // Poll endpoint chuẩn (backend đã map theo webhook)
+        val status = paymentApi.getPayOsPaymentStatus(orderCode).status
         return when (status.uppercase()) {
             "PAID", "SUCCESS" -> PaymentStatus.SUCCESS
-            "CANCELLED", "CANCELED", "FAILED" -> PaymentStatus.FAILED
+            "CANCELLED", "CANCELED" -> PaymentStatus.FAILED
+            "FAILED" -> PaymentStatus.FAILED
             else -> PaymentStatus.PENDING
         }
     }
@@ -176,10 +157,10 @@ class PaymentRepositoryImpl @Inject constructor(
 
     override suspend fun updateLocalOrderPaymentStatus(localOrderId: Int, status: PaymentStatus) {
         val orderStatus = when (status) {
-            PaymentStatus.SUCCESS -> com.example.easymart.domain.model.OrderStatus.CONFIRMED
-            PaymentStatus.FAILED -> com.example.easymart.domain.model.OrderStatus.CANCELLED
+            PaymentStatus.SUCCESS -> OrderStatus.CONFIRMED
+            PaymentStatus.FAILED -> OrderStatus.CANCELLED
             PaymentStatus.UNPAID, PaymentStatus.PROCESSING, PaymentStatus.PENDING ->
-                com.example.easymart.domain.model.OrderStatus.CREATED
+                OrderStatus.CREATED
         }
         orderDao.updateOrderAndPaymentStatus(localOrderId, orderStatus, status)
     }

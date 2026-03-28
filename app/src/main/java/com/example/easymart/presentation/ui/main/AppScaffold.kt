@@ -1,6 +1,7 @@
 package com.example.easymart.presentation.ui.main
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -123,6 +124,8 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
         val orderCode = link.getQueryParameter("orderCode")?.toLongOrNull()
         val localOrderId = link.getQueryParameter("localOrderId")?.toIntOrNull()
         val status = link.getQueryParameter("status")
+
+        Log.d("AppScaffold", "Received deep link with path: $path, orderCode: $orderCode, localOrderId: $localOrderId, status: $status")
 
         when (path.lowercase()) {
             "return" -> navController.navigate(

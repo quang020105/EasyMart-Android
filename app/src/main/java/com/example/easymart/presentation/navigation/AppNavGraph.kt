@@ -2,6 +2,7 @@ package com.example.easymart.presentation.navigation
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -258,8 +259,10 @@ fun AppNavGraph(
                     onNavigateToSuccess = {
                         navController.navigate(Screen.OrderSuccess.route)
                     },
-                    onNavigateToOnlineProcessing = {
-                        navController.navigate(Screen.OnlinePaymentProcessing.route)
+                    onNavigateToOnlineProcessing = { orderCode, localOrderId ->
+                        navController.navigate(
+                            Screen.OnlinePaymentProcessing.createRoute(orderCode, localOrderId)
+                        )
                     },
                     onNavigateToPaymentFailed = { orderId, reason ->
                         navController.navigate(
@@ -331,18 +334,56 @@ fun AppNavGraph(
 
                 PaymentFailedRoute(
                     message = message ?: "Thanh toán không thành công",
-                    onRetry = {},
-                    onChangePaymentMethod = {},
-                    onBackToCheckOut = {}
+                    onRetry = {
+                        navController.navigate(Screen.Checkout.route) {
+                            popUpTo(Screen.HomeGraph.route)
+                            launchSingleTop = true
+                        }
+                    },
+                    onChangePaymentMethod = {
+                        navController.navigate(Screen.SelectPaymentMethod.route) {
+                            popUpTo(Screen.HomeGraph.route)
+                            launchSingleTop = true
+                        }
+                    },
+                    onBackToCheckOut = {
+                        navController.navigate(Screen.Checkout.route) {
+                            popUpTo(Screen.HomeGraph.route)
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
 
             composableWithAnim(
                 route = Screen.OnlinePaymentProcessing.route,
-                anim = NavAnim.FADE
-            ) {
+                anim = NavAnim.FADE,
+                arguments = listOf(
+                    navArgument("orderCode") { type = NavType.StringType; defaultValue = "" },
+                    navArgument("localOrderId") { type = NavType.StringType; defaultValue = "" }
+                )
+            ) { backStackEntry ->
+                val orderCode = backStackEntry.arguments?.getString("orderCode")?.toLongOrNull()
+                val localOrderId = backStackEntry.arguments?.getString("localOrderId")?.toIntOrNull()
+
+                //Log.d("AppNavGraph", "Navigating to OnlinePaymentProcessingRoute with orderCode=$orderCode, localOrderId=$localOrderId")
                 OnlinePaymentProcessingRoute(
-                    onPaymentFinished = { }
+                    orderCode = orderCode,
+                    localOrderId = localOrderId,
+                    onSuccess = {
+                        navController.navigate(Screen.OrderSuccess.route) {
+                            popUpTo(Screen.HomeGraph.route)
+                        }
+                        Log.d("AppNavGraph", "Navigated to OrderSuccessRoute")
+                    },
+                    onFailed = { reason ->
+                        navController.navigate(
+                            Screen.PaymentFailed.createRoute(localOrderId ?: -1, reason)
+                        )
+                    },
+                    onPendingTimeout = {
+                        // nếu vẫn pending thì cứ ở màn này (user có thể chờ hoặc back)
+                    }
                 )
             }
 
@@ -574,27 +615,15 @@ fun AppNavGraph(
                 navArgument("status") { type = NavType.StringType; defaultValue = "" }
             )
         ) { backStackEntry ->
-            val parentEntry = remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
-            val viewModel = hiltViewModel<CheckoutViewModel>(parentEntry)
             val orderCode = backStackEntry.arguments?.getString("orderCode")?.toLongOrNull()
             val localOrderId = backStackEntry.arguments?.getString("localOrderId")?.toIntOrNull()
 
             LaunchedEffect(orderCode, localOrderId) {
-                if (orderCode != null && localOrderId != null) {
-                    val status = viewModel.pollPayOsAndUpdate(orderCode, localOrderId)
-                    if (status == PaymentStatus.SUCCESS) {
-                        navController.navigate(Screen.OrderSuccess.route) {
-                            popUpTo(Screen.HomeGraph.route)
-                        }
-                    } else if (status == PaymentStatus.FAILED) {
-                        navController.navigate(
-                            Screen.PaymentFailed.createRoute(localOrderId, "Thanh toán thất bại")
-                        )
-                    } else {
-                        navController.navigate(Screen.OnlinePaymentProcessing.route)
-                    }
-                } else {
-                    navController.navigate(Screen.OnlinePaymentProcessing.route)
+                Log.d("AppNavGraph", "Received PayOs return: orderCode=$orderCode, localOrderId=$localOrderId")
+                navController.navigate(
+                    Screen.OnlinePaymentProcessing.createRoute(orderCode, localOrderId)
+                ) {
+                    popUpTo(Screen.HomeGraph.route)
                 }
             }
         }
@@ -610,16 +639,18 @@ fun AppNavGraph(
         ) { backStackEntry ->
             val parentEntry = remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
             val viewModel = hiltViewModel<CheckoutViewModel>(parentEntry)
+            val orderCode = backStackEntry.arguments?.getString("orderCode")?.toLongOrNull()
             val localOrderId = backStackEntry.arguments?.getString("localOrderId")?.toIntOrNull()
 
-            LaunchedEffect(localOrderId) {
+            LaunchedEffect(orderCode, localOrderId) {
                 if (localOrderId != null) {
                     viewModel.markPayOsCancelled(localOrderId)
-                    navController.navigate(
-                        Screen.PaymentFailed.createRoute(localOrderId, "Bạn đã hủy thanh toán")
-                    )
-                } else {
-                    navController.navigate(Screen.PaymentFailed.createRoute(-1, "Bạn đã hủy thanh toán"))
+                }
+
+                navController.navigate(
+                    Screen.PaymentFailed.createRoute(localOrderId ?: -1, "Bạn đã hủy thanh toán")
+                ) {
+                    popUpTo(Screen.HomeGraph.route)
                 }
             }
         }
@@ -646,6 +677,14 @@ fun AppNavGraph(
         }
     }
 }
+
+
+
+
+
+
+
+
 
 
 
