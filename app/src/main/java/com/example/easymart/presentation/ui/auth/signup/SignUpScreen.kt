@@ -1,10 +1,6 @@
-package com.example.easymart.presentation.ui.login
+package com.example.easymart.presentation.ui.auth.signup
 
-import android.util.Log
-import android.widget.Space
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,21 +9,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,24 +33,23 @@ import com.example.easymart.presentation.ui.common.components.RoundedActionButto
 import com.example.easymart.presentation.ui.common.components.ViewLoading
 
 @Composable
-fun LoginScreen(
+fun SignUpScreen(
     modifier: Modifier = Modifier,
-    formState: LoginFormState = LoginFormState(),
-    uiState: LoginUiState,
-    onLoginClick: (email: String, sdt: String, password: String) -> Unit = { _, _, _ -> },
-    onNavigateToSignUp: () -> Unit,
+    formState: SignUpFormState = SignUpFormState(),
+    uiState: SignUpUiState = SignUpUiState.Idle,
+    onFullNameChange: (String) -> Unit = {},
     onEmailChange: (String) -> Unit = {},
+    onPhoneChange: (String) -> Unit = {},
     onPasswordChange: (String) -> Unit = {},
+    onConfirmPasswordChange: (String) -> Unit = {},
+    onSignUpClick: () -> Unit = {},
+    onNavigateToLogin: () -> Unit
 ) {
     val dimens = LocalAppDimens.current
     val focusManager = LocalFocusManager.current
-    val isBusy = uiState == LoginUiState.Loading
-//    var email by rememberSaveable { mutableStateOf("") }
-//    var sdt by rememberSaveable { mutableStateOf("") }
-//    var password by rememberSaveable { mutableStateOf("") }
-//    var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
     Surface {
-        if (isBusy) {
+        if (uiState == SignUpUiState.Loading) {
             ViewLoading(modifier = modifier)
 
         } else {
@@ -67,17 +59,35 @@ fun LoginScreen(
                     .padding(all = dimens.space2xl),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(dimens.space4xl))
+                Spacer(modifier = Modifier.height(dimens.space2xl))
                 Text(
-                    text = "Đăng nhập",
-                    modifier = Modifier.padding(vertical = dimens.spaceLg),
-                    style = MaterialTheme.typography.displayMedium,
-                    fontWeight = FontWeight.Bold
+                    text = "Đăng kí",
+                    modifier = Modifier.padding(bottom = dimens.spaceLg),
+                    style = MaterialTheme.typography.displayMedium
                 )
 
                 AppTextField(
+                    value = formState.fullName,
+                    onValueChange = { onFullNameChange(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = dimens.spaceSm),
+                    label = { Text("Tên đầy đủ") },
+                    isError = formState.fullNameError != null,
+                    errorMessage = formState.fullNameError,
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Words,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyBoardActions = KeyboardActions(onNext = {
+                        focusManager.moveFocus(
+                            FocusDirection.Down
+                        )
+                    }),
+                )
+                AppTextField(
                     value = formState.email,
-                    onValueChange = onEmailChange,
+                    onValueChange = { onEmailChange(it) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = dimens.spaceSm),
@@ -94,33 +104,57 @@ fun LoginScreen(
                         )
                     })
                 )
-                PasswordField(
-                    password = formState.password,
-                    onPasswordChange = onPasswordChange,
+                AppTextField(
+                    value = formState.phone,
+                    onValueChange = { onPhoneChange(it) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = dimens.spaceSm),
+                        .padding(vertical = dimens.spaceSm),
+                    label = { Text("Số điện thoại") },
+                    isError = formState.phoneError != null,
+                    errorMessage = formState.phoneError,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Phone,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyBoardActions = KeyboardActions(onNext = {
+                        focusManager.moveFocus(
+                            FocusDirection.Down
+                        )
+                    })
+                )
+                PasswordField(
+                    password = formState.password,
+                    onPasswordChange = { onPasswordChange(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = dimens.spaceSm),
                     label = { Text("Mật khẩu") },
                     isError = formState.passwordError != null,
                     errorMessage = formState.passwordError,
-                    //passwordVisible = passwordVisible,
-                    //onPasswordVisibleChange = { passwordVisible = it },
+//                passwordVisible = passwordVisible,
+//                onPasswordVisibleChange = { passwordVisible = it },
                     focusManager = LocalFocusManager.current
                 )
-                Text(
-                    text = "Quên mật khẩu?",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                PasswordField(
+                    password = formState.confirmPassword,
+                    onPasswordChange = { onConfirmPasswordChange(it) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = dimens.spaceLg, horizontal = dimens.spaceSm)
+                        .padding(vertical = dimens.spaceSm),
+                    label = { Text("Xác nhận mật khẩu") },
+                    isError = formState.confirmPasswordError != null,
+                    errorMessage = formState.confirmPasswordError,
+                passwordVisible = passwordVisible,
+                onPasswordVisibleChange = { passwordVisible = it },
+                    focusManager = LocalFocusManager.current
                 )
-                Spacer(modifier = Modifier.height(dimens.spaceMd))
+                Spacer(modifier = Modifier.height(dimens.spaceXl))
                 RoundedActionButton(
-                    text = "Đăng nhập",
+                    text = "Đăng kí",
                     onClick = {
                         focusManager.clearFocus()
-                        onLoginClick(formState.email, "57478", formState.password)
+                        onSignUpClick()
                     },
                     modifier = Modifier.fillMaxWidth(),
                     verticalPadding = dimens.spaceLg,
@@ -128,16 +162,16 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(dimens.space2xl))
                 Text(
-                    text = "Bạn chưa có tài khoản?",
+                    text = "Bạn đã có tài khoản?",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(dimens.spaceMd))
                 Text(
-                    text = "Đăng kí",
+                    text = "Đăng nhập",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { onNavigateToSignUp() }
+                    modifier = Modifier.clickable { onNavigateToLogin() }
                 )
             }
         }
@@ -146,19 +180,12 @@ fun LoginScreen(
 
 @Preview
 @Composable
-fun LoginScreenPreview() {
+fun SignUpScreenPreview() {
     EasyMartTheme {
-        LoginScreen(
+        SignUpScreen(
             modifier = Modifier.fillMaxSize(),
-            uiState = LoginUiState.Idle,
-            onLoginClick = { email, sdt, password ->
-                // Handle sign up click
-                Log.d(
-                    "login",
-                    "Sign up clicked with fullName: email: $email, sdt: $sdt, password: $password"
-                )
-            },
-            onNavigateToSignUp = { }
+            onSignUpClick = { },
+            onNavigateToLogin = { }
         )
     }
 }

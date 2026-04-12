@@ -60,6 +60,22 @@ interface CartDao {
     @Query("DELETE FROM cart_items WHERE cartId = :cartId")
     suspend fun clearAllCartItems(cartId: String)
 
+    @Query("SELECT cartId FROM cart_items WHERE id = :cartItemId LIMIT 1")
+    suspend fun getCartIdByCartItemId(cartItemId: Int): String?
+
+    @Query("SELECT * FROM carts WHERE id = :cartId LIMIT 1")
+    suspend fun getCartById(cartId: String): CartEntity?
+
+    @Query("""
+    SELECT * FROM cart_items
+    WHERE cartId = :cartId AND isSynced = 0
+    ORDER BY updatedAt ASC
+""")
+    suspend fun getUnsyncedCartItems(cartId: String): List<CartItemEntity>
+
+    @Query("UPDATE cart_items SET isSynced = 1 WHERE id = :id")
+    suspend fun markCartItemSynced(id: Int)
+
 //    @Query("UPDATE cart_items SET isChecked =:isChecked WHERE id =:cartItemId")
 //    suspend fun checkedChangeById(cartItemId: Int, isChecked: Boolean)
 }

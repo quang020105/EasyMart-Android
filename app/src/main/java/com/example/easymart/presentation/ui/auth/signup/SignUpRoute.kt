@@ -1,4 +1,4 @@
-package com.example.easymart.presentation.ui.signup
+package com.example.easymart.presentation.ui.auth.signup
 
 import android.util.Log
 import androidx.compose.material3.Scaffold

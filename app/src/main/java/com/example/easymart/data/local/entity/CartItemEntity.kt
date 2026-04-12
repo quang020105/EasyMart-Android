@@ -29,5 +29,7 @@ data class CartItemEntity(
     val price: Double,
     val imageUrl: String?,
     val quantity: Int,
+    val isSynced: Boolean = true, // đánh dấu đã đồng bộ với server hay chưa
+    val updatedAt: Long = System.currentTimeMillis(),
     val addAt: Long = System.currentTimeMillis(),
 )

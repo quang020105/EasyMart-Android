@@ -1,4 +1,4 @@
-package com.example.easymart.presentation.ui.login
+package com.example.easymart.presentation.ui.auth.login
 
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -14,6 +14,7 @@ fun LoginRoute(
     viewModel: LoginViewModel,
     onLoginClick: (email: String, sdt: String, password: String) -> Unit = {_,_,_ ->},
     onNavigateToSignUp: () -> Unit,
+    onNavigateToForgotPassword: () -> Unit = {},
     onLoginSuccess: (user: User) -> Unit = {}
 ){
     val formState = viewModel.formState.collectAsState()
@@ -42,6 +43,7 @@ fun LoginRoute(
             uiState = uiState.value,
             onLoginClick = onLoginClick,
             onNavigateToSignUp = onNavigateToSignUp,
+            onNavigateToForgotPassword = onNavigateToForgotPassword,
             onEmailChange = { viewModel.onEmailChange(it) },
             onPasswordChange = { viewModel.onPasswordChange(it) },
         )

@@ -33,6 +33,9 @@ fun CartRoute(
     CartScreen(
         cartItems = uiState.items,
         selectedItems = uiState.selectedItems,
+        pendingRemoveItem = uiState.pendingRemoveItem,
+        onConfirmRemove = { viewModel.confirmRemovePendingItem() },
+        onCancelRemove = { viewModel.cancelRemovePendingItem() },
         onCheckOutClick = {
             // Lưu danh sách sản phẩm đã chọn trước khi điều hướng sang checkout
             viewModel.saveSelectedItemsForCheckout()

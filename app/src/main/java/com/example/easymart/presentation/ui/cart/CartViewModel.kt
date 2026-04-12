@@ -10,6 +10,7 @@ import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
 import com.example.easymart.domain.usecase.cart.AddToCartUseCase
 import com.example.easymart.domain.usecase.cart.ClearAllCartsUseCase
 import com.example.easymart.domain.usecase.cart.ObserveCartUseCase
+import com.example.easymart.domain.usecase.cart.SyncCartUseCase
 import com.example.easymart.domain.usecase.cart.UpdateCartQuantityUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,33 +31,11 @@ class CartViewModel @Inject constructor(
     private val addToCartUS: AddToCartUseCase,
     private val updateQuantityUS: UpdateCartQuantityUseCase,
     private val observeCurrentUserUS: ObserveCurrentUserUseCase,
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val syncCartUseCase: SyncCartUseCase
 ) : ViewModel() {
     //phí ship mặc định
     private val shippingPerItem = 15000 * 1.0 / 26333
-
-//    private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
-//    val cartItems = _cartItems.asStateFlow().stateIn(
-//        scope = viewModelScope,
-//        started = SharingStarted.WhileSubscribed(5000),
-//        initialValue = emptyList()
-//    )
-//
-//    val selectedItems = cartItems.map { cartItems -> cartItems.filter { it.isChecked } }
-//
-//    val subtotal: StateFlow<Double> = selectedItems.map { cartItemsChecked ->
-//        cartItemsChecked.sumOf { it.totalPrice }
-//    }.stateIn(viewModelScope, SharingStarted.Eagerly, 0.0)
-//
-//    val shipping: StateFlow<Double> = selectedItems.map { cartItemsChecked ->
-//        cartItemsChecked.sumOf { (it.quantity * shippingPerItem).toDouble() }
-//    }.stateIn(viewModelScope, SharingStarted.Eagerly,0.0)
-//
-//    val total: StateFlow<Double> = combine(subtotal, shipping){s,sh -> s + sh}
-//        .stateIn(viewModelScope, SharingStarted.Eagerly,0.0)
-//
-//    private val _checkedAll = MutableStateFlow(false)
-//    val checkedAll = _checkedAll.asStateFlow()
 
     private val _uiState = MutableStateFlow(CartUiState())
     val uiState: StateFlow<CartUiState> = _uiState.asStateFlow()
@@ -159,22 +138,39 @@ class CartViewModel @Inject constructor(
     }
 
     fun updateQuantity(cartItem: CartItem, delta: Int) {
-//        viewModelScope.launch {
-//            try {
-//                updateQuantityUS(cartItem, delta)
-//            } catch (e: Exception) {
-//                _event.emit(CartEvent.ShowMessage("Không thể cập nhật số lượng"))
-//                Log.e("CartViewModelError", "updateQuantity: ${e.message}")
-//            }
-//        }
+        if (delta < 0 && cartItem.quantity <= 1) {
+            _uiState.update { state ->
+                state.copy(pendingRemoveItem = cartItem)
+            }
+            return
+        }
+
         viewModelScope.launch {
             runCatching {
                 updateQuantityUS(cartItem, delta)
             }.onFailure {
                 _event.emit(CartEvent.ShowMessage("Không thể cập nhật số lượng"))
-                Log.e("CartViewModelError", "updateQuantity: ${it.message}")
+                //Log.e("CartViewModelError", "updateQuantity: ${it.message}")
             }
         }
+    }
+
+    fun confirmRemovePendingItem() {
+        val target = _uiState.value.pendingRemoveItem ?: return
+        viewModelScope.launch {
+            runCatching {
+                updateQuantityUS(target, -target.quantity)
+            }.onSuccess {
+                _uiState.update { it.copy(pendingRemoveItem = null) }
+            }.onFailure {
+                _event.emit(CartEvent.ShowMessage("Không thể xóa sản phẩm"))
+                //Log.e("CartViewModelError", "confirmRemovePendingItem: ${it.message}")
+            }
+        }
+    }
+
+    fun cancelRemovePendingItem() {
+        _uiState.update { it.copy(pendingRemoveItem = null) }
     }
 
     fun onCheckChanged(id: Int, isChecked: Boolean) {
@@ -208,7 +204,7 @@ class CartViewModel @Inject constructor(
         
         if (selectedProductIds.isNotEmpty()) {
             pendingSelectedProductIds = selectedProductIds
-            Log.d("CartViewModel", "Saved selected items for checkout: $selectedProductIds")
+            //Log.d("CartViewModel", "Saved selected items for checkout: $selectedProductIds")
         }
     }
 
@@ -217,6 +213,8 @@ class CartViewModel @Inject constructor(
      * Method này được gọi từ CheckOutRoute để đảm bảo restore ngay khi vào checkout
      * Không clear pendingSelectedProductIds ở đây, để observeCart có thể restore lại nếu items chưa đầy đủ
      */
+
+    //chưa viết unittest
     fun restoreSelectedItemsAfterLogin() {
         val pendingIds = pendingSelectedProductIds ?: return
         val currentItems = _uiState.value.items
@@ -240,6 +238,16 @@ class CartViewModel @Inject constructor(
                     }
                 )
             }
+        }
+    }
+
+
+    //đồng bộ giỏ hàng
+    fun syncCart(userId: String?) {
+        if (userId == null) return
+
+        viewModelScope.launch {
+            syncCartUseCase(userId)
         }
     }
 }

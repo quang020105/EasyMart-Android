@@ -1,5 +1,7 @@
 package com.example.easymart.di
 
+import com.example.easymart.data.network.ConnectivityNetworkObserver
+import com.example.easymart.domain.network.NetworkObserver
 import com.example.easymart.data.remote.api.AlgoliaApi
 import com.example.easymart.data.remote.api.LocationApi
 import com.example.easymart.data.remote.api.PaymentApi
@@ -121,4 +123,10 @@ object NetworkModule {
     @Singleton
     fun providePaymentApi(@Named("payment") retrofit: Retrofit): PaymentApi =
         retrofit.create(PaymentApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNetworkObserver(
+        observer: ConnectivityNetworkObserver
+    ): NetworkObserver = observer
 }

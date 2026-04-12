@@ -131,4 +131,18 @@ dependencies {
     implementation(libs.firebase.messaging)
 
     implementation(libs.androidx.browser)
+
+    // JUnit
+    testImplementation(libs.junit)
+    // AndroidX Test (LiveData / Architecture)
+    testImplementation(libs.androidx.core.testing)
+    // Coroutines Test
+    testImplementation(libs.kotlinx.coroutines.test)
+    // Mocking
+    testImplementation(libs.mockk)
+    // Flow testing (optional but recommended)
+    testImplementation(libs.turbine)
+    // Assertion (optional)
+    testImplementation(libs.truth)
+
 }

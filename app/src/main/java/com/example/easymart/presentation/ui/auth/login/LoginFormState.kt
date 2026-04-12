@@ -1,4 +1,4 @@
-package com.example.easymart.presentation.ui.login
+package com.example.easymart.presentation.ui.auth.login
 
 data class LoginFormState(
     val email: String = "",

@@ -8,9 +8,12 @@ import com.example.easymart.domain.repository.AuthRepository
 import com.example.easymart.domain.usecase.auth.GetCurrentUserUseCase
 import com.example.easymart.domain.usecase.auth.LoginUseCase
 import com.example.easymart.domain.usecase.auth.LogoutUseCase
+import com.example.easymart.domain.usecase.cart.SyncCartOnLoginUseCase
+import com.example.easymart.domain.usecase.cart.SyncCartUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,11 +23,23 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val logoutUseCase: LogoutUseCase,
+    private val syncCartUseCase: SyncCartUseCase,
+    private val syncCartOnLoginUseCase: SyncCartOnLoginUseCase,
 ) : ViewModel() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Guest)
     val authState = _authState.asStateFlow()
     init {
         refresh()
+        observeLoginForSync()
+    }
+
+    // Khi người dùng đăng nhập thành công, đồng bộ giỏ hàng
+    private fun observeLoginForSync() {
+        viewModelScope.launch {
+            syncCartOnLoginUseCase().collectLatest { userId ->
+                syncCartUseCase(userId)
+            }
+        }
     }
 
     fun refresh() {
@@ -42,5 +57,4 @@ class AuthViewModel @Inject constructor(
             _authState.value = AuthState.Guest
         }
     }
-
 }

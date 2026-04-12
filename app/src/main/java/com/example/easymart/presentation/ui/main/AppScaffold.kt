@@ -44,6 +44,7 @@ import com.example.easymart.presentation.ui.main.bottomnav.BottomNavItem
 import com.example.easymart.presentation.ui.main.bottomnav.EasyMartBottomBar
 import com.example.easymart.presentation.ui.search.SearchViewModel
 import com.example.easymart.presentation.ui.search.components.SearchTopbar
+import com.example.easymart.presentation.sync.AppSyncViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -135,6 +136,12 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
                 Screen.PayOsCancel.createRoute(orderCode, localOrderId, status)
             )
         }
+    }
+
+    //đồng bộ dữ liệu khi app vào foreground
+    val syncViewModel = hiltViewModel<AppSyncViewModel>()
+    LaunchedEffect(Unit) {
+        syncViewModel.startSync()
     }
 
     Scaffold(
@@ -296,3 +303,7 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
 //    val icon: Int,
 //    val graphRoute: String
 //)
+
+
+
+

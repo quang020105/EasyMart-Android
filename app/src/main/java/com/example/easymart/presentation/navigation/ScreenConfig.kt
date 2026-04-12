@@ -10,6 +10,7 @@ private val screenConfigs: List<Pair<String, ScreenConfig>> = listOf(
     "splash" to ScreenConfig(showTopBar = false, showBottomBar = false),
     "login" to ScreenConfig(title = "Đăng nhập", showTopBar = false),
     "signup" to ScreenConfig(title = "Đăng ký", showTopBar = false),
+    "forgot_password" to ScreenConfig(title = "Quên mật khẩu", showTopBar = false),
 
     // home graph
     "home" to ScreenConfig(showTopBar = true, showBottomBar = true),

@@ -12,6 +12,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.LocalShipping
+import androidx.compose.material.icons.filled.QrCode
+import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,8 +66,8 @@ fun SelectPaymentMethodScreen(
 
             PaymentMethodItem(
                 method = PaymentMethod.ONLINE_GATEWAY,
-                description = "Thẻ ngân hàng, VNPay, MoMo...",
-                icon = Icons.Default.CreditCard,
+                description = "Thanh toán bằng mã QR",
+                icon = Icons.Default.QrCode2,
                 selected = uiState.selectedMethod == PaymentMethod.ONLINE_GATEWAY,
                 onClick = { onMethodSelected(PaymentMethod.ONLINE_GATEWAY) }
             )

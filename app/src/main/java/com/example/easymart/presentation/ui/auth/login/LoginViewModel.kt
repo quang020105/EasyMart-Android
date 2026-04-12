@@ -1,4 +1,4 @@
-package com.example.easymart.presentation.ui.login
+package com.example.easymart.presentation.ui.auth.login
 
 import android.util.Log
 import android.util.Patterns
@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.easymart.domain.usecase.auth.LoginUseCase
 import com.example.easymart.domain.usecase.cart.MergeGuestCartIntoUserUseCase
-import com.example.easymart.presentation.ui.signup.SignUpUiEvent
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthException
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -8,6 +8,7 @@ data class CartEntity(
     @PrimaryKey
     val id: String,
     val userId: String?,
+    val isSynced: Boolean = false, // đánh dấu đã đồng bộ với server hay chưa
     val createdAt: Long,
     val updatedAt: Long
 )

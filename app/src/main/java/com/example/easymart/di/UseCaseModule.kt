@@ -17,11 +17,13 @@ import com.example.easymart.domain.usecase.auth.GetCurrentUserUseCase
 import com.example.easymart.domain.usecase.auth.LoginUseCase
 import com.example.easymart.domain.usecase.auth.LogoutUseCase
 import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
+import com.example.easymart.domain.usecase.auth.SendPasswordResetEmailUseCase
 import com.example.easymart.domain.usecase.auth.SignUpUseCase
 import com.example.easymart.domain.usecase.cart.AddToCartUseCase
 import com.example.easymart.domain.usecase.cart.ClearAllCartsUseCase
 import com.example.easymart.domain.usecase.cart.MergeGuestCartIntoUserUseCase
 import com.example.easymart.domain.usecase.cart.ObserveCartUseCase
+import com.example.easymart.domain.usecase.cart.SyncCartUseCase
 import com.example.easymart.domain.usecase.cart.UpdateCartQuantityUseCase
 import com.example.easymart.domain.usecase.location.GetDistrictsUseCase
 import com.example.easymart.domain.usecase.location.GetProvincesUseCase
@@ -77,6 +79,9 @@ object UseCaseModule {
     fun provideMergeCartUseCase(cartRepo: CartRepository): MergeGuestCartIntoUserUseCase =
         MergeGuestCartIntoUserUseCase(cartRepo)
 
+    @Provides
+    fun provideSyncCartUseCase(cartRepo: CartRepository): SyncCartUseCase =
+        SyncCartUseCase(cartRepo)
 
 
     //search
@@ -195,5 +200,9 @@ object UseCaseModule {
     @Provides
     fun provideObserveUserUseCase(authRepo: AuthRepository): ObserveCurrentUserUseCase =
         ObserveCurrentUserUseCase(authRepo)
+
+    @Provides
+    fun provideSendPasswordResetEmailUseCase(authRepo: AuthRepository) =
+        SendPasswordResetEmailUseCase(authRepo)
 
 }

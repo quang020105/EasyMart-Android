@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.easymart.R
@@ -53,7 +55,7 @@ fun ProductCart(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(all = dimens.spaceXs)
+            .padding(vertical = dimens.spaceXs)
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
@@ -65,7 +67,7 @@ fun ProductCart(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = dimens.spaceMd),
+                .padding(horizontal = dimens.spaceSm, vertical = dimens.spaceSm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
@@ -78,71 +80,69 @@ fun ProductCart(
             )
             ProductCard(
                 modifier = Modifier
-                    .padding(all = dimens.spaceXs)
                     .size(dimens.cartImgSize),
                 product = cartItem.product,
                 onClick = {},
                 colorBackground = MaterialTheme.colorScheme.background
             )
+            Spacer(modifier = Modifier.width(dimens.spaceSm))
             Column(
                 modifier = Modifier
-                    .padding(all = dimens.spaceSm)
+                    .weight(1f)
+                    .padding(end = dimens.spaceSm)
             ) {
                 Text(
                     text = cartItem.product.name,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 2
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
+                Spacer(modifier = Modifier.height(dimens.spaceXs))
                 Text(
                     text = cartItem.price.toVNDString(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(vertical = dimens.spaceSm)
                 )
             }
-
-        }
-
-        Surface(
-            modifier = Modifier
-                .padding(end = dimens.spaceMd, bottom = dimens.spaceMd)
-                .wrapContentWidth().align(Alignment.End),
-            shape = RoundedCornerShape(dimens.radiusSmall),
-            shadowElevation = dimens.cardElevation,
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Row(
-                modifier = Modifier.height(dimens.cardQualityHeight),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
+            Surface(
+                shape = RoundedCornerShape(dimens.radiusSmall),
+                shadowElevation = dimens.cardElevation,
+                color = MaterialTheme.colorScheme.surfaceVariant
             ) {
-                IconButton(
-                    onClick = onMinusClick,
-                    modifier = Modifier.wrapContentSize()
-
+                Row(
+                    modifier = Modifier
+                        .height(dimens.cardQualityHeight)
+                        .padding(horizontal = dimens.spaceXs),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_minus),
-                        contentDescription = "Minus",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.fillMaxHeight()
+                    IconButton(
+                        onClick = onMinusClick,
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_minus),
+                            contentDescription = "Minus",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    Text(
+                        text = cartItem.quantity.toString(),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(horizontal = dimens.spaceXs)
                     )
-                }
-                Text(
-                    text = cartItem.quantity.toString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                IconButton(
-                    onClick = onPlusClick
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_plus),
-                        contentDescription = "Minus",
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.fillMaxHeight()
-                    )
+                    IconButton(
+                        onClick = onPlusClick,
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_plus),
+                            contentDescription = "Plus",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
 
             }

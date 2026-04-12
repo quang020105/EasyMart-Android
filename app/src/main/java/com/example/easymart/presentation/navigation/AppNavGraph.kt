@@ -20,7 +20,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.presentation.auth.AuthViewModel
 import com.example.easymart.presentation.common.AppEventBus
 import com.example.easymart.presentation.common.ui.LoginRequiredBottomSheet
@@ -33,8 +32,8 @@ import com.example.easymart.presentation.ui.deliveryaddress.AddAddressRoute
 import com.example.easymart.presentation.ui.deliveryaddress.AddressViewModel
 import com.example.easymart.presentation.ui.deliveryaddress.DeliveryAddressRoute
 import com.example.easymart.presentation.ui.home.HomeRoute
-import com.example.easymart.presentation.ui.login.LoginRoute
-import com.example.easymart.presentation.ui.login.LoginViewModel
+import com.example.easymart.presentation.ui.auth.login.LoginRoute
+import com.example.easymart.presentation.ui.auth.login.LoginViewModel
 import com.example.easymart.presentation.ui.order.OrderRoute
 import com.example.easymart.presentation.ui.order.OrderViewModel
 import com.example.easymart.presentation.ui.orderdetail.OrderDetailRoute
@@ -48,9 +47,11 @@ import com.example.easymart.presentation.ui.resultorder.OnlinePaymentProcessingR
 import com.example.easymart.presentation.ui.resultorder.OrderSuccessRoute
 import com.example.easymart.presentation.ui.resultorder.PaymentFailedRoute
 import com.example.easymart.presentation.ui.search.SearchRoute
-import com.example.easymart.presentation.ui.signup.SignUpRoute
-import com.example.easymart.presentation.ui.signup.SignUpViewModel
+import com.example.easymart.presentation.ui.auth.signup.SignUpRoute
+import com.example.easymart.presentation.ui.auth.signup.SignUpViewModel
 import com.example.easymart.presentation.ui.splash.SplashScreen
+import com.example.easymart.presentation.ui.auth.forgot_password.ForgotPasswordRoute
+import com.example.easymart.presentation.ui.auth.forgot_password.ForgotPasswordViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -119,10 +120,10 @@ fun AppNavGraph(
                     onNavigateToSignUp = {
                         navController.navigate("${Screen.SignUp.route}?next=${Uri.encode(next)}")
                     },
+                    onNavigateToForgotPassword = {
+                        navController.navigate("${Screen.ForgotPassword.route}?next=${Uri.encode(next)}")
+                    },
                     onLoginClick = { email, phone, password ->
-//                        navController.navigate(Screen.HomeGraph.route) {
-//                            popUpTo(Screen.AuthGraph.route) { inclusive = true }
-//                        }
                         loginViewModel.login(email, password)
                     },
                     onLoginSuccess = { user ->
@@ -174,6 +175,24 @@ fun AppNavGraph(
                                 popUpTo(Screen.AuthGraph.route) { inclusive = true }
                             }
                         }
+                    }
+                )
+            }
+
+            composableWithAnim(
+                route = "${Screen.ForgotPassword.route}?next={next}",
+                anim = NavAnim.FADE,
+                arguments = listOf(navArgument("next") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                })
+            ) { backStackEntry ->
+                val next = backStackEntry.arguments?.getString("next") ?: ""
+                val forgotViewModel = hiltViewModel<ForgotPasswordViewModel>()
+                ForgotPasswordRoute(
+                    viewModel = forgotViewModel,
+                    onNavigateToLogin = {
+                        navController.navigate("${Screen.Login.route}?next=${Uri.encode(next)}")
                     }
                 )
             }
@@ -677,6 +696,8 @@ fun AppNavGraph(
         }
     }
 }
+
+
 
 
 

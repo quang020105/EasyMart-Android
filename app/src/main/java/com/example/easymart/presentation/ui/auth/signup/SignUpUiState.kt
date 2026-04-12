@@ -1,4 +1,4 @@
-package com.example.easymart.presentation.ui.signup
+package com.example.easymart.presentation.ui.auth.signup
 
 import com.example.easymart.domain.model.User
 

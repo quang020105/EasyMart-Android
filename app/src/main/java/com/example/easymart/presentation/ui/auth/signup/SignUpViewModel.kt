@@ -1,6 +1,7 @@
-package com.example.easymart.presentation.ui.signup
+package com.example.easymart.presentation.ui.auth.signup
 
 import android.util.Log
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.easymart.domain.usecase.auth.SignUpUseCase
@@ -137,7 +138,7 @@ class SignUpViewModel @Inject constructor(
 
     private fun validateEmail(email: String): String? {
         if (email.isEmpty()) return "Email không được để trống"
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches())
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches())
             return "Email không hợp lệ"
         return null
     }

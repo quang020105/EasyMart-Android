@@ -112,4 +112,12 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             auth.signOut()
         }
     }
+
+    override suspend fun sendPasswordResetEmail(
+        email: String,
+    ): Result<Unit> {
+        return runCatching {
+            auth.sendPasswordResetEmail(email).await()
+        }
+    }
 }

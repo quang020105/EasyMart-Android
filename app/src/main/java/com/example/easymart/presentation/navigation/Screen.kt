@@ -7,6 +7,7 @@ sealed class Screen(val route: String) {
     data object AuthGraph : Screen("auth_graph")
     data object Login : Screen("login")
     data object SignUp : Screen("signup")
+    data object ForgotPassword : Screen("forgot_password")
 
     //graph home
     data object HomeGraph : Screen("home_graph")

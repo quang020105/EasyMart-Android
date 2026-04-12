@@ -1,4 +1,4 @@
-package com.example.easymart.presentation.ui.login
+package com.example.easymart.presentation.ui.auth.login
 
 sealed class LoginUiState {
     object Idle : LoginUiState()

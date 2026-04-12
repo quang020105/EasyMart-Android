@@ -29,7 +29,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
-
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +42,7 @@ fun HomeTopbar(
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
         title = {
             SearchBoxTopBar(onClick = onSearchClick)
@@ -63,24 +65,31 @@ fun SearchBoxTopBar(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(40.dp)
-            .clickable(onClick = onClick)
-            .background(MaterialTheme.colorScheme.primary),
-        shape = RoundedCornerShape(dimens.radiusMedium)
+            .height(44.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(24.dp),
+        color = MaterialTheme.colorScheme.surface
     ) {
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = dimens.spaceSm),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-
-            Spacer(modifier = Modifier.padding(dimens.spaceXs))
             Icon(
                 painter = painterResource(id = R.drawable.ic_search),
                 contentDescription = null,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(modifier = Modifier.padding(dimens.spaceXs))
-            Text(text = placeholder, style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.width(dimens.spaceSm))
+            Text(
+                text = placeholder,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
@@ -151,5 +160,3 @@ fun HomeTopbarPreview() {
         )
     }
 }
-
-
