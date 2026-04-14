@@ -48,6 +48,18 @@ class CartViewModel @Inject constructor(
 
     init {
         observeCart()
+        observeCheckAll()
+    }
+
+    private fun observeCheckAll() {
+        viewModelScope.launch {
+            uiState.collect { state ->
+                val allChecked = state.items.isNotEmpty() && state.items.all { it.isChecked }
+                if (state.checkedAll != allChecked) {
+                    _uiState.update { it.copy(checkedAll = allChecked) }
+                }
+            }
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -162,6 +174,7 @@ class CartViewModel @Inject constructor(
                 updateQuantityUS(target, -target.quantity)
             }.onSuccess {
                 _uiState.update { it.copy(pendingRemoveItem = null) }
+                _event.emit(CartEvent.ShowMessage("Đã xóa sản phẩm"))
             }.onFailure {
                 _event.emit(CartEvent.ShowMessage("Không thể xóa sản phẩm"))
                 //Log.e("CartViewModelError", "confirmRemovePendingItem: ${it.message}")
@@ -171,6 +184,41 @@ class CartViewModel @Inject constructor(
 
     fun cancelRemovePendingItem() {
         _uiState.update { it.copy(pendingRemoveItem = null) }
+    }
+
+    fun requestRemoveSelectedItems() {
+        val hasSelected = _uiState.value.selectedItems.isNotEmpty()
+        if (!hasSelected) {
+            viewModelScope.launch {
+                _event.emit(CartEvent.ShowMessage("Chưa có sản phẩm nào được chọn"))
+            }
+            return
+        }
+        _uiState.update { it.copy(pendingRemoveSelected = true) }
+    }
+
+    fun cancelRemoveSelectedItems() {
+        _uiState.update { it.copy(pendingRemoveSelected = false) }
+    }
+
+    fun confirmRemoveSelectedItems() {
+        val selectedItems = _uiState.value.selectedItems
+        if (selectedItems.isEmpty()) {
+            _uiState.update { it.copy(pendingRemoveSelected = false) }
+            return
+        }
+        viewModelScope.launch {
+            runCatching {
+                selectedItems.forEach { item ->
+                    updateQuantityUS(item, -item.quantity)
+                }
+            }.onSuccess {
+                _uiState.update { it.copy(pendingRemoveSelected = false) }
+                _event.emit(CartEvent.ShowMessage("Đã xóa ${selectedItems.size} sản phẩm"))
+            }.onFailure {
+                _event.emit(CartEvent.ShowMessage("Không thể xóa các sản phẩm đã chọn"))
+            }
+        }
     }
 
     fun onCheckChanged(id: Int, isChecked: Boolean) {

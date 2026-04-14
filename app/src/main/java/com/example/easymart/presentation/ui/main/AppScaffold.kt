@@ -1,5 +1,6 @@
 package com.example.easymart.presentation.ui.main
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.border
@@ -24,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -39,6 +41,7 @@ import com.example.easymart.presentation.navigation.Screen
 import com.example.easymart.presentation.navigation.getScreenConfig
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.cart.CartViewModel
+import com.example.easymart.presentation.ui.cart.components.CartTopbar
 import com.example.easymart.presentation.ui.home.components.HomeTopbar
 import com.example.easymart.presentation.ui.main.bottomnav.BottomNavItem
 import com.example.easymart.presentation.ui.main.bottomnav.EasyMartBottomBar
@@ -46,6 +49,7 @@ import com.example.easymart.presentation.ui.search.SearchViewModel
 import com.example.easymart.presentation.ui.search.components.SearchTopbar
 import com.example.easymart.presentation.sync.AppSyncViewModel
 
+@SuppressLint("UnrememberedGetBackStackEntry")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepLink: Uri? = null) {
@@ -126,12 +130,16 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
         val localOrderId = link.getQueryParameter("localOrderId")?.toIntOrNull()
         val status = link.getQueryParameter("status")
 
-        Log.d("AppScaffold", "Received deep link with path: $path, orderCode: $orderCode, localOrderId: $localOrderId, status: $status")
+        Log.d(
+            "AppScaffold",
+            "Received deep link with path: $path, orderCode: $orderCode, localOrderId: $localOrderId, status: $status"
+        )
 
         when (path.lowercase()) {
             "return" -> navController.navigate(
                 Screen.PayOsReturn.createRoute(orderCode, localOrderId, status)
             )
+
             "cancel" -> navController.navigate(
                 Screen.PayOsCancel.createRoute(orderCode, localOrderId, status)
             )
@@ -177,6 +185,23 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
                         }
                     }
 
+                    Screen.Cart.route -> {
+                        val parentEntry = remember {
+                            navController.getBackStackEntry(Screen.HomeGraph.route)
+                        }
+                        val viewModel = hiltViewModel<CartViewModel>(parentEntry)
+                        val uiState by viewModel.uiState.collectAsState()
+                        CartTopbar(
+                            selectedCount = uiState.selectedItems.size,
+                            onBackClick = {
+                                navController.navigateUp()
+                            },
+                            onDeleteSelectedClick = {
+                                viewModel.requestRemoveSelectedItems()
+                            }
+                        )
+                    }
+
                     else -> {
                         TopAppBar(
                             title = { Text(config.title ?: "") },
@@ -206,6 +231,7 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
                                 }
                             },
                         )
+
                     }
 
                 }
@@ -303,6 +329,10 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
 //    val icon: Int,
 //    val graphRoute: String
 //)
+
+
+
+
 
 
 

@@ -5,7 +5,8 @@ import com.example.easymart.domain.model.CartItem
 data class CartUiState(
     val items: List<CartItem> = emptyList(),
     val checkedAll: Boolean = false,
-    val pendingRemoveItem: CartItem? = null
+    val pendingRemoveItem: CartItem? = null,
+    val pendingRemoveSelected: Boolean = false
 ) {
     val selectedItems = items.filter { it.isChecked }
 
