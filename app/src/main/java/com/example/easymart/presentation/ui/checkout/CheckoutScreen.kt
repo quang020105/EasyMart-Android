@@ -1,9 +1,16 @@
 package com.example.easymart.presentation.ui.checkout
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,13 +18,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +36,10 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +67,7 @@ fun CheckoutScreen(
     shipping: Double = 0.0,
     total: Double = 0.0,
     isLoading: Boolean = false,
+    isAddressLoading: Boolean = false,
     onAddressClick: () -> Unit = {},
     onPaymentClick: () -> Unit = {},
     onConfirmClick: () -> Unit = {}
@@ -88,78 +103,143 @@ fun CheckoutScreen(
                     ),
                     shape = RoundedCornerShape(dimens.radiusLarge)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(all = dimens.spaceLg)
-                    ) {
-                        Text(
-                            text = "Địa chỉ giao hàng",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(bottom = dimens.spaceSm)
-                        )
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = dimens.spaceMd),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_address),
-                                contentDescription = "Biểu tượng địa chỉ",
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-//                            Text(
-//                                text = address?.detailAddress ?: "Chưa chọn địa chỉ",
-//                                style = MaterialTheme.typography.bodyLarge,
-//                                modifier = Modifier.padding(start = dimens.spaceMd)
-//                            )
-
-
+                    when {
+                        isAddressLoading -> {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = dimens.spaceLg)
+                                    .heightIn(min = 120.dp)
+                                    .padding(all = dimens.spaceLg),
+                                verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
                             ) {
-
-                                // -------- NAME + PHONE --------
+                                ShimmerPlaceholder(
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.6f)
+                                        .height(18.dp)
+                                )
+                                ShimmerPlaceholder(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(14.dp)
+                                )
+                                ShimmerPlaceholder(
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.75f)
+                                        .height(14.dp)
+                                )
+                            }
+                        }
+                        address == null -> {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(min = 120.dp)
+                                    .padding(all = dimens.spaceLg),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_address),
+                                    contentDescription = "Địa chỉ giao hàng",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = "Bạn chưa có địa chỉ giao hàng",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.padding(top = dimens.spaceSm)
+                                )
+                                Text(
+                                    text = "Thêm địa chỉ để tiếp tục thanh toán",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(top = dimens.spaceXs)
+                                )
+                                FilledTonalButton(
+                                    onClick = onAddressClick,
+                                    modifier = Modifier.padding(top = dimens.spaceSm),
+                                    colors = ButtonDefaults.filledTonalButtonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                                        contentColor = MaterialTheme.colorScheme.primary
+                                    )
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_add),
+                                        contentDescription = "Thêm địa chỉ"
+                                    )
+                                    Spacer(modifier = Modifier.width(dimens.spaceSm))
+                                    Text(text = "Thêm địa chỉ")
+                                }
+                            }
+                        }
+                        else -> {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(all = dimens.spaceLg)
+                            ) {
+                                Text(
+                                    text = "Địa chỉ giao hàng",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier.padding(bottom = dimens.spaceSm)
+                                )
                                 Row(
                                     modifier = Modifier
-                                        .padding(vertical = dimens.spaceXs)
-                                        .fillMaxWidth(),
+                                        .fillMaxWidth()
+                                        .padding(vertical = dimens.spaceMd),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text(
-                                        text = address?.name ?: "",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        fontWeight = FontWeight.Medium
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_address),
+                                        contentDescription = "Biểu tượng địa chỉ",
+                                        tint = MaterialTheme.colorScheme.primary,
                                     )
-                                    VerticalDivider(
+
+                                    Column(
                                         modifier = Modifier
-                                            .padding(horizontal = dimens.spaceSm)
-                                            .height(16.dp),
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                            alpha = 0.5f
-                                        ),
-                                        thickness = 1.dp
-                                    )
-                                    Text(
-                                        text = address?.phone ?: "",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                            alpha = 0.7f
+                                            .fillMaxWidth()
+                                            .padding(horizontal = dimens.spaceLg)
+                                    ) {
+
+                                        // -------- NAME + PHONE --------
+                                        Row(
+                                            modifier = Modifier
+                                                .padding(vertical = dimens.spaceXs)
+                                                .fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = address.name,
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = MaterialTheme.colorScheme.onSurface,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                            VerticalDivider(
+                                                modifier = Modifier
+                                                    .padding(horizontal = dimens.spaceSm)
+                                                    .height(16.dp),
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                                    alpha = 0.5f
+                                                ),
+                                                thickness = 1.dp
+                                            )
+                                            Text(
+                                                text = address.phone,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                                    alpha = 0.7f
+                                                )
+                                            )
+                                        }
+
+
+                                        Text(
+                                            text = address.addressString,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.padding(vertical = dimens.spaceXs)
                                         )
-                                    )
+                                    }
                                 }
-
-
-                                Text(
-                                    text = address?.addressString ?: "",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(vertical = dimens.spaceXs)
-                                )
                             }
                         }
                     }
@@ -329,24 +409,40 @@ fun CheckoutScreen(
             }
 
         }
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
+                .background(MaterialTheme.colorScheme.background)
+                .padding(bottom = dimens.spaceXs),
+            horizontalAlignment = Alignment.End
         ) {
-            Text(text = "Tổng cộng: ", style = MaterialTheme.typography.titleSmall)
-            Text(
-                text = total.toVNDString(), color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge
-            )
-            RoundedActionButton(
-                text = if (isLoading) "Đang xử lý" else "Thanh toán",
-                enabled = !isLoading,
-                onClick = onConfirmClick,
-                modifier = Modifier.padding(horizontal = dimens.spaceMd, vertical = dimens.spaceXs)
-            )
+            if (address == null && !isAddressLoading) {
+                Text(
+                    text = "Vui lòng thêm địa chỉ giao hàng trước khi đặt hàng",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(horizontal = dimens.spaceMd, vertical = dimens.spaceXs)
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(text = "Tổng cộng: ", style = MaterialTheme.typography.titleSmall)
+                Text(
+                    text = total.toVNDString(), color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                RoundedActionButton(
+                    text = if (isLoading) "Đang xử lý" else "Thanh toán",
+                    enabled = !isLoading && address != null,
+                    onClick = onConfirmClick,
+                    modifier = Modifier.padding(horizontal = dimens.spaceMd, vertical = dimens.spaceXs)
+                )
+            }
         }
     }
 
@@ -367,7 +463,39 @@ fun CheckoutScreenPreview() {
             cartItems = mockCartItems,
             subTotal = 290.0,
             shipping = 10.0,
-            total = 300.0
+            total = 300.0,
+            isAddressLoading = false
         )
     }
+}
+
+@Composable
+private fun ShimmerPlaceholder(
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(6.dp)
+) {
+    val transition = rememberInfiniteTransition(label = "shimmer")
+    val translate = transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 600f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "shimmer_translate"
+    )
+    val shimmerColors = listOf(
+        Color(0xFFEEEEEE),
+        Color(0xFFF6F6F6),
+        Color(0xFFEEEEEE)
+    )
+    val brush = Brush.linearGradient(
+        colors = shimmerColors,
+        start = Offset(translate.value - 200f, 0f),
+        end = Offset(translate.value, 0f)
+    )
+
+    Box(
+        modifier = modifier.background(brush, shape)
+    )
 }

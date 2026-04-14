@@ -69,10 +69,15 @@ class AddressViewModel @Inject constructor(
     //set địa chỉ mặc định khi vào màn thanh toán
     private fun loadDefaultAddress() {
         viewModelScope.launch {
-            val defaultAddress = withContext(ioDispatcher){
-                getDefaultAddressUseCase()
+            _uiState.update { it.copy(isLoading = true) }
+            try {
+                val defaultAddress = withContext(ioDispatcher) {
+                    getDefaultAddressUseCase()
+                }
+                _selectedAddress.value = defaultAddress
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
             }
-            _selectedAddress.value = defaultAddress
             //Log.d("AddressViewModel", "defaultAddress: $defaultAddress")
         }
     }

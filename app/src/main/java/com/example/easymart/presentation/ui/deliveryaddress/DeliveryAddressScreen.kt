@@ -2,6 +2,7 @@ package com.example.easymart.presentation.ui.deliveryaddress
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +25,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.easymart.R
 import com.example.easymart.domain.model.Address
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
@@ -144,6 +147,22 @@ fun DeliveryAddressScreen(
                     )
                 }
             }
+
+//            FilledTonalButton(
+//                onClick = onAddressClick,
+//                modifier = Modifier.padding(top = dimens.spaceSm),
+//                colors = ButtonDefaults.filledTonalButtonColors(
+//                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+//                    contentColor = MaterialTheme.colorScheme.primary
+//                )
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.ic_add),
+//                    contentDescription = "Thêm địa chỉ"
+//                )
+//                Spacer(modifier = Modifier.width(dimens.spaceSm))
+//                Text(text = "Thêm địa chỉ")
+//            }
         }
     }
 

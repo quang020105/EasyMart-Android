@@ -35,6 +35,7 @@ fun CheckOutRoute(
 
     //lấy địa chỉ đã chọn
     val selectedAddress by addressViewModel.selectedAddress.collectAsState()
+    val addressUiState by addressViewModel.uiState.collectAsState()
 
     //trạng thái ui của checkout
     val uiState by checkoutViewModel.uiState.collectAsState()
@@ -112,6 +113,7 @@ fun CheckOutRoute(
         onAddressClick = { checkoutViewModel.selectAddressClick() },
         onPaymentClick = { checkoutViewModel.selectPaymentClick() },
         isLoading = uiState.isProcessing,
+        isAddressLoading = addressUiState.isLoading,
         onConfirmClick = { checkoutViewModel.pay(
             cartItems = cartUiState.selectedItems,
             address = selectedAddress,
