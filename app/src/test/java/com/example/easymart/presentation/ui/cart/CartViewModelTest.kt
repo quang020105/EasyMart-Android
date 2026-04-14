@@ -25,8 +25,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -119,6 +121,12 @@ class CartViewModelTest {
             syncCartUseCase = syncCartUseCase
         )
     }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
 
     @Test
     fun initialState_shouldHaveDefaultValues() = runTest {

@@ -3,6 +3,7 @@ package com.example.easymart.presentation.ui.deliveryaddress
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.easymart.di.IoDispatcher
 import com.example.easymart.domain.model.Address
 import com.example.easymart.domain.model.District
 import com.example.easymart.domain.model.Province
@@ -18,7 +19,7 @@ import com.example.easymart.domain.usecase.location.GetDistrictsUseCase
 import com.example.easymart.domain.usecase.location.GetProvincesUseCase
 import com.example.easymart.domain.usecase.location.GetWardsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +45,8 @@ class AddressViewModel @Inject constructor(
     private val getDefaultAddressUseCase: GetDefaultAddressUseCase,
     private val getProvincesUS: GetProvincesUseCase,
     private val getDistrictsUS: GetDistrictsUseCase,
-    private val getWardsUS: GetWardsUseCase
+    private val getWardsUS: GetWardsUseCase,
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
     val addresses: StateFlow<List<Address>> = getALlAddressUS()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
@@ -67,11 +69,11 @@ class AddressViewModel @Inject constructor(
     //set địa chỉ mặc định khi vào màn thanh toán
     private fun loadDefaultAddress() {
         viewModelScope.launch {
-            val defaultAddress = withContext(Dispatchers.IO){
+            val defaultAddress = withContext(ioDispatcher){
                 getDefaultAddressUseCase()
             }
             _selectedAddress.value = defaultAddress
-            Log.d("AddressViewModel", "defaultAddress: $defaultAddress")
+            //Log.d("AddressViewModel", "defaultAddress: $defaultAddress")
         }
     }
 
@@ -101,7 +103,7 @@ class AddressViewModel @Inject constructor(
 
     fun loadProvinces() {
         viewModelScope.launch {
-            val provinces = withContext(Dispatchers.IO) {
+            val provinces = withContext(ioDispatcher) {
                 getProvincesUS()
             }
             Log.d("AddressViewModel", "provincesUC: $provinces")
@@ -112,7 +114,7 @@ class AddressViewModel @Inject constructor(
 
     fun onProvinceSelected(province: Province?) {
         viewModelScope.launch {
-            val districts = withContext(Dispatchers.IO) {
+            val districts = withContext(ioDispatcher) {
                 getDistrictsUS(province?.code ?: 0)
             }
             _uiState.value = _uiState.value.copy(districts = districts, selectedProvince = province, selectedDistrict = null, selectedWard = null)
@@ -123,7 +125,7 @@ class AddressViewModel @Inject constructor(
 
     fun onDistrictSelected(district: District?) {
         viewModelScope.launch {
-            val wards =  withContext(Dispatchers.IO) {
+            val wards =  withContext(ioDispatcher) {
                 getWardsUS(district?.code ?: 0)
             }
             _uiState.value = _uiState.value.copy(wards = wards, selectedDistrict = district, selectedWard = null)

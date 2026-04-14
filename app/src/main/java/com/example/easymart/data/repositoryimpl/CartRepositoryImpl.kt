@@ -13,8 +13,6 @@ import com.example.easymart.domain.repository.CartRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -55,7 +53,12 @@ class CartRepositoryImpl @Inject constructor(
             val existing = cartDao.getExistingByProductId(cart.id, cartItem.product.id)
             if (existing != null) {
                 val newQuantity = existing.quantity + cartItem.quantity
-                val updated = existing.copy(quantity = newQuantity, isSynced = false, updatedAt = now)
+                val updated = existing.copy(
+                    quantity = newQuantity,
+                    isSynced = false,
+                    isDeleted = false,
+                    updatedAt = now
+                )
                 cartDao.updateCartItem(updated)
 //                if (userId != null) {
 //                    remoteDS.upsertCartItem(userId, updated.toRemoteDto())
@@ -64,6 +67,7 @@ class CartRepositoryImpl @Inject constructor(
             } else {
                 cartDao.insertCartItem(cartItem.toEntity(cart.id).copy(
                     isSynced = false,
+                    isDeleted = false,
                     updatedAt = now
                 ))
 //                if (userId != null) {
@@ -117,11 +121,12 @@ class CartRepositoryImpl @Inject constructor(
             val unSyncedItems = cartDao.getUnsyncedCartItems(cartId = cart.id)
             unSyncedItems.forEach { local ->
                 runCatching {
-                    if(local.quantity <= 0){
-                        cartDao.deleteCartItem(local)
+                    if (local.isDeleted || local.quantity <= 0) {
                         remoteDS.deleteCartItem(userId, local.productId)
+                        cartDao.deleteCartItem(local)
                     } else {
                         remoteDS.upsertCartItem(userId, local.toRemoteDto())
+                        cartDao.markCartItemSynced(local.id)
                     }
                 }.onFailure {
                     Log.e("CartRepositoryImpl", "Đồng bộ thất bại ${local.id}", it)
@@ -134,28 +139,20 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun updateQuantity(cartItem: CartItem, delta: Int) {
         withContext(Dispatchers.IO) {
-            //cartDao.updateQuantityById(cartItem.id, delta)
             val cartId = cartDao.getCartIdByCartItemId(cartItem.id) ?: return@withContext
-            val cart = cartDao.getCartById(cartId) ?: return@withContext
-            val userId = cart.userId ?: return@withContext
+            cartDao.getCartById(cartId) ?: return@withContext
             val existing = cartDao.getExistingByProductId(cartId, cartItem.product.id) ?: return@withContext
-//            if (updated != null) {
-//                if (updated.quantity <= 0) {
-//                    remoteDS.deleteCartItem(userId, updated.productId)
-//                } else {
-//                    remoteDS.upsertCartItem(userId, updated.toRemoteDto())
-//                }
-//            }
 
-           val newQuantity = existing.quantity + delta
+            val newQuantity = existing.quantity + delta
             if (newQuantity <= 0) {
-                cartDao.deleteCartItem(existing)
+                cartDao.markCartItemDeleted(existing.id, System.currentTimeMillis())
                 return@withContext
             }
 
             cartDao.updateCartItem(cartItem.toEntity(cartId).copy(
                 quantity = newQuantity,
                 isSynced = false,
+                isDeleted = false,
                 updatedAt = System.currentTimeMillis()
             ))
         }
@@ -165,7 +162,7 @@ class CartRepositoryImpl @Inject constructor(
     // Hàm này sẽ đồng bộ dữ liệu từ remote về local
     private suspend fun syncRemoteToLocal(cartId: String, remoteItems: List<CartItemRemoteDto>) {
         withContext(Dispatchers.IO) {
-            val localItems = cartDao.getAllCartItemsOnce(cartId)
+            val localItems = cartDao.getAllCartItemsIncludingDeleted(cartId)
             val localByProductId = localItems.associateBy { it.productId }
             val remoteByProductId = remoteItems.associateBy { it.productId }
 
@@ -175,6 +172,10 @@ class CartRepositoryImpl @Inject constructor(
                 if (local == null) {
                     cartDao.insertCartItem(remote.toEntity(cartId).copy(isSynced = true))
                 } else {
+                    if (local.isDeleted) {
+                        // Local đã xoá, ưu tiên xoá (không hồi sinh từ remote)
+                        return@forEach
+                    }
                     val localHasPendingChange = !local.isSynced
                     val remoteIsNewer = remote.updatedAt > local.updatedAt
                     when {
@@ -191,17 +192,18 @@ class CartRepositoryImpl @Inject constructor(
                                 quantity = remote.quantity,
                                 updatedAt = remote.updatedAt,
                                 addAt = remote.addAt,
-                                isSynced = true
+                                isSynced = true,
+                                isDeleted = false
                             ))
                         }
                     }
                 }
             }
 
-            // Xóa local item nếu remote không còn
+            // Xóa local item nếu remote không còn (chỉ khi local không có pending change)
             localItems.forEach { local ->
                 val remote = remoteByProductId[local.productId]
-                if(remote == null && local.isSynced){
+                if (remote == null && local.isSynced) {
                     cartDao.deleteCartItem(local)
                 }
             }

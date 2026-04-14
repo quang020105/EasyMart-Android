@@ -54,6 +54,7 @@ fun CartItemRemoteDto.toEntity(cartId: String): CartItemEntity {
         price = price,
         imageUrl = imageUrl,
         quantity = quantity,
-        addAt = addAt
+        addAt = addAt,
+        isDeleted = false
     )
 }

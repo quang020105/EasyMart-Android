@@ -28,12 +28,12 @@ interface CartDao {
 
 
     //cart items
-
-    @Query("SELECT * FROM cart_items WHERE cartId = :cartId ORDER BY addAt DESC")
+    //@Query("SELECT * FROM cart_items WHERE cartId = :cartId AND isDeleted = 0 ORDER BY addAt DESC")
+    @Query("SELECT * FROM cart_items WHERE cartId = :cartId AND isDeleted = 0")
     fun getAllCartItems(cartId: String): Flow<List<CartItemEntity>>
 
     //dùng để lấy danh sách sản phẩm trong giỏ hàng một lần (xử lý logic)
-    @Query("SELECT * FROM cart_items WHERE cartId = :cartId")
+    @Query("SELECT * FROM cart_items WHERE cartId = :cartId AND isDeleted = 0")
     suspend fun getAllCartItemsOnce(cartId: String): List<CartItemEntity>
 
     @Query("SELECT * FROM cart_items WHERE cartId = :cartId AND productId = :productId LIMIT 1")
@@ -65,6 +65,12 @@ interface CartDao {
 
     @Query("SELECT * FROM carts WHERE id = :cartId LIMIT 1")
     suspend fun getCartById(cartId: String): CartEntity?
+
+    @Query("UPDATE cart_items SET isDeleted = 1, isSynced = 0, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun markCartItemDeleted(id: Int, updatedAt: Long)
+
+    @Query("SELECT * FROM cart_items WHERE cartId = :cartId")
+    suspend fun getAllCartItemsIncludingDeleted(cartId: String): List<CartItemEntity>
 
     @Query("""
     SELECT * FROM cart_items
