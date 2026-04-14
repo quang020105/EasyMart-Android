@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -69,6 +71,12 @@ class CartViewModel @Inject constructor(
             observeCurrentUserUS()
                 .flatMapLatest { user ->
                     observeCartUS(user?.id)
+                }
+                .onStart {
+                    _uiState.update { it.copy(isLoading = true) }
+                }
+                .onEach {
+                    _uiState.update { it.copy(isLoading = false) }
                 }
                 .collect { items ->
                     //tránh reset lại check đã chọn khi reset UI do room cập nhật

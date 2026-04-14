@@ -3,6 +3,7 @@ package com.example.easymart.presentation.ui.cart
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -96,44 +98,59 @@ fun CartScreen(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
 
-        if (uiState.items.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.pic_empty_cart),
-                    contentDescription = "Giỏ hàng trống"
-                )
-                Text(
-                    text = "Giỏ hàng trống",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(top = dimens.spaceSm)
-                )
+        when {
+            uiState.isLoading -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator()
+                }
             }
-        }else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(horizontal = dimens.spaceMd)
-                    .fillMaxWidth()
-                    .weight(1f),
-            ) {
-                items(uiState.items, key = { it.id }) { cartItem ->
-                    ProductCart(
-                        cartItem = cartItem,
-                        checked = cartItem.isChecked,
-                        onMinusClick = { onMinusClick(cartItem) },
-                        onPlusClick = { onPlusClick(cartItem) },
-                        onCheckedChange = { checked ->
-                            onCheckedChange(
-                                cartItem,
-                                checked
-                            )
-                        }
+            uiState.isEmpty -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.pic_empty_cart),
+                        contentDescription = "Giỏ hàng trống"
                     )
+                    Text(
+                        text = "Giỏ hàng trống",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(top = dimens.spaceSm)
+                    )
+                }
+            }
+            else -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(horizontal = dimens.spaceMd)
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentPadding = PaddingValues(bottom = dimens.spaceXl)
+                ) {
+                    items(uiState.items, key = { it.id }) { cartItem ->
+                        ProductCart(
+                            cartItem = cartItem,
+                            checked = cartItem.isChecked,
+                            onMinusClick = { onMinusClick(cartItem) },
+                            onPlusClick = { onPlusClick(cartItem) },
+                            onCheckedChange = { checked ->
+                                onCheckedChange(
+                                    cartItem,
+                                    checked
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
