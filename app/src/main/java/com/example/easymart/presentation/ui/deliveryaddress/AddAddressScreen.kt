@@ -2,20 +2,16 @@ package com.example.easymart.presentation.ui.deliveryaddress
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.easymart.R
 import com.example.easymart.domain.model.District
 import com.example.easymart.domain.model.Province
@@ -27,7 +23,7 @@ import com.example.easymart.presentation.ui.deliveryaddress.components.Searchabl
 
 @Composable
 fun AddAddressScreen(
-    state: AddAddressUIState = AddAddressUIState(),
+    uiState: AddAddressUIState = AddAddressUIState(),
     isFormValid: Boolean = false,
     events: AddAddressUiEvents
 ) {
@@ -74,183 +70,203 @@ fun AddAddressScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = dimens.spaceXl),
-            verticalArrangement = Arrangement.spacedBy(dimens.spaceMd)
-        ) {
-
-            Column {
-                // Tên người nhận
-                OutlinedTextField(
-                    value = state.fullName,
-                    onValueChange = {
-                        events.onFullNameChange(it)
-                        // cập nhật lỗi local khi đã touched
-                        if (fullNameTouched) localFullNameError = validateFullName(it)
-                    },
-                    label = { Text("Tên người nhận") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = dimens.space2xl)
-                        .onFocusChanged { focusState ->
-                            //nếu đã được focus thì đánh dấu đã từng focus
-                            if (focusState.isFocused) {
-                                fullNameHadFocus = true
-                            } else {
-                                if (fullNameHadFocus) {
-                                    fullNameTouched = true
-                                    localFullNameError = validateFullName(state.fullName)
-                                }
-                            }
-                        },
-                    singleLine = true
-                )
-                (state.fullNameError ?: localFullNameError)?.let { msg ->
-                    Text(
-                        modifier = Modifier.padding(start = dimens.spaceXs, top = dimens.spaceXs),
-                        text = msg,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
-            }
-
-            // Số điện thoại
-            Column {
-                OutlinedTextField(
-                    value = state.phone,
-                    onValueChange = {
-                        events.onPhoneChange(it)
-                        if (phoneTouched) localPhoneError = validatePhone(it)
-                    },
-                    label = { Text("Số điện thoại") },
-                    modifier = Modifier.fillMaxWidth()
-                        .onFocusChanged{ focusState ->
-                            if(focusState.isFocused){
-                                phoneHadFocus = true
-                            } else {
-                                if(phoneHadFocus){
-                                    phoneTouched = true
-                                    localPhoneError = validatePhone(state.phone)
-                                }
-                            }
-                        },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                    singleLine = true
-                )
-                (state.phoneError ?: localPhoneError)?.let{ msg ->
-                    Text(
-                        modifier = Modifier.padding(start = dimens.spaceXs, top = dimens.spaceXs),
-                        text = msg,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
-            }
-
-            // Địa chỉ chi tiết
-
-            Column {
-                OutlinedTextField(
-                    value = state.detailAddress,
-                    onValueChange = {
-                        events.onDetailAddressChange(it)
-                                    if(detailTouched) localDetailError = validateDetail(it)
-                    },
-                    label = { Text("Địa chỉ chi tiết") },
-                    modifier = Modifier.fillMaxWidth()
-                        .onFocusChanged{ focusState ->
-                            if(focusState.isFocused){
-                                detailHadFocus = true
-                            } else {
-                                if(detailHadFocus){
-                                    detailTouched = true
-                                    localDetailError = validateDetail(state.detailAddress)
-                                }
-                            }
-                        },
-                    singleLine = false,
-                    maxLines = 3
-                )
-                (state.detailAddressError ?: localDetailError)?.let{ msg ->
-                    Text(
-                        modifier = Modifier.padding(start = dimens.spaceXs, top = dimens.spaceXs),
-                        text = msg,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
-            }
-
-
-
-            Column(modifier = Modifier.fillMaxWidth()) {
-                SearchableDropDown(
-                    label = "Tỉnh/Thành phố *",
-                    options = state.provinces,
-                    selected = state.selectedProvince,
-                    onSelect = { events.onProvinceSelected(it) },
-                    itemLabel = { it.name }
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                SearchableDropDown(
-                    label = "Quận/Huyện *",
-                    options = state.districts,
-                    selected = state.selectedDistrict,
-                    onSelect = { events.onDistrictSelected(it) },
-                    itemLabel = { it.name },
-                    enabled = state.districts.isNotEmpty()
-                )
-
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-
-                SearchableDropDown(
-                    label = "Phường/Xã *",
-                    options = state.wards,
-                    selected = state.selectedWard,
-                    onSelect = { events.onWardSelected(it) },
-                    itemLabel = { it.name },
-                    enabled = state.wards.isNotEmpty()
-                )
-            }
-
-
-            // Checkbox mặc định
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                Checkbox(
-                    checked = state.isDefault,
-                    onCheckedChange = { events.onDefaultToggle(it) },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = MaterialTheme.colorScheme.primary
+                CircularProgressIndicator()
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = dimens.spaceXl),
+                verticalArrangement = Arrangement.spacedBy(dimens.spaceMd)
+            ) {
+
+                Column {
+                    // Tên người nhận
+                    OutlinedTextField(
+                        value = uiState.fullName,
+                        onValueChange = {
+                            events.onFullNameChange(it)
+                            // cập nhật lỗi local khi đã touched
+                            if (fullNameTouched) localFullNameError = validateFullName(it)
+                        },
+                        label = { Text("Tên người nhận") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = dimens.space2xl)
+                            .onFocusChanged { focusState ->
+                                //nếu đã được focus thì đánh dấu đã từng focus
+                                if (focusState.isFocused) {
+                                    fullNameHadFocus = true
+                                } else {
+                                    if (fullNameHadFocus) {
+                                        fullNameTouched = true
+                                        localFullNameError = validateFullName(uiState.fullName)
+                                    }
+                                }
+                            },
+                        singleLine = true
                     )
+                    (uiState.fullNameError ?: localFullNameError)?.let { msg ->
+                        Text(
+                            modifier = Modifier.padding(
+                                start = dimens.spaceXs,
+                                top = dimens.spaceXs
+                            ),
+                            text = msg,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
+
+                // Số điện thoại
+                Column {
+                    OutlinedTextField(
+                        value = uiState.phone,
+                        onValueChange = {
+                            events.onPhoneChange(it)
+                            if (phoneTouched) localPhoneError = validatePhone(it)
+                        },
+                        label = { Text("Số điện thoại") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { focusState ->
+                                if (focusState.isFocused) {
+                                    phoneHadFocus = true
+                                } else {
+                                    if (phoneHadFocus) {
+                                        phoneTouched = true
+                                        localPhoneError = validatePhone(uiState.phone)
+                                    }
+                                }
+                            },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                        singleLine = true
+                    )
+                    (uiState.phoneError ?: localPhoneError)?.let { msg ->
+                        Text(
+                            modifier = Modifier.padding(
+                                start = dimens.spaceXs,
+                                top = dimens.spaceXs
+                            ),
+                            text = msg,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
+
+                // Địa chỉ chi tiết
+
+                Column {
+                    OutlinedTextField(
+                        value = uiState.detailAddress,
+                        onValueChange = {
+                            events.onDetailAddressChange(it)
+                            if (detailTouched) localDetailError = validateDetail(it)
+                        },
+                        label = { Text("Địa chỉ chi tiết") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { focusState ->
+                                if (focusState.isFocused) {
+                                    detailHadFocus = true
+                                } else {
+                                    if (detailHadFocus) {
+                                        detailTouched = true
+                                        localDetailError = validateDetail(uiState.detailAddress)
+                                    }
+                                }
+                            },
+                        singleLine = false,
+                        maxLines = 3
+                    )
+                    (uiState.detailAddressError ?: localDetailError)?.let { msg ->
+                        Text(
+                            modifier = Modifier.padding(
+                                start = dimens.spaceXs,
+                                top = dimens.spaceXs
+                            ),
+                            text = msg,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                }
+
+
+
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    SearchableDropDown(
+                        label = "Tỉnh/Thành phố *",
+                        options = uiState.provinces,
+                        selected = uiState.selectedProvince,
+                        onSelect = { events.onProvinceSelected(it) },
+                        itemLabel = { it.name }
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    SearchableDropDown(
+                        label = "Quận/Huyện *",
+                        options = uiState.districts,
+                        selected = uiState.selectedDistrict,
+                        onSelect = { events.onDistrictSelected(it) },
+                        itemLabel = { it.name },
+                        enabled = uiState.districts.isNotEmpty()
+                    )
+
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+
+                    SearchableDropDown(
+                        label = "Phường/Xã *",
+                        options = uiState.wards,
+                        selected = uiState.selectedWard,
+                        onSelect = { events.onWardSelected(it) },
+                        itemLabel = { it.name },
+                        enabled = uiState.wards.isNotEmpty()
+                    )
+                }
+
+
+                // Checkbox mặc định
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = uiState.isDefault,
+                        onCheckedChange = { events.onDefaultToggle(it) },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = MaterialTheme.colorScheme.primary
+                        )
+                    )
+                    Text("Đặt làm địa chỉ mặc định")
+                }
+
+                Spacer(modifier = Modifier.height(dimens.spaceLg))
+
+                uiState.errorMessage?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+
+                RoundedActionButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(id = R.string.action_save_address),
+                    onClick = { events.onSave() },
+                    verticalPadding = dimens.spaceLg,
+                    enabled = isFormValid
                 )
-                Text("Đặt làm địa chỉ mặc định")
             }
-
-            Spacer(modifier = Modifier.height(dimens.spaceLg))
-
-            state.errorMessage?.let {
-                Text(
-                    text = it,
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-
-            RoundedActionButton(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = R.string.action_save_address),
-                onClick = { events.onSave() },
-                verticalPadding = dimens.spaceLg,
-                enabled = isFormValid
-            )
         }
     }
 }

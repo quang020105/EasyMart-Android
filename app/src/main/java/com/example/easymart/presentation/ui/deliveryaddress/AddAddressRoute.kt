@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import com.example.easymart.domain.model.District
 import com.example.easymart.domain.model.Province
 import com.example.easymart.domain.model.Ward
-import kotlinx.coroutines.launch
 
 @Composable
 fun AddAddressRoute(
@@ -26,7 +25,7 @@ fun AddAddressRoute(
     ) { innerPadding ->
         val padding = innerPadding
         AddAddressScreen(
-            state = uiState.value,
+            uiState = uiState.value,
             isFormValid = isFormValid.value,
             events = object : AddAddressUiEvents {
                 override fun onFullNameChange(v: String) {

@@ -5,10 +5,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface AddressRepository {
     fun getAllAddresses(): Flow<List<Address>>
+    fun getAllAddressesByUser(userUid: String): Flow<List<Address>>
     suspend fun insertAddress(address: Address): Int
     suspend fun updateAddress(address: Address)
     suspend fun setDefaultAddress(addressId: Int)
     suspend fun deleteAddress(addressId: Int)
     suspend fun getAddressById(addressId: Int): Address?
     suspend fun getDefaultAddress(): Address?
+    suspend fun getDefaultAddressByUser(userUid: String): Address?
+    suspend fun syncAddresses(userUid: String)
 }

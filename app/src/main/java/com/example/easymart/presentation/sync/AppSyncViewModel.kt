@@ -6,6 +6,7 @@ import com.example.easymart.domain.network.NetworkStatus
 import com.example.easymart.domain.usecase.auth.GetCurrentUserUseCase
 import com.example.easymart.domain.usecase.cart.SyncCartUseCase
 import com.example.easymart.domain.usecase.network.ObserveNetworkStatusUseCase
+import com.example.easymart.domain.usecase.address.SyncAddressesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -17,7 +18,8 @@ import javax.inject.Inject
 class AppSyncViewModel @Inject constructor(
     private val observeNetworkStatusUseCase: ObserveNetworkStatusUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
-    private val syncCartUseCase: SyncCartUseCase
+    private val syncCartUseCase: SyncCartUseCase,
+    private val syncAddressesUseCase: SyncAddressesUseCase
 ) : ViewModel() {
 
     fun startSync() {
@@ -28,8 +30,8 @@ class AppSyncViewModel @Inject constructor(
                 .collectLatest {
                     val userId = getCurrentUserUseCase()?.id ?: return@collectLatest
                     syncCartUseCase(userId)
+                    syncAddressesUseCase(userId)
                 }
         }
     }
 }
-

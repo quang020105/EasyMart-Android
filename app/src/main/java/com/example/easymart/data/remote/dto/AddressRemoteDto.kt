@@ -1,8 +1,7 @@
-package com.example.easymart.domain.model
+package com.example.easymart.data.remote.dto
 
-data class Address(
+data class AddressRemoteDto(
     val id: Int = 0,
-    val userId: Int = 0,
     val userUid: String? = null,
     val name: String = "",
     val phone: String = "",
@@ -13,10 +12,7 @@ data class Address(
     val districtCode: Int = 0,
     val wardCode: Int = 0,
     val isDeleted: Boolean = false,
-    val isSynced: Boolean = false,
-    val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis(),
-){
-    val tagName: String?
-        get() = if(isDefault) "Mặc định" else null
-}
+    val createdAt: Long = System.currentTimeMillis(),
+)
+

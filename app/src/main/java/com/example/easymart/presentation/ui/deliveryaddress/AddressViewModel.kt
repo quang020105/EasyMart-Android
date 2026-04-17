@@ -18,6 +18,11 @@ import com.example.easymart.domain.usecase.address.UpdateAddressUseCase
 import com.example.easymart.domain.usecase.location.GetDistrictsUseCase
 import com.example.easymart.domain.usecase.location.GetProvincesUseCase
 import com.example.easymart.domain.usecase.location.GetWardsUseCase
+import com.example.easymart.domain.usecase.address.GetAllAddressByUserUseCase
+import com.example.easymart.domain.usecase.address.GetDefaultAddressByUserUseCase
+import com.example.easymart.domain.usecase.address.SyncAddressesUseCase
+import com.example.easymart.domain.usecase.auth.GetCurrentUserUseCase
+import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,6 +32,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -37,22 +45,42 @@ import javax.inject.Inject
 @HiltViewModel
 class AddressViewModel @Inject constructor(
     private val getALlAddressUS: GetAllAddressUseCase,
+    private val getAllAddressByUserUS: GetAllAddressByUserUseCase,
     private val insertAddressUS: InsertNewAddressUseCase,
     private val updateAddressUS: UpdateAddressUseCase,
     private val deleteAddressUS: DeleteAddressUseCase,
     private val getAddressByIdUS: GetAddressByIdUseCase,
     private val setDefaultAddressUS: SetDefaultAddressUseCase,
     private val getDefaultAddressUseCase: GetDefaultAddressUseCase,
+    private val getDefaultAddressByUserUS: GetDefaultAddressByUserUseCase,
     private val getProvincesUS: GetProvincesUseCase,
     private val getDistrictsUS: GetDistrictsUseCase,
     private val getWardsUS: GetWardsUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val syncAddressesUseCase: SyncAddressesUseCase,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
-    val addresses: StateFlow<List<Address>> = getALlAddressUS()
+    private val currentUserUid: StateFlow<String?> = observeCurrentUserUseCase()
+        .map { it?.id }
+        .stateIn(viewModelScope, SharingStarted.Lazily, getCurrentUserUseCase()?.id)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val addresses: StateFlow<List<Address>> = currentUserUid
+        .flatMapLatest { uid ->
+            if (uid == null) getALlAddressUS() else getAllAddressByUserUS(uid)
+        }
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
-    private val _selectedAddress = MutableStateFlow<Address?>(null)
-    val selectedAddress = _selectedAddress.asStateFlow()
+    private val _selectedAddressId = MutableStateFlow<Int?>(null)
+
+    // kết hợp giữa danh sách địa chỉ và id địa chỉ được chọn để lấy ra địa chỉ được chọn
+    // , nếu không có thì lấy địa chỉ mặc định
+    val selectedAddress = combine(addresses, _selectedAddressId) { list, selectedId ->
+        list.firstOrNull { it.id == selectedId }
+            ?: list.firstOrNull { it.isDefault }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, null)
+
 
     private val _uiState = MutableStateFlow(AddAddressUIState())
     val uiState = _uiState.asStateFlow()
@@ -64,6 +92,14 @@ class AddressViewModel @Inject constructor(
 
     init {
         loadDefaultAddress()
+        viewModelScope.launch {
+            currentUserUid
+                .collect { uid ->
+                    if (uid != null) {
+                        syncAddressesUseCase(uid)
+                    }
+                }
+        }
     }
 
     //set địa chỉ mặc định khi vào màn thanh toán
@@ -72,18 +108,18 @@ class AddressViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true) }
             try {
                 val defaultAddress = withContext(ioDispatcher) {
-                    getDefaultAddressUseCase()
+                    val uid = getCurrentUserUseCase()?.id
+                    if (uid != null) getDefaultAddressByUserUS(uid) else getDefaultAddressUseCase()
                 }
-                _selectedAddress.value = defaultAddress
+                _selectedAddressId.value = defaultAddress?.id
             } finally {
                 _uiState.update { it.copy(isLoading = false) }
             }
-            //Log.d("AddressViewModel", "defaultAddress: $defaultAddress")
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun clearUiEvent(){
+    fun clearUiEvent() {
         _uiEvent.resetReplayCache()
     }
 
@@ -122,7 +158,12 @@ class AddressViewModel @Inject constructor(
             val districts = withContext(ioDispatcher) {
                 getDistrictsUS(province?.code ?: 0)
             }
-            _uiState.value = _uiState.value.copy(districts = districts, selectedProvince = province, selectedDistrict = null, selectedWard = null)
+            _uiState.value = _uiState.value.copy(
+                districts = districts,
+                selectedProvince = province,
+                selectedDistrict = null,
+                selectedWard = null
+            )
             //_uiState.update { it.copy(districts = districts, selectedProvince = province) }
             Log.d("AddressViewModel", "districts: $districts")
         }
@@ -130,10 +171,11 @@ class AddressViewModel @Inject constructor(
 
     fun onDistrictSelected(district: District?) {
         viewModelScope.launch {
-            val wards =  withContext(ioDispatcher) {
+            val wards = withContext(ioDispatcher) {
                 getWardsUS(district?.code ?: 0)
             }
-            _uiState.value = _uiState.value.copy(wards = wards, selectedDistrict = district, selectedWard = null)
+            _uiState.value =
+                _uiState.value.copy(wards = wards, selectedDistrict = district, selectedWard = null)
         }
     }
 
@@ -142,19 +184,36 @@ class AddressViewModel @Inject constructor(
     }
 
     fun selectAddress(address: Address) {
-        _selectedAddress.value = address
+        _selectedAddressId.value = address.id
     }
 
     fun addNewAddress(address: Address) {
         viewModelScope.launch {
-            insertAddressUS(address)
+            val uid = getCurrentUserUseCase()?.id
+            insertAddressUS(address.copy(userUid = uid))
+            uid?.let { syncAddressesUseCase(it) }
         }
     }
 
-    fun deleteAddress(addressId: Int){
+    fun deleteAddress(addressId: Int) {
         viewModelScope.launch {
-            deleteAddressUS(addressId)
-            _uiEvent.emit(AddressUiEvent.ShowMessage("Đã xóa địa chỉ"))
+            _uiState.update { it.copy(isLoading = true) }
+            try {
+                deleteAddressUS(addressId)
+                val uid = getCurrentUserUseCase()?.id
+                if (_selectedAddressId.value == addressId) {
+                    _selectedAddressId.value = null
+                }
+                uid?.let { syncAddressesUseCase(it) }
+                _uiEvent.emit(AddressUiEvent.ShowMessage("Đã xóa địa chỉ"))
+            } catch (e: Exception) {
+                Log.e("AddressViewModel", "Error deleting address", e)
+                _uiEvent.emit(AddressUiEvent.ShowMessage("Lỗi khi xóa địa chỉ: ${e.message}"))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
+            }
         }
     }
 
@@ -273,6 +332,7 @@ class AddressViewModel @Inject constructor(
             //thêm vào database
             val address = Address(
                 id = current.editId ?: 0,
+                userUid = getCurrentUserUseCase()?.id,
                 name = current.fullName,
                 phone = current.phone,
                 detailAddress = current.detailAddress,
@@ -283,25 +343,31 @@ class AddressViewModel @Inject constructor(
                 wardCode = current.selectedWard?.code ?: 0
             )
 
-            //xử lý từng edit hay insert
             viewModelScope.launch {
-                if (current.isEdit) {
-                    updateAddressUS(address)
-                    if (current.isDefault) {
-                        setDefaultAddressUS(address.id)
+                _uiState.update { it.copy(isLoading = true) }
+                try {
+                    val uid = getCurrentUserUseCase()?.id
+                    if (current.isEdit) {
+                        updateAddressUS(address)
+                        if (current.isDefault) {
+                            setDefaultAddressUS(address.id)
+                        }
+                        _uiEvent.emit(AddressUiEvent.ShowMessage("Cập nhật thành công"))
+                    } else {
+                        val newId = insertAddressUS(address)
+                        if (current.isDefault) {
+                            setDefaultAddressUS(newId)
+                        }
+                        _uiEvent.emit(AddressUiEvent.ShowMessage("Đã thêm 1 địa chỉ"))
                     }
-                    //phát thông báo cập nhật thành công
-                    _uiEvent.emit(AddressUiEvent.ShowMessage("Cập nhật thành công"))
-                } else {
-                    val newId = insertAddressUS(address)
-                    if (current.isDefault) {
-                        setDefaultAddressUS(newId)
-                    }
-                    //phát thông báo thêm thành công
-                    _uiEvent.emit(AddressUiEvent.ShowMessage("Đã thêm 1 địa chỉ"))
+                    uid?.let { syncAddressesUseCase(it) }
+                } catch (e: Exception) {
+                    Log.e("AddressViewModel", "Error saving address", e)
+                    _uiEvent.emit(AddressUiEvent.ShowMessage("Lỗi khi lưu địa chỉ: ${e.message}"))
+                } finally {
+                    _uiState.update { it.copy(isLoading = false) }
                 }
                 _uiState.update { it.copy(success = true) }
-                Log.d("AddressViewModel", "uiState: ${_uiState.value}")
             }
         }
     }

@@ -7,6 +7,8 @@ import com.example.easymart.domain.model.Address
 fun AddressEntity.toDomain(): Address {
     return Address(
         id = id,
+        userId = userId,
+        userUid = userUid,
         name = name,
         phone = phone,
         detailAddress = detailAddress,
@@ -14,7 +16,11 @@ fun AddressEntity.toDomain(): Address {
         isDefault = isDefault,
         provinceCode = provinceCode,
         districtCode = districtCode,
-        wardCode = wardCode
+        wardCode = wardCode,
+        isDeleted = isDeleted,
+        isSynced = isSynced,
+        createdAt = createdAt,
+        updatedAt = updatedAt
     )
 }
 
@@ -23,13 +29,19 @@ fun Address.toEntity(): AddressEntity {
         id = id,
         name = name,
         tagName = tagName,
+        userId = userId,
+        userUid = userUid,
         phone = phone,
         detailAddress = detailAddress,
         addressString = addressString,
         isDefault = isDefault,
         provinceCode = provinceCode,
         districtCode = districtCode,
-        wardCode = wardCode
+        wardCode = wardCode,
+        isDeleted = isDeleted,
+        isSynced = isSynced,
+        createdAt = createdAt,
+        updatedAt = updatedAt
     )
 }
 

@@ -9,7 +9,9 @@ import com.example.easymart.data.remote.api.AlgoliaApi
 import com.example.easymart.data.remote.api.LocationApi
 import com.example.easymart.data.remote.api.PaymentApi
 import com.example.easymart.data.remote.api.ProductApi
+import com.example.easymart.data.remote.datasource.AddressRemoteDataSource
 import com.example.easymart.data.remote.datasource.CartRemoteDataSource
+import com.example.easymart.data.remote.datasource.FirestoreAddressRemoteDataSource
 import com.example.easymart.data.remote.datasource.FirestoreCartRemoteDataSource
 import com.example.easymart.data.repositoryimpl.AddressRepositoryImpl
 import com.example.easymart.data.repositoryimpl.CartRepositoryImpl
@@ -67,7 +69,15 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideAddressRepository(dao: AddressDao): AddressRepository = AddressRepositoryImpl(dao)
+    fun provideAddressRemoteDataSource(firestore: FirebaseFirestore): AddressRemoteDataSource =
+        FirestoreAddressRemoteDataSource(firestore)
+
+    @Provides
+    @Singleton
+    fun provideAddressRepository(
+        dao: AddressDao,
+        remoteDS: AddressRemoteDataSource
+    ): AddressRepository = AddressRepositoryImpl(dao, remoteDS)
 
     @Provides
     @Singleton

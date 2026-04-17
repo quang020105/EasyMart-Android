@@ -9,6 +9,7 @@ data class AddressEntity(
     val id: Int = 0,
     val tagName: String? = null,
     val userId: Int = 0,
+    val userUid: String? = null,
     val name: String,
     val phone: String,
     val detailAddress: String,
@@ -18,4 +19,8 @@ data class AddressEntity(
     val provinceCode: Int = 0,
     val districtCode: Int = 0,
     val wardCode: Int = 0,
+    val isDeleted: Boolean = false,
+    val isSynced: Boolean = false,
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis(),
 )

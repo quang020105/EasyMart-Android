@@ -81,7 +81,7 @@ fun DeliveryAddressScreen(
 //            )
 //        }
 
-        items(items = addresses, key = { it.id }){ address ->
+        items(items = addresses, key = { it.id }) { address ->
             val dismissState = rememberDismissState(
                 confirmStateChange = { dismissValue ->
                     if (dismissValue == DismissValue.DismissedToStart) {
@@ -122,47 +122,52 @@ fun DeliveryAddressScreen(
         }
 
         item {
+//            Box(
+//                modifier = Modifier.fillMaxWidth(),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Button(
+//                    onClick = onAddressAddClick,
+//                    modifier = Modifier.padding(vertical = dimens.spaceMd),
+//                    colors = ButtonDefaults.buttonColors(
+//                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
+//                        contentColor = MaterialTheme.colorScheme.onPrimary
+//                    ),
+//                ) {
+//                    Icon(
+//                        painter = painterResource(id = com.example.easymart.R.drawable.ic_add),
+//                        contentDescription = "Biểu tượng thêm",
+//                        modifier = Modifier
+//                            .height(dimens.iconMedium)
+//                            .width(dimens.iconMedium)
+//                    )
+//                    Text(
+//                        text = "Thêm địa chỉ mới",
+//                        modifier = Modifier.padding(start = dimens.spaceSm)
+//                    )
+//                }
+//            }
+
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                Button(
+                FilledTonalButton(
                     onClick = onAddressAddClick,
-                    modifier = Modifier.padding(vertical = dimens.spaceMd),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
+                    modifier = Modifier.padding(top = dimens.spaceSm),
+                    colors = ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
                 ) {
                     Icon(
-                        painter = painterResource(id = com.example.easymart.R.drawable.ic_add),
-                        contentDescription = "Biểu tượng thêm",
-                        modifier = Modifier
-                            .height(dimens.iconMedium)
-                            .width(dimens.iconMedium)
+                        painter = painterResource(id = R.drawable.ic_add),
+                        contentDescription = "Thêm địa chỉ"
                     )
-                    Text(
-                        text = "Thêm địa chỉ mới",
-                        modifier = Modifier.padding(start = dimens.spaceSm)
-                    )
+                    Spacer(modifier = Modifier.width(dimens.spaceSm))
+                    Text(text = "Thêm địa chỉ")
                 }
             }
-
-//            FilledTonalButton(
-//                onClick = onAddressClick,
-//                modifier = Modifier.padding(top = dimens.spaceSm),
-//                colors = ButtonDefaults.filledTonalButtonColors(
-//                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-//                    contentColor = MaterialTheme.colorScheme.primary
-//                )
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.ic_add),
-//                    contentDescription = "Thêm địa chỉ"
-//                )
-//                Spacer(modifier = Modifier.width(dimens.spaceSm))
-//                Text(text = "Thêm địa chỉ")
-//            }
         }
     }
 
@@ -194,7 +199,6 @@ fun DeliveryAddressScreen(
             }
         )
     }
-
 
 
 }

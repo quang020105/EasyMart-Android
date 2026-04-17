@@ -10,9 +10,12 @@ import com.example.easymart.domain.repository.OrderRepository
 import com.example.easymart.domain.repository.PaymentRepository
 import com.example.easymart.domain.repository.ProductRepository
 import com.example.easymart.domain.repository.SearchRepository
+import com.example.easymart.domain.usecase.address.GetAllAddressByUserUseCase
 import com.example.easymart.domain.usecase.address.GetAllAddressUseCase
+import com.example.easymart.domain.usecase.address.GetDefaultAddressByUserUseCase
 import com.example.easymart.domain.usecase.address.GetDefaultAddressUseCase
 import com.example.easymart.domain.usecase.address.InsertNewAddressUseCase
+import com.example.easymart.domain.usecase.address.SyncAddressesUseCase
 import com.example.easymart.domain.usecase.auth.GetCurrentUserUseCase
 import com.example.easymart.domain.usecase.auth.LoginUseCase
 import com.example.easymart.domain.usecase.auth.LogoutUseCase
@@ -109,6 +112,18 @@ object UseCaseModule {
     @Provides
     fun provideGetDefaultAddressUseCase(addressRepo: AddressRepository): GetDefaultAddressUseCase =
         GetDefaultAddressUseCase(addressRepo)
+
+    @Provides
+    fun provideSyncAddressesUseCase(addressRepo: AddressRepository): SyncAddressesUseCase =
+        SyncAddressesUseCase(addressRepo)
+
+    @Provides
+    fun provideGetAddressesByUserUseCase(addressRepo: AddressRepository): GetAllAddressByUserUseCase =
+        GetAllAddressByUserUseCase(addressRepo)
+
+    @Provides
+    fun provideGetDefaultAddressByUserUseCase(addressRepo: AddressRepository): GetDefaultAddressByUserUseCase =
+        GetDefaultAddressByUserUseCase(addressRepo)
 
 
     //location
