@@ -25,6 +25,23 @@ object DatabaseModule {
         }
     }
 
+    private val MIGRATION_20_21 = object : Migration(20, 21) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS product (" +
+                    "id INTEGER NOT NULL, " +
+                    "name TEXT NOT NULL, " +
+                    "description TEXT, " +
+                    "price REAL NOT NULL, " +
+                    "imageUrl TEXT NOT NULL, " +
+                    "category TEXT NOT NULL, " +
+                    "updatedAt INTEGER NOT NULL, " +
+                    "PRIMARY KEY(id)" +
+                ")"
+            )
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext appContext: Context): EasyMartDatabase {
@@ -33,7 +50,7 @@ object DatabaseModule {
                 EasyMartDatabase::class.java,
                 "easy_mart_database",
             )
-            .addMigrations(MIGRATION_19_20)
+            .addMigrations(MIGRATION_19_20, MIGRATION_20_21)
             .fallbackToDestructiveMigration(false).build()
     }
 
@@ -56,4 +73,8 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun providePaymentDao(database: EasyMartDatabase) = database.getPaymentDao()
+
+    @Singleton
+    @Provides
+    fun provideProductDao(database: EasyMartDatabase) = database.getProductDao()
 }

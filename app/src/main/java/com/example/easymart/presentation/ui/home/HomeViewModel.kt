@@ -26,18 +26,39 @@ class HomeViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
     init {
-        fetchProducts()
+        observeProducts()
+        refreshProducts()
     }
 
-    fun fetchProducts(){
+    private fun observeProducts() {
         viewModelScope.launch {
-            val result = getProducts()
-            result.collect { resource ->
-                when(resource){
+            getProducts().collect { resource ->
+                when (resource) {
                     is Resource.Loading -> _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-                    is Resource.Success -> _uiState.value = HomeUiState(isLoading = false, products = resource.data)
-                    is Resource.Error -> _uiState.value = HomeUiState(isLoading = false ,error = resource.message)
+                    is Resource.Success -> _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        products = resource.data,
+                        error = null
+                    )
+                    is Resource.Error -> _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = resource.message
+                    )
                 }
+            }
+        }
+    }
+
+    fun refreshProducts() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isRefreshing = true, refreshError = null)
+            when (val result = getProducts.refresh()) {
+                is Resource.Success -> _uiState.value = _uiState.value.copy(isRefreshing = false)
+                is Resource.Error -> _uiState.value = _uiState.value.copy(
+                    isRefreshing = false,
+                    refreshError = result.message
+                )
+                is Resource.Loading -> Unit
             }
         }
     }

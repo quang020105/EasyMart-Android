@@ -4,6 +4,8 @@ import com.example.easymart.domain.model.Product
 
 data class HomeUiState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val products: List<Product> = emptyList(),
-    val error: String? = null
+    val error: String? = null,
+    val refreshError: String? = null
 )

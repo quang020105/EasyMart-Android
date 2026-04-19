@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,65 +48,75 @@ import com.example.easymart.utils.toVNDString
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    productRecommends: List<Product> = emptyList(),
+    uiState: HomeUiState = HomeUiState(),
     onAddToCart: (Product) -> Unit = {},
     onProductClick: (Product) -> Unit,
 ) {
     val dimens = LocalAppDimens.current
     Box(modifier = modifier.fillMaxSize()) {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.primaryContainer)
-        )
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.95f)
-                .background(color = Color.Transparent)
-                .align(Alignment.BottomCenter),
-            shape = RoundedCornerShape(topStart = dimens.radiusXl, topEnd = dimens.radiusXl),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(all = dimens.screenPadding)
-                    .verticalScroll(rememberScrollState())
+        if (uiState.isLoading) {
+            // Loading UI
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                HomePromoBanner()
-                Spacer(modifier = Modifier.height(dimens.spaceMd))
-                Text(
-                    text = "Sản phẩm nổi bật",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                )
-                Spacer(modifier = Modifier.height(dimens.spaceSm))
-                val featuredProduct = productRecommends.randomOrNull() ?: mockSimpleProduct
-                FeaturedProductCard(
-                    product = featuredProduct,
-                    onClick = onProductClick,
-                    onAddToCart = onAddToCart
-                )
-                Spacer(modifier = Modifier.height(dimens.spaceMd))
-                Text(
-                    text = "Gợi ý cho bạn",
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                )
-                Spacer(modifier = Modifier.height(dimens.spaceSm))
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
+                CircularProgressIndicator()
+            }
+        } else {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.primaryContainer)
+            )
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.95f)
+                    .background(color = Color.Transparent)
+                    .align(Alignment.BottomCenter),
+                shape = RoundedCornerShape(topStart = dimens.radiusXl, topEnd = dimens.radiusXl),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            ) {
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(520.dp),
-                    horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm),
-                    verticalArrangement = Arrangement.spacedBy(dimens.spaceSm),
-                    userScrollEnabled = false
+                        .fillMaxSize()
+                        .padding(all = dimens.screenPadding)
+                        .verticalScroll(rememberScrollState())
                 ) {
-                    items(productRecommends) { product ->
-                        ItemProductRecommendCard(
-                            product = product,
-                            onProductClick = onProductClick,
-                        )
+                    HomePromoBanner()
+                    Spacer(modifier = Modifier.height(dimens.spaceMd))
+                    Text(
+                        text = "Sản phẩm nổi bật",
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Spacer(modifier = Modifier.height(dimens.spaceSm))
+                    val featuredProduct = uiState.products.randomOrNull() ?: mockSimpleProduct
+                    FeaturedProductCard(
+                        product = featuredProduct,
+                        onClick = onProductClick,
+                        onAddToCart = onAddToCart
+                    )
+                    Spacer(modifier = Modifier.height(dimens.spaceMd))
+                    Text(
+                        text = "Gợi ý cho bạn",
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Spacer(modifier = Modifier.height(dimens.spaceSm))
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(520.dp),
+                        horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm),
+                        verticalArrangement = Arrangement.spacedBy(dimens.spaceSm),
+                        userScrollEnabled = false
+                    ) {
+                        items(uiState.products) { product ->
+                            ItemProductRecommendCard(
+                                product = product,
+                                onProductClick = onProductClick,
+                            )
+                        }
                     }
                 }
             }
@@ -146,7 +157,10 @@ private fun HomePromoBanner() {
                 Text(
                     text = "Mua ngay",
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(horizontal = dimens.spaceMd, vertical = dimens.spaceXs),
+                    modifier = Modifier.padding(
+                        horizontal = dimens.spaceMd,
+                        vertical = dimens.spaceXs
+                    ),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -230,7 +244,6 @@ fun HomeScreenPreview() {
     EasyMartTheme {
         Surface {
             HomeScreen(
-                productRecommends = fakeProducts,
                 onAddToCart = {},
                 onProductClick = {}
             )

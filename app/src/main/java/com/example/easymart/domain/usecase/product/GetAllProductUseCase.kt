@@ -11,4 +11,6 @@ class GetAllProductUseCase @Inject constructor(
 ) {
     //operator fun invoke : tạo đối tượng sẽ gọi trực tiếp hàm này
     operator fun invoke(): Flow<Resource<List<Product>>> = repo.getAllProduct()
+
+    suspend fun refresh(): Resource<Unit> = repo.refreshProducts()
 }

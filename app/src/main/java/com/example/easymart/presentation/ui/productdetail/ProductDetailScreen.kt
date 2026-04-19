@@ -40,211 +40,200 @@ import com.example.easymart.utils.toVNDString
 @Composable
 fun ProductDetailScreen(
     modifier: Modifier = Modifier,
-    product: Product,
+    uiState: ProductDetailUiState = ProductDetailUiState(),
     initialQuantity: Int = 1,
     onPlusClick: () -> Unit = {},
     onMinusClick: () -> Unit = {},
     onAddToCartClick: (Product, Int) -> Unit = { _, _ -> },
-    similarProducts: List<Product> = emptyList()
 ) {
     val dimens = LocalAppDimens.current
     var quantity by remember { mutableIntStateOf(initialQuantity.coerceAtLeast(1)) }
-    val scrollState = rememberScrollState()
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentPadding = PaddingValues(horizontal = dimens.spaceMd)
-    ) {
-        // Product Image
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(dimens.productImageHeight)
-            ) {
-                if (product.imageUrl.isNotBlank()) {
-                    AsyncImage(
-                        model = product.imageUrl,
-                        contentDescription = product.name,
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentScale = ContentScale.Inside,
-                        placeholder = painterResource(id = R.drawable.pic_shoe_1),
-                        error = painterResource(id = R.drawable.pic_shoe_1)
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(id = product.imageRes),
-                        contentDescription = product.name,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Inside
-                    )
+    Box(modifier = modifier.fillMaxSize()) {
+        when {
+            uiState.isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
-        }
 
-
-        //thông tin sản phẩm
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                colors = cardColors(containerColor = MaterialTheme.colorScheme.background)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth().padding(all = dimens.spaceMd)
+            uiState.product == null -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    // Title
-                    Text(
-                        text = product.name,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    Text(text = "Không có dữ liệu sản phẩm")
+                }
+            }
 
-                    Text(
-                        text = product.price.toVNDString(),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(top = dimens.spaceXs)
-                    )
+            else -> {
+                val product = uiState.product
+                val similarProducts = uiState.similarProducts
 
-                    Text(
-                        text = stringResource(id = R.string.label_description),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(top = dimens.spaceMd, bottom = dimens.spaceXs),
-                    )
-
-                    Text(
-                        text = product.description ?: "",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-//                // Stars row (simple)
-//                Row(verticalAlignment = Alignment.CenterVertically) {
-//                    repeat(4) {
-//                        Icon(
-//                            painter = painterResource(id = R.drawable.ic_star_filled),
-//                            contentDescription = "star",
-//                            tint = MaterialTheme.colorScheme.primary,
-//                            modifier = Modifier.size(dimens.starSize)
-//                        )
-//                        Spacer(modifier = Modifier.width(4.dp))
-//                    }
-//                    Icon(
-//                        painter = painterResource(id = R.drawable.ic_star_half),
-//                        contentDescription = "star half",
-//                        tint = MaterialTheme.colorScheme.primary,
-//                        modifier = Modifier.size(dimens.starSize)
-//                    )
-//                }
-
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Surface(
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                    contentPadding = PaddingValues(horizontal = dimens.spaceMd)
+                ) {
+                    item {
+                        Box(
                             modifier = Modifier
-                                .wrapContentWidth()
-                                .border(
-                                    width = 0.dp,
-                                    color = MaterialTheme.colorScheme.outline,
-                                    shape = RoundedCornerShape(dimens.radiusSmall)
-                                ),
-                            shape = RoundedCornerShape(dimens.radiusSmall),
-                            color = MaterialTheme.colorScheme.surfaceVariant
+                                .fillMaxWidth()
+                                .height(dimens.productImageHeight)
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .padding(horizontal = dimens.spaceSm, vertical = dimens.spaceXs),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                IconButton(
-                                    onClick = {
-                                        if (quantity > 1) {
-                                            quantity -= 1
-                                            onMinusClick()
-                                        }
-                                    },
-                                    modifier = Modifier.size(dimens.qtyBtnSize)
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_minus),
-                                        contentDescription = "minus",
-                                        tint = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.size(dimens.contentIconSize)
-                                    )
-                                }
+                            if (product.imageUrl.isNotBlank()) {
+                                AsyncImage(
+                                    model = product.imageUrl,
+                                    contentDescription = product.name,
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Inside,
+                                    placeholder = painterResource(id = R.drawable.pic_shoe_1),
+                                    error = painterResource(id = R.drawable.pic_shoe_1)
+                                )
+                            } else {
+                                Image(
+                                    painter = painterResource(id = product.imageRes),
+                                    contentDescription = product.name,
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Inside
+                                )
+                            }
+                        }
+                    }
 
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = cardColors(containerColor = MaterialTheme.colorScheme.background)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(all = dimens.spaceMd)
+                            ) {
                                 Text(
-                                    text = quantity.toString(),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.padding(horizontal = dimens.spaceSm)
+                                    text = product.name,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
 
-                                IconButton(
-                                    onClick = {
-                                        quantity += 1
-                                        onPlusClick()
-                                    },
-                                    modifier = Modifier.size(dimens.qtyBtnSize)
+                                Text(
+                                    text = product.price.toVNDString(),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(top = dimens.spaceXs)
+                                )
+
+                                Text(
+                                    text = stringResource(id = R.string.label_description),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.padding(top = dimens.spaceMd, bottom = dimens.spaceXs),
+                                )
+
+                                Text(
+                                    text = product.description ?: "",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_plus),
-                                        contentDescription = "plus",
-                                        tint = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.size(dimens.contentIconSize)
+                                    Surface(
+                                        modifier = Modifier
+                                            .wrapContentWidth()
+                                            .border(
+                                                width = 0.dp,
+                                                color = MaterialTheme.colorScheme.outline,
+                                                shape = RoundedCornerShape(dimens.radiusSmall)
+                                            ),
+                                        shape = RoundedCornerShape(dimens.radiusSmall),
+                                        color = MaterialTheme.colorScheme.surfaceVariant
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(
+                                                horizontal = dimens.spaceSm,
+                                                vertical = dimens.spaceXs
+                                            ),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            IconButton(
+                                                onClick = {
+                                                    if (quantity > 1) {
+                                                        quantity -= 1
+                                                        onMinusClick()
+                                                    }
+                                                },
+                                                modifier = Modifier.size(dimens.qtyBtnSize)
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.ic_minus),
+                                                    contentDescription = "minus",
+                                                    tint = MaterialTheme.colorScheme.onSurface,
+                                                    modifier = Modifier.size(dimens.contentIconSize)
+                                                )
+                                            }
+
+                                            Text(
+                                                text = quantity.toString(),
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurface,
+                                                modifier = Modifier.padding(horizontal = dimens.spaceSm)
+                                            )
+
+                                            IconButton(
+                                                onClick = {
+                                                    quantity += 1
+                                                    onPlusClick()
+                                                },
+                                                modifier = Modifier.size(dimens.qtyBtnSize)
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.ic_plus),
+                                                    contentDescription = "plus",
+                                                    tint = MaterialTheme.colorScheme.onSurface,
+                                                    modifier = Modifier.size(dimens.contentIconSize)
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.weight(1f))
+
+                                    RoundedActionButton(
+                                        text = stringResource(id = R.string.action_add_to_cart),
+                                        onClick = { onAddToCartClick(product, quantity) },
+                                        horizontalPadding = dimens.spaceMd
                                     )
                                 }
                             }
                         }
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        // Add to cart button
-//                    Button(
-//                        onClick = { onAddToCartClick(quantity) },
-//                        shape = RoundedCornerShape(dimens.buttonCorner),
-//                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-//                        contentPadding = PaddingValues(horizontal = dimens.spaceLg, vertical = dimens.spaceSm)
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.action_add_to_cart /* "Thêm vào giỏ" */),
-//                            color = MaterialTheme.colorScheme.onPrimary
-//                        )
-//                    }
-
-                        RoundedActionButton(
-                            text = stringResource(id = R.string.action_add_to_cart),
-                            onClick = { onAddToCartClick(product, quantity) },
-                            horizontalPadding = dimens.spaceMd
-                        )
                     }
-                }
-            }
 
-        }
-
-        //gridView sản phẩm tương tự
-        item {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(dimens.spaceSm),
-                verticalArrangement = Arrangement.spacedBy(dimens.spaceSm),
-                horizontalArrangement = Arrangement.spacedBy(dimens.spaceMd),
-                modifier = Modifier.fillMaxWidth().height(1000.dp)
-            ) {
-                items(similarProducts){ similarProducts ->
-                    ItemProductRecommendCard(
-                        product = similarProducts,
-                        onProductClick = {},
-                    )
+                    item {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            contentPadding = PaddingValues(dimens.spaceSm),
+                            verticalArrangement = Arrangement.spacedBy(dimens.spaceSm),
+                            horizontalArrangement = Arrangement.spacedBy(dimens.spaceMd),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1000.dp)
+                        ) {
+                            items(similarProducts) { similarProduct ->
+                                ItemProductRecommendCard(
+                                    product = similarProduct,
+                                    onProductClick = {},
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -256,15 +245,10 @@ fun ProductDetailScreen(
 fun ProductDetailScreenPreview() {
     EasyMartTheme {
         ProductDetailScreen(
-            product = Product(
-                id = 1,
-                name = "Sample Product",
-                description = "This is a sample product description. It provides details about the product, its features, and benefits.",
-                price = 99.99,
-                imageUrl = "",
-                imageRes = R.drawable.pic_shoe_1
-            ),
-            similarProducts = mockProducts
+            uiState = ProductDetailUiState(
+                product = mockProducts.firstOrNull(),
+                similarProducts = mockProducts.drop(1).take(4)
+            )
         )
     }
 }

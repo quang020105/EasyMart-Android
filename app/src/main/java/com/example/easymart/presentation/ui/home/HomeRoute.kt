@@ -65,7 +65,7 @@ fun HomeRoute(
     ) { innerPadding ->
         HomeScreen(
             modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
-            productRecommends = uiState.value.products,
+            uiState = uiState.value,
             onAddToCart = { product -> cartViewModel.addProductToCart(product) },
             onProductClick = { product -> homeViewModel.onProductClick(product) }
         )

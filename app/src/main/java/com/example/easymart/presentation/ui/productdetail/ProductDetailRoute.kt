@@ -46,8 +46,7 @@ fun ProductDetailRoute(
     ){ innerPadding ->
         ProductDetailScreen(
             modifier = Modifier.padding(innerPadding),
-            product = uiState.value.product ?: mockSimpleProduct,
-            similarProducts = uiState.value.similarProducts,
+            uiState = uiState.value,
             onAddToCartClick = { product, quantity -> viewModel.addProductToCart(product, quantity) },
         )
     }

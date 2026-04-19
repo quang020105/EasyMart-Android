@@ -10,7 +10,6 @@ import com.example.easymart.domain.usecase.cart.AddToCartUseCase
 import com.example.easymart.domain.usecase.product.GetAllProductUseCase
 import com.example.easymart.domain.usecase.product.GetProductUseCase
 import com.example.easymart.presentation.common.Resource
-import com.example.easymart.presentation.ui.cart.CartEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +33,11 @@ class ProductDetailViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
     fun loadProduct(productId: Int) {
+        observeProduct(productId)
+        refreshProduct(productId)
+    }
+
+    private fun observeProduct(productId: Int) {
         viewModelScope.launch {
             val result = getProductUseCase(productId)
             result.collect { resource ->
@@ -61,6 +65,20 @@ class ProductDetailViewModel @Inject constructor(
                         )
                     }
                 }
+            }
+        }
+    }
+
+    private fun refreshProduct(productId: Int) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isRefreshing = true, refreshError = null)
+            when (val result = getProductUseCase.refresh(productId)) {
+                is Resource.Success -> _uiState.value = _uiState.value.copy(isRefreshing = false)
+                is Resource.Error -> _uiState.value = _uiState.value.copy(
+                    isRefreshing = false,
+                    refreshError = result.message
+                )
+                is Resource.Loading -> Unit
             }
         }
     }

@@ -7,4 +7,6 @@ class GetProductUseCase @Inject constructor(
     private val productRepo: ProductRepository
 ) {
     operator fun invoke(productId: Int) = productRepo.getProductById(productId)
+
+    suspend fun refresh(productId: Int) = productRepo.refreshProductById(productId)
 }

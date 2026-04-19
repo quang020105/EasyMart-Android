@@ -3,8 +3,10 @@ package com.example.easymart.di
 import com.example.easymart.data.local.dao.AddressDao
 import com.example.easymart.data.local.dao.CartDao
 import com.example.easymart.data.local.dao.OrderDao
+import com.example.easymart.data.local.dao.ProductDao
 import com.example.easymart.data.local.dao.WalletDao
 import com.example.easymart.data.local.datasource.CartLocalDataSource
+import com.example.easymart.data.local.datasource.ProductLocalDataSource
 import com.example.easymart.data.remote.api.AlgoliaApi
 import com.example.easymart.data.remote.api.LocationApi
 import com.example.easymart.data.remote.api.PaymentApi
@@ -13,6 +15,7 @@ import com.example.easymart.data.remote.datasource.AddressRemoteDataSource
 import com.example.easymart.data.remote.datasource.CartRemoteDataSource
 import com.example.easymart.data.remote.datasource.FirestoreAddressRemoteDataSource
 import com.example.easymart.data.remote.datasource.FirestoreCartRemoteDataSource
+import com.example.easymart.data.remote.datasource.ProductRemoteDataSource
 import com.example.easymart.data.repositoryimpl.AddressRepositoryImpl
 import com.example.easymart.data.repositoryimpl.CartRepositoryImpl
 import com.example.easymart.data.repositoryimpl.FirebaseAuthRepositoryImpl
@@ -47,7 +50,20 @@ import javax.inject.Singleton
 object RepositoryModule {
     @Provides
     @Singleton
-    fun provideProductRepository(api: ProductApi): ProductRepository = ProductRepositoryImpl(api)
+    fun provideProductLocalDataSource(dao: ProductDao): ProductLocalDataSource =
+        ProductLocalDataSource(dao)
+
+    @Provides
+    @Singleton
+    fun provideProductRemoteDataSource(api: ProductApi): ProductRemoteDataSource =
+        ProductRemoteDataSource(api)
+
+    @Provides
+    @Singleton
+    fun provideProductRepository(
+        localDS: ProductLocalDataSource,
+        remoteDS: ProductRemoteDataSource
+    ): ProductRepository = ProductRepositoryImpl(localDS, remoteDS)
 
     @Provides
     @Singleton
