@@ -68,6 +68,7 @@ fun CheckoutScreen(
     total: Double = 0.0,
     isLoading: Boolean = false,
     isAddressLoading: Boolean = false,
+    isQuickOrder: Boolean = false,
     onAddressClick: () -> Unit = {},
     onPaymentClick: () -> Unit = {},
     onConfirmClick: () -> Unit = {}
@@ -85,6 +86,39 @@ fun CheckoutScreen(
                 .background(color = MaterialTheme.colorScheme.background),
             contentPadding = PaddingValues(all = dimens.spaceMd)
         ) {
+            if (isQuickOrder) {
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = dimens.spaceMd),
+                        colors = androidx.compose.material3.CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+                        ),
+                        shape = RoundedCornerShape(dimens.radiusLarge)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(all = dimens.spaceMd),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_flash),
+                                contentDescription = "Mua ngay",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(dimens.spaceSm))
+                            Text(
+                                text = "Đơn mua ngay",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+            }
+
             // Address header (item)
             item {
                 Spacer(modifier = Modifier.height(dimens.spaceMd))

@@ -21,7 +21,8 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun ProductDetailRoute(
     viewModel: ProductDetailViewModel,
-    onNavigateToProduct: (Product) -> Unit
+    onNavigateToProduct: (Product) -> Unit,
+    onNavigateToQuickCheckout: (Product, Int) -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsState()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -49,8 +50,8 @@ fun ProductDetailRoute(
         ProductDetailScreen(
             uiState = uiState.value,
             onAddToCartClick = { product, quantity -> viewModel.addProductToCart(product, quantity) },
-            onBuyNowClick = { product, quantity -> viewModel.addProductToCart(product, quantity) },
-            onRecommendedProductClick = onNavigateToProduct
+            onRecommendedProductClick = onNavigateToProduct,
+            onBuyNowClick = onNavigateToQuickCheckout
         )
     }
 }

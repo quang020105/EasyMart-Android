@@ -14,6 +14,10 @@ sealed class Screen(val route: String) {
     data object Home : Screen("home")
     data object Cart : Screen("cart")
     data object Checkout : Screen("checkout")
+    data object QuickCheckout : Screen("checkout_quick?productId={productId}&quantity={quantity}") {
+        fun createRoute(productId: Int, quantity: Int) =
+            "checkout_quick?productId=$productId&quantity=$quantity"
+    }
 //    data object OrderSuccess : Screen("order_success/{orderId}/{total}/{paymentMethod}") {
 //        fun createRoute(orderId: Int, total: Long, paymentMethod: String) =
 //            "order_success/$orderId/$total/$paymentMethod"

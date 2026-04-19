@@ -16,6 +16,7 @@ import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
 import com.example.easymart.domain.usecase.payment.ProcessPaymentUseCase
 import com.example.easymart.domain.usecase.payment.PollPayOsPaymentStatusUseCase
 import com.example.easymart.domain.usecase.payment.UpdateLocalOrderPaymentStatusUseCase
+import com.example.easymart.presentation.common.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +34,8 @@ class CheckoutViewModel @Inject constructor(
     private val orderAutoProcessUseCase: OrderAutoProcessUseCase,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
     private val pollPayOsPaymentStatusUseCase: PollPayOsPaymentStatusUseCase,
-    private val updateLocalOrderPaymentStatusUseCase: UpdateLocalOrderPaymentStatusUseCase
+    private val updateLocalOrderPaymentStatusUseCase: UpdateLocalOrderPaymentStatusUseCase,
+    private val getProductUseCase: com.example.easymart.domain.usecase.product.GetProductUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CheckoutUiState())
     val uiState: StateFlow<CheckoutUiState> = _uiState
@@ -124,6 +126,7 @@ class CheckoutViewModel @Inject constructor(
                         is PaymentResult.Pending -> {
                             _uiState.update { it.copy(isProcessing = true) }
                         }
+
                         is PaymentResult.Redirect -> {
                             _uiState.update { it.copy(isProcessing = false) }
                             _uiEvent.emit(
@@ -134,6 +137,7 @@ class CheckoutViewModel @Inject constructor(
                                 )
                             )
                         }
+
                         is PaymentResult.Processing -> {
                             _uiState.update {
                                 it.copy(isProcessing = true)
@@ -162,11 +166,13 @@ class CheckoutViewModel @Inject constructor(
 
                         is PaymentResult.Failed -> {
                             _uiState.update { it.copy(isProcessing = false) }
-                            if(paymentMethod == PaymentMethod.ONLINE_GATEWAY){
-                                _uiEvent.emit(CheckoutUiEvent.NavigateToPaymentFailed(
-                                    result.orderID,
-                                    result.reason
-                                ))
+                            if (paymentMethod == PaymentMethod.ONLINE_GATEWAY) {
+                                _uiEvent.emit(
+                                    CheckoutUiEvent.NavigateToPaymentFailed(
+                                        result.orderID,
+                                        result.reason
+                                    )
+                                )
                             } else {
                                 _uiEvent.emit(CheckoutUiEvent.ShowErrorMessage(result.reason))
                             }
@@ -190,9 +196,9 @@ class CheckoutViewModel @Inject constructor(
     }
 
     // gọi workManager để tự động chuyển trạng thái đơn hàng (nếu đặt hàng thành công)
-    fun startAutoProcessOrder(){
+    fun startAutoProcessOrder() {
         val order = uiState.value.order
-        if(order != null){
+        if (order != null) {
             viewModelScope.launch {
                 Log.d("CheckoutViewModel", "startAutoProcessOrder: ${order.id}")
                 orderAutoProcessUseCase.start(orderId = order.id)
@@ -210,5 +216,35 @@ class CheckoutViewModel @Inject constructor(
 
     suspend fun markPayOsCancelled(localOrderId: Int) {
         updateLocalOrderPaymentStatusUseCase(localOrderId, PaymentStatus.FAILED)
+    }
+
+    fun loadQuickOrder(productId: Int, quantity: Int) {
+        viewModelScope.launch {
+            getProductUseCase(productId).collect { resource ->
+                when (resource) {
+                    is com.example.easymart.presentation.common.Resource.Success -> {
+                        val product = resource.data
+                        val cartItem = CartItem(
+                            id = product.id,
+                            product = product,
+                            quantity = quantity.coerceAtLeast(1),
+                            price = product.price
+                        )
+                        _uiState.update {
+                            it.copy(
+                                quickOrderItems = listOf(cartItem),
+                                isQuickOrderActive = true
+                            )
+                        }
+                    }
+
+                    else -> Unit
+                }
+            }
+        }
+    }
+
+    fun clearQuickOrder() {
+        _uiState.update { it.copy(quickOrderItems = emptyList(), isQuickOrderActive = false) }
     }
 }

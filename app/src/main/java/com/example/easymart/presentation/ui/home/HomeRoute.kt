@@ -63,8 +63,8 @@ fun HomeRoute(
             SnackbarHost(hostState = snackBarHostState)
         }
     ) { innerPadding ->
+        val padding = innerPadding
         HomeScreen(
-            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
             uiState = uiState.value,
             onAddToCart = { product -> cartViewModel.addProductToCart(product) },
             onProductClick = { product -> homeViewModel.onProductClick(product) }

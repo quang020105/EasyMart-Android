@@ -286,7 +286,9 @@ fun ProductDetailScreen(
                                         }
 
                                         Button(
-                                            onClick = { onBuyNowClick(product, quantity) },
+                                            onClick = {
+                                                onBuyNowClick(product, quantity)
+                                            },
                                             modifier = Modifier
                                                 .weight(1f)
                                                 .heightIn(min = 52.dp),

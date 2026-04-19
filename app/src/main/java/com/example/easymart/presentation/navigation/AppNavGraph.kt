@@ -251,6 +251,12 @@ fun AppNavGraph(
                     viewModel = viewModel,
                     onNavigateToProduct = { product ->
                         navController.navigate(Screen.ProductDetail.createRoute(product.id))
+                    },
+                    onNavigateToQuickCheckout = { product, quantity ->
+                        navController.requireLoginThenNavigate(
+                            authState.value,
+                            Screen.QuickCheckout.createRoute(product.id, quantity)
+                        )
                     }
                 )
             }
@@ -268,6 +274,55 @@ fun AppNavGraph(
                     cartViewModel = hiltViewModel(parentEntry),
                     addressViewModel = hiltViewModel(parentEntry),
                     paymentViewModel = hiltViewModel(parentEntry),
+                    onNavigateToAddress = {
+                        navController.requireLoginThenNavigate(
+                            authState.value,
+                            Screen.DeliveryAddress.route
+                        )
+                    },
+                    onNavigateToPayment = {
+                        navController.requireLoginThenNavigate(
+                            authState.value,
+                            Screen.SelectPaymentMethod.route
+                        )
+                    },
+                    onNavigateToSuccess = {
+                        navController.navigate(Screen.OrderSuccess.route)
+                    },
+                    onNavigateToOnlineProcessing = { orderCode, localOrderId ->
+                        navController.navigate(
+                            Screen.OnlinePaymentProcessing.createRoute(orderCode, localOrderId)
+                        )
+                    },
+                    onNavigateToPaymentFailed = { orderId, reason ->
+                        navController.navigate(
+                            Screen.PaymentFailed.createRoute(orderId, reason)
+                        )
+                    }
+                )
+            }
+
+            composableWithAnim(
+                route = Screen.QuickCheckout.route,
+                anim = NavAnim.HORIZONTAL,
+                arguments = listOf(
+                    navArgument("productId") { type = NavType.IntType; defaultValue = -1 },
+                    navArgument("quantity") { type = NavType.IntType; defaultValue = 1 }
+                )
+            ) { backStackEntry ->
+                val parentEntry =
+                    remember { navController.getBackStackEntry(Screen.HomeGraph.route) }
+
+                val productId = backStackEntry.arguments?.getInt("productId") ?: -1
+                val quantity = backStackEntry.arguments?.getInt("quantity") ?: 1
+
+                CheckOutRoute(
+                    checkoutViewModel = hiltViewModel(parentEntry),
+                    cartViewModel = hiltViewModel(parentEntry),
+                    addressViewModel = hiltViewModel(parentEntry),
+                    paymentViewModel = hiltViewModel(parentEntry),
+                    quickOrderProductId = productId.takeIf { it > 0 },
+                    quickOrderQuantity = quantity.takeIf { it > 0 } ?: 1,
                     onNavigateToAddress = {
                         navController.requireLoginThenNavigate(
                             authState.value,
@@ -456,6 +511,7 @@ fun AppNavGraph(
                 SelectPaymentRoute(
                     selectPaymentViewModel = hiltViewModel(parentEntry),
                     cartViewModel = hiltViewModel(parentEntry),
+                    checkoutViewModel = hiltViewModel(parentEntry),
                     onNavigateBack = { navController.navigateUp() }
                 )
             }
@@ -701,6 +757,12 @@ fun AppNavGraph(
         }
     }
 }
+
+
+
+
+
+
 
 
 

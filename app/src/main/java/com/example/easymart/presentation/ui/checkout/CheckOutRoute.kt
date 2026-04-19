@@ -26,7 +26,9 @@ fun CheckOutRoute(
     onNavigateToPayment: () -> Unit,
     onNavigateToSuccess: () -> Unit,
     onNavigateToOnlineProcessing: (orderCode: Long?, localOrderId: Int?) -> Unit,
-    onNavigateToPaymentFailed: (orderId: Int, reason: String) -> Unit
+    onNavigateToPaymentFailed: (orderId: Int, reason: String) -> Unit,
+    quickOrderProductId: Int? = null,
+    quickOrderQuantity: Int? = null
 ) {
     val context = LocalContext.current
 
@@ -43,13 +45,14 @@ fun CheckOutRoute(
     //trạng thái ui của selectPayment
     val selectPaymentUiState by paymentViewModel.uiState.collectAsState()
 
+    val isQuickOrder = quickOrderProductId != null && quickOrderQuantity != null
+
 //     Restore selected items sau khi login thành công và vào checkout
 //     Restore khi số lượng items thay đổi (sau khi merge cart hoàn thành)
 //    Sử dụng size thay vì toàn bộ items để tránh trigger quá nhiều lần
 
-    LaunchedEffect(cartUiState.items.size, cartUiState.selectedItems.size) {
-        // Chỉ restore nếu có items
-        if (cartUiState.items.isNotEmpty()) {
+    LaunchedEffect(cartUiState.items.size, cartUiState.selectedItems.size, isQuickOrder) {
+        if (!isQuickOrder && cartUiState.items.isNotEmpty()) {
             cartViewModel.restoreSelectedItemsAfterLogin()
         }
     }
@@ -103,21 +106,44 @@ fun CheckOutRoute(
     Log.d("CheckOutRoute", "selectedMethod: ${selectPaymentUiState.selectedMethod}")
 
 
+    // kiểm tra nếu có quick order thì load quick order, ưu tiên hiển thị quick order hơn cart
+    LaunchedEffect(quickOrderProductId, quickOrderQuantity, isQuickOrder) {
+        if (isQuickOrder) {
+            checkoutViewModel.loadQuickOrder(quickOrderProductId, quickOrderQuantity)
+        } else {
+            checkoutViewModel.clearQuickOrder()
+        }
+    }
+
+    val quickItems = uiState.quickOrderItems
+    val itemsForCheckout = if (isQuickOrder && quickItems.isNotEmpty()) {
+        quickItems
+    } else {
+        cartUiState.selectedItems
+    }
+
+    val subTotal = itemsForCheckout.sumOf { it.totalPrice }
+    val shipping = itemsForCheckout.sumOf { it.quantity * (15000.0 / 26333) }
+    val total = subTotal + shipping
+
     CheckoutScreen(
         address = selectedAddress,
         paymentMethod = selectPaymentUiState.selectedMethod,
-        cartItems = cartUiState.selectedItems,
-        subTotal = cartUiState.subtotal,
-        shipping = cartUiState.shipping,
-        total = cartUiState.total,
-        onAddressClick = { checkoutViewModel.selectAddressClick() },
-        onPaymentClick = { checkoutViewModel.selectPaymentClick() },
+        cartItems = itemsForCheckout,
+        subTotal = subTotal,
+        shipping = shipping,
+        total = total,
         isLoading = uiState.isProcessing,
         isAddressLoading = addressUiState.isLoading,
-        onConfirmClick = { checkoutViewModel.pay(
-            cartItems = cartUiState.selectedItems,
-            address = selectedAddress,
-            paymentMethod = selectPaymentUiState.selectedMethod ?: PaymentMethod.COD
-        )}
+        isQuickOrder = isQuickOrder,
+        onAddressClick = { checkoutViewModel.selectAddressClick() },
+        onPaymentClick = { checkoutViewModel.selectPaymentClick() },
+        onConfirmClick = {
+            checkoutViewModel.pay(
+                cartItems = itemsForCheckout,
+                address = selectedAddress,
+                paymentMethod = selectPaymentUiState.selectedMethod ?: PaymentMethod.COD
+            )
+        }
     )
 }
