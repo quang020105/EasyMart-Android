@@ -10,5 +10,12 @@ data class Product(
     val images: List<ProductImage> = emptyList(),
     val category: String = "",
     val stockQuantity: Int = 0,
-    val soldQuantity: Int = 0
+    val soldQuantity: Int = 0,
+    val rating: ProductRating = ProductRating()
+)
+
+// Rating cho sản phẩm theo API FakeStore.
+data class ProductRating(
+    val rate: Double = 0.0,
+    val count: Int = 0
 )

@@ -44,10 +44,11 @@ fun ProductDetailRoute(
             SnackbarHost(hostState = snackBarHostState)
         }
     ){ innerPadding ->
+        val padding = innerPadding
         ProductDetailScreen(
-            modifier = Modifier.padding(innerPadding),
             uiState = uiState.value,
             onAddToCartClick = { product, quantity -> viewModel.addProductToCart(product, quantity) },
+            onBuyNowClick = { product, quantity -> viewModel.addProductToCart(product, quantity) }
         )
     }
 }

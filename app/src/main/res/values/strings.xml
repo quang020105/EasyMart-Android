@@ -2,7 +2,7 @@
     <string name="app_name">EasyMart</string>
     <string name="title_activity_home_screen">HomeScreen</string>
     <string name="label_description">Mô tả sản phẩm</string>
-    <string name="action_add_to_cart">Thêm vào giỏ hàng</string>
+    <string name="action_add_to_cart">Thêm vào giỏ</string>
     <string name="label_orders">Đơn hàng của tôi</string>
     <string name="label_address">Địa chỉ giao hàng</string>
     <string name="label_payments">Phương thức thanh toán</string>
@@ -18,4 +18,7 @@
     <string name="title_payment_online">Thanh toán Online</string>
     <string name="desc_payment_online">Thẻ ngân hàng, VNPay, MoMo...</string>
     <string name="label_login">Đăng nhập</string>
+    <string name="label_recommended_products">Sản phẩm gợi ý</string>
+    <string name="action_buy_now">Mua ngay</string>
+    <string name="label_quantity">Số lượng</string>
 </resources>
