@@ -247,7 +247,12 @@ fun AppNavGraph(
                     viewModel.loadProduct(productId)
                 }
 
-                ProductDetailRoute(viewModel = viewModel)
+                ProductDetailRoute(
+                    viewModel = viewModel,
+                    onNavigateToProduct = { product ->
+                        navController.navigate(Screen.ProductDetail.createRoute(product.id))
+                    }
+                )
             }
 
 
@@ -696,6 +701,8 @@ fun AppNavGraph(
         }
     }
 }
+
+
 
 
 

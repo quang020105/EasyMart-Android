@@ -45,6 +45,7 @@ fun ProductDetailScreen(
     onMinusClick: () -> Unit = {},
     onAddToCartClick: (Product, Int) -> Unit = { _, _ -> },
     onBuyNowClick: (Product, Int) -> Unit = { _, _ -> },
+    onRecommendedProductClick: (Product) -> Unit = {},
 ) {
     val dimens = LocalAppDimens.current
     var quantity by remember { mutableIntStateOf(initialQuantity.coerceAtLeast(1)) }
@@ -323,7 +324,7 @@ fun ProductDetailScreen(
                                 items(similarProducts) { similarProduct ->
                                     ItemProductRecommendCard(
                                         product = similarProduct,
-                                        onProductClick = {},
+                                        onProductClick = onRecommendedProductClick,
                                     )
                                 }
                             }
