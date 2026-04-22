@@ -26,6 +26,8 @@ import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -89,6 +91,11 @@ class AddressViewModel @Inject constructor(
         1
     )
     val uiEvent = _uiEvent.asSharedFlow()
+
+    // dùng để debounce khi sync dữ liệu , tránh spam API
+    private var syncJob: Job? = null
+
+
 
     init {
         loadDefaultAddress()
@@ -191,7 +198,7 @@ class AddressViewModel @Inject constructor(
         viewModelScope.launch {
             val uid = getCurrentUserUseCase()?.id
             insertAddressUS(address.copy(userUid = uid))
-            uid?.let { syncAddressesUseCase(it) }
+            uid?.let { scheduleSync(it) }
         }
     }
 
@@ -360,7 +367,7 @@ class AddressViewModel @Inject constructor(
                         }
                         _uiEvent.emit(AddressUiEvent.ShowMessage("Đã thêm 1 địa chỉ"))
                     }
-                    uid?.let { syncAddressesUseCase(it) }
+                    uid?.let { scheduleSync(it) }
                 } catch (e: Exception) {
                     Log.e("AddressViewModel", "Error saving address", e)
                     _uiEvent.emit(AddressUiEvent.ShowMessage("Lỗi khi lưu địa chỉ: ${e.message}"))
@@ -379,5 +386,14 @@ class AddressViewModel @Inject constructor(
 
     fun resetForm() {
         _uiState.update { AddAddressUIState() }
+    }
+
+    // delay việc sync dữ liệu để tránh spam API khi người dùng thao tác nhanh nhiều lần
+    private fun scheduleSync(userId: String) {
+        syncJob?.cancel()
+        syncJob = viewModelScope.launch {
+            delay(800) // debounce 800ms
+            syncAddressesUseCase(userId)
+        }
     }
 }
