@@ -13,13 +13,15 @@ fun FirebaseUser.toDomain(): User {
     )
 }
 
-fun FirebaseUserDto.toDomain(): User {
+fun FirebaseUserDto.toDomain(isAdmin: Boolean): User {
     return User(
         id = uid,
         name = name,
         email = email,
         phone = phone,
         avatarUrl = avatarUrl,
+        role = if (isAdmin) "admin" else role.ifBlank { "customer" },
+        isAdmin = isAdmin,
         createdAt = createdAt
     )
 }

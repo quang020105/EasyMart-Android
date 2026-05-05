@@ -6,5 +6,6 @@ class FirebaseUserDto(
     var email: String = "",
     var phone: String? = null,
     var avatarUrl: String? = null,
+    var role: String = "customer",
     var createdAt: Long = 0L
 )

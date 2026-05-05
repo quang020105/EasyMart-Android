@@ -76,6 +76,14 @@ fun ProfileScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
+        // Email
+        Text(
+            text = user?.role ?: "",
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth().padding(all = dimens.spaceLg),
             thickness = dimens.dividerThickness,

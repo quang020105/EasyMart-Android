@@ -6,5 +6,7 @@ data class User(
     val email: String,
     val phone: String? = null,
     val avatarUrl: String? = null,
+    val role: String = "customer",
+    val isAdmin: Boolean = false,
     val createdAt: Long
 )

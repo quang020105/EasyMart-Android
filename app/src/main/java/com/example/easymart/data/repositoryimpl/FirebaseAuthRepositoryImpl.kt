@@ -7,16 +7,24 @@ import com.example.easymart.domain.repository.AuthRepository
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirebaseAuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore
-): AuthRepository {
+) : AuthRepository {
+    private suspend fun FirebaseAuth.readAdminClaim(): Boolean {
+        val user = auth.currentUser ?: return false
+        val tokenResult = user.getIdToken(false).await()
+        return tokenResult.claims["admin"] as? Boolean ?: false
+    }
+
     override suspend fun register(
         email: String,
         password: String,
@@ -26,7 +34,8 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         return runCatching {
             val authResult = auth.createUserWithEmailAndPassword(email, password).await()
             //check lỗi user trả về null , vì fb không đảm bảo luôn trả về user
-            val firebaseUser = authResult.user ?: throw Exception("Đã xảy ra lỗi trong quá trình đăng ký")
+            val firebaseUser =
+                authResult.user ?: throw Exception("Đã xảy ra lỗi trong quá trình đăng ký")
             val userId = firebaseUser.uid
 
             //tạo document trong firestore cho user
@@ -34,6 +43,8 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
                 id = userId,
                 name = name,
                 email = email,
+                role = "customer",
+                isAdmin = false,
                 createdAt = System.currentTimeMillis()
             )
             //ghi vào firestore bằng dto
@@ -43,6 +54,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
                 this.email = user.email
                 this.phone = user.phone
                 this.avatarUrl = user.avatarUrl
+                this.role = user.role
                 this.createdAt = user.createdAt
             }
 
@@ -57,22 +69,39 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     ): Result<User> {
         return runCatching {
             val authResult = auth.signInWithEmailAndPassword(email, password).await()
-            val userId = authResult.user?.uid ?: throw Exception("Đã xảy ra lỗi trong quá trình đăng nhập")
+            val userId =
+                authResult.user?.uid ?: throw Exception("Đã xảy ra lỗi trong quá trình đăng nhập")
 
             //lấy thông tin user từ firestore
             val userDto = firestore.collection("usersEM").document(userId).get().await()
                 .toObject(FirebaseUserDto::class.java)
                 ?: throw Exception("Người dùng không tồn tại")
 
-            User(
-                id = userDto.uid,
-                name = userDto.name,
-                email = userDto.email,
-                phone = userDto.phone,
-                avatarUrl = userDto.avatarUrl,
-                createdAt = userDto.createdAt
-            )
+            // đọc quyền của người dùng đang đăng nhập từ firebase
+            val isAdmin = auth.readAdminClaim()
+            userDto.toDomain(isAdmin)
         }
+    }
+
+
+    override suspend fun getCurrentUserWithRole(): User? {
+        val firebaseUser = auth.currentUser ?: return null
+        val userDto = firestore.collection("usersEM")
+            .document(firebaseUser.uid)
+            .get()
+            .await()
+            .toObject(FirebaseUserDto::class.java)
+
+        val isAdmin = auth.readAdminClaim()
+        return userDto?.toDomain(isAdmin)
+            ?: User(
+                id = firebaseUser.uid,
+                name = firebaseUser.displayName ?: "",
+                email = firebaseUser.email ?: "",
+                createdAt = 0L,
+                role = if (isAdmin) "admin" else "customer",
+                isAdmin = isAdmin
+            )
     }
 
     override fun getCurrentUser(): User? {
@@ -81,30 +110,92 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             id = firebaseUser.uid,
             name = firebaseUser.displayName ?: "",
             email = firebaseUser.email ?: "",
+            role = "customer",
+            isAdmin = false,
             createdAt = 0L
         )
     }
 
 
     //lắng nghe thay đổi user
-    override fun observeCurrentUser(): Flow<User?> = callbackFlow{
-        val listener = FirebaseAuth.AuthStateListener { auth ->
-            val firebaseUser = auth.currentUser
-            //nếu user null thì gửi null
+    override fun observeCurrentUser(): Flow<User?> = callbackFlow {
+//        val listener = FirebaseAuth.AuthStateListener { auth ->
+//            val firebaseUser = auth.currentUser
+//            //nếu user null thì gửi null
+//            if (firebaseUser == null) {
+//                trySend(null)
+//                return@AuthStateListener
+//            }
+//
+//            firestore.collection("usersEM").document(firebaseUser.uid)
+//                .addSnapshotListener { snapshot, _ ->
+//                    val userDto = snapshot?.toObject(FirebaseUserDto::class.java)
+//                    trySend(userDto?.toDomain())
+//                }
+//        }
+//       auth.addAuthStateListener(listener)
+//        awaitClose { auth.removeAuthStateListener(listener) }
+//
+//
+//        val firebaseUser = auth.currentUser ?: return null
+//        return User(
+//            id = firebaseUser.uid,
+//            name = firebaseUser.displayName ?: "",
+//            email = firebaseUser.email ?: "",
+//            createdAt = 0L,
+//            role = "customer",
+//            isAdmin = false
+//        )
+
+
+        var profileListener: ListenerRegistration? = null
+
+        val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            profileListener?.remove()
+            profileListener = null
+
+            val firebaseUser = firebaseAuth.currentUser
             if (firebaseUser == null) {
                 trySend(null)
                 return@AuthStateListener
             }
 
-            firestore.collection("usersEM").document(firebaseUser.uid)
-                .addSnapshotListener { snapshot, _ ->
-                    val userDto = snapshot?.toObject(FirebaseUserDto::class.java)
-                    trySend(userDto?.toDomain())
-                }
+            launch {
+                val isAdmin = firebaseAuth.readAdminClaim()
 
+                profileListener = firestore.collection("usersEM")
+                    .document(firebaseUser.uid)
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            trySend(null)
+                            return@addSnapshotListener
+                        }
+
+                        val userDto = snapshot?.toObject(FirebaseUserDto::class.java)
+                        if (userDto == null) {
+                            trySend(
+                                User(
+                                    id = firebaseUser.uid,
+                                    name = firebaseUser.displayName ?: "",
+                                    email = firebaseUser.email ?: "",
+                                    createdAt = 0L,
+                                    role = if (isAdmin) "admin" else "customer",
+                                    isAdmin = isAdmin
+                                )
+                            )
+                        } else {
+                            trySend(userDto.toDomain(isAdmin))
+                        }
+                    }
+            }
         }
-       auth.addAuthStateListener(listener)
-        awaitClose { auth.removeAuthStateListener(listener) }
+
+        auth.addAuthStateListener(listener)
+
+        awaitClose {
+            profileListener?.remove()
+            auth.removeAuthStateListener(listener)
+        }
     }
 
     override suspend fun logout(): Result<Unit> {
