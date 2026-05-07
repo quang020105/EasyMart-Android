@@ -58,6 +58,7 @@ import com.example.easymart.presentation.ui.auth.signup.SignUpViewModel
 import com.example.easymart.presentation.ui.splash.SplashScreen
 import com.example.easymart.presentation.ui.auth.forgot_password.ForgotPasswordRoute
 import com.example.easymart.presentation.ui.auth.forgot_password.ForgotPasswordViewModel
+import com.example.easymart.presentation.ui.admin.products.AdminProductsRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -698,7 +699,11 @@ fun AppNavGraph(
                 route = Screen.AdminProducts.route,
                 anim = NavAnim.HORIZONTAL
             ) {
-                AdminPlaceholderScreen("Quản lý sản phẩm")
+                AdminProductsRoute(
+                    onNavigateBack = { navController.navigateUp() },
+                    onAddProduct = { /* TODO: open add product */ },
+                    onEditProduct = { /* TODO: open edit product */ }
+                )
             }
 
             composableWithAnim(
@@ -815,6 +820,8 @@ fun AppNavGraph(
         }
     }
 }
+
+
 
 
 

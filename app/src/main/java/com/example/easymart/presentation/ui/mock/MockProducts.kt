@@ -14,6 +14,7 @@ val mockProducts = List(10){ idx ->
         price = (100000..3000000).random().toDouble(),
         imageUrl = "https://via.placeholder.com/150",
         imageRes = R.drawable.pic_shoe_1,
+        category = listOf("Điện thoại", "Laptop", "Phụ kiện").random(),
         rating = ProductRating(rate = 4.2, count = 120 + idx)
     )
 }
@@ -25,5 +26,6 @@ val mockSimpleProduct = Product(
     price = 100000.0,
     imageUrl = "",
     imageRes = R.drawable.pic_shoe_1,
+    category = "Phụ kiện",
     rating = ProductRating(rate = 3.9, count = 120)
 )
