@@ -21,7 +21,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
     private suspend fun FirebaseAuth.readAdminClaim(): Boolean {
         val user = auth.currentUser ?: return false
-        val tokenResult = user.getIdToken(false).await()
+        val tokenResult = user.getIdToken(true).await()
         return tokenResult.claims["admin"] as? Boolean ?: false
     }
 

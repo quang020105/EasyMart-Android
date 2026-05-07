@@ -69,4 +69,11 @@ sealed class Screen(val route: String) {
         fun createRoute(orderCode: Long?, localOrderId: Int?, status: String?) =
             "payos_cancel?orderCode=${orderCode ?: ""}&localOrderId=${localOrderId ?: ""}&status=${status ?: ""}"
     }
+
+    // admin graph
+    data object AdminGraph : Screen("admin_graph")
+    data object AdminDashboard : Screen("admin_dashboard")
+    data object AdminProducts : Screen("admin_products")
+    data object AdminOrders : Screen("admin_orders")
+    data object AdminCategories : Screen("admin_categories")
 }

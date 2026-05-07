@@ -26,6 +26,12 @@ private val screenConfigs: List<Pair<String, ScreenConfig>> = listOf(
     "payment_method" to ScreenConfig(title = "Phương thức thanh toán", showTopBar = true),
     "order" to ScreenConfig(title = "Đơn hàng của tôi", showTopBar = true),
 
+    // admin
+    "admin_dashboard" to ScreenConfig(title = "Admin Dashboard", showTopBar = true, showBottomBar = false),
+    "admin_products" to ScreenConfig(title = "Quản lý sản phẩm", showTopBar = true, showBottomBar = false),
+    "admin_orders" to ScreenConfig(title = "Quản lý đơn hàng", showTopBar = true, showBottomBar = false),
+    "admin_categories" to ScreenConfig(title = "Quản lý danh mục", showTopBar = true, showBottomBar = false),
+
     "order_success" to ScreenConfig(title = "Đặt hàng thành công", showTopBar = true),
     "payment_failed" to ScreenConfig(title = "Thanh toán thất bại", showTopBar = true),
     "online_payment_processing" to ScreenConfig(showTopBar = false, showBottomBar = false),

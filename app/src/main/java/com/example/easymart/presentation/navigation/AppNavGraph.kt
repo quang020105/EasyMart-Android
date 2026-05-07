@@ -3,6 +3,7 @@ package com.example.easymart.presentation.navigation
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -14,16 +15,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.example.easymart.domain.model.Role
+import com.example.easymart.presentation.auth.AuthState
 import com.example.easymart.presentation.auth.AuthViewModel
 import com.example.easymart.presentation.common.AppEventBus
 import com.example.easymart.presentation.common.ui.LoginRequiredBottomSheet
 import com.example.easymart.presentation.common.ui.UiEvent
+import com.example.easymart.presentation.ui.admin.dashboard.AdminDashboardRoute
+import com.example.easymart.presentation.ui.admin.AdminPlaceholderScreen
 import com.example.easymart.presentation.ui.cart.CartRoute
 import com.example.easymart.presentation.ui.cart.CartViewModel
 import com.example.easymart.presentation.ui.checkout.CheckOutRoute
@@ -63,6 +69,9 @@ fun AppNavGraph(
     ///quản lí trạng thái đăng nhập
     val authViewModel = hiltViewModel<AuthViewModel>()
     val authState = authViewModel.authState.collectAsState()
+    val context = LocalContext.current
+
+    val isAdmin = (authState.value as? AuthState.LoggedIn)?.role == Role.ADMIN
 
     //quản lý bottom sheet
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -72,9 +81,14 @@ fun AppNavGraph(
     // xử lí hiển thị bottom sheet đăng nhập khi có sự kiện yêu cầu đăng nhập
     LaunchedEffect(Unit) {
         AppEventBus.events.collect { event ->
-            if (event is UiEvent.RequireLogin) {
-                pendingRoute = event.targetRoute
-                showLoginSheet = true
+            when (event) {
+                is UiEvent.RequireLogin -> {
+                    pendingRoute = event.targetRoute
+                    showLoginSheet = true
+                }
+                is UiEvent.ShowMessage -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -605,10 +619,19 @@ fun AppNavGraph(
                             }
 
                             "address" -> {
+                                Log.d("AppNavGraph", "Address clicked")
                                 navController.navigate(Screen.DeliveryAddress.route)
                             }
 
                             "payment" -> {
+                            }
+
+                            "admin" -> {
+                                Log.d("AppNavGraph", "User role: ${(authState.value as? AuthState.LoggedIn)?.role}")
+                                navController.requireAdminThenNavigate(
+                                    authState.value,
+                                    Screen.AdminGraph.route
+                                )
                             }
 
                             "settings" -> {
@@ -650,6 +673,41 @@ fun AppNavGraph(
 
         }
 
+
+        // admin graph
+        navigation(startDestination = Screen.AdminDashboard.route, route = Screen.AdminGraph.route) {
+            composableWithAnim(
+                route = Screen.AdminDashboard.route,
+                anim = NavAnim.HORIZONTAL
+            ) {
+                AdminDashboardRoute(
+                    onNavigateOrders = { navController.navigate(Screen.AdminOrders.route) },
+                    onNavigateProducts = { navController.navigate(Screen.AdminProducts.route) },
+                    onNavigateCategories = { navController.navigate(Screen.AdminCategories.route) }
+                )
+            }
+
+            composableWithAnim(
+                route = Screen.AdminOrders.route,
+                anim = NavAnim.HORIZONTAL
+            ) {
+                AdminPlaceholderScreen("Quản lý đơn hàng")
+            }
+
+            composableWithAnim(
+                route = Screen.AdminProducts.route,
+                anim = NavAnim.HORIZONTAL
+            ) {
+                AdminPlaceholderScreen("Quản lý sản phẩm")
+            }
+
+            composableWithAnim(
+                route = Screen.AdminCategories.route,
+                anim = NavAnim.HORIZONTAL
+            ) {
+                AdminPlaceholderScreen("Quản lý danh mục")
+            }
+        }
 
         //màn đơn hàng của tôi
         composableWithAnim(
@@ -757,6 +815,10 @@ fun AppNavGraph(
         }
     }
 }
+
+
+
+
 
 
 

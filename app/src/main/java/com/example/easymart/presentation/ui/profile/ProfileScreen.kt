@@ -37,6 +37,7 @@ fun ProfileScreen(
     onOptionClick: (tag: String) -> Unit = {}
 ) {
     val dimens = LocalAppDimens.current
+    val isAdmin = user?.isAdmin == true || user?.role?.equals("admin", ignoreCase = true) == true
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -109,6 +110,15 @@ fun ProfileScreen(
             tag = "payment",
             onClick = onOptionClick
         )
+
+        if (isAdmin) {
+            ProfileRowItem(
+                iconRes = R.drawable.ic_administration,
+                title = stringResource(R.string.label_admin_dashboard),
+                tag = "admin",
+                onClick = onOptionClick
+            )
+        }
 
         ProfileRowItem(
             iconRes = R.drawable.ic_setting,

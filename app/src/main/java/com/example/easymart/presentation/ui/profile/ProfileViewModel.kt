@@ -60,6 +60,7 @@ class ProfileViewModel @Inject constructor(
                 "payment" -> _events.send(ProfileUiEvent.Navigate("payment"))
                 "settings" -> _events.send(ProfileUiEvent.Navigate("settings"))
                 "login" -> _events.send(ProfileUiEvent.Navigate("login"))
+                "admin" -> _events.send(ProfileUiEvent.Navigate("admin"))
                 "logout" -> handleLogout()
             }
         }

@@ -1,12 +1,11 @@
 package com.example.easymart.presentation.auth
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.easymart.domain.model.Role
 import com.example.easymart.domain.model.User
-import com.example.easymart.domain.repository.AuthRepository
 import com.example.easymart.domain.usecase.auth.GetCurrentUserUseCase
-import com.example.easymart.domain.usecase.auth.LoginUseCase
+import com.example.easymart.domain.usecase.auth.GetCurrentUserWithRoleUseCase
 import com.example.easymart.domain.usecase.auth.LogoutUseCase
 import com.example.easymart.domain.usecase.cart.SyncCartOnLoginUseCase
 import com.example.easymart.domain.usecase.cart.SyncCartUseCase
@@ -22,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val getCurrentUserWithRoleUseCase: GetCurrentUserWithRoleUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val syncCartUseCase: SyncCartUseCase,
     private val syncCartOnLoginUseCase: SyncCartOnLoginUseCase,
@@ -43,12 +43,18 @@ class AuthViewModel @Inject constructor(
     }
 
     fun refresh() {
-        val current = getCurrentUserUseCase()
-        _authState.value = if (current != null) AuthState.LoggedIn(current) else AuthState.Guest
+        viewModelScope.launch {
+            val current = getCurrentUserWithRoleUseCase()
+            _authState.value = if (current != null) {
+                AuthState.LoggedIn(current, Role.fromUser(current))
+            } else {
+                AuthState.Guest
+            }
+        }
     }
 
     fun onUserLoggedIn(user: User) {
-        _authState.value = AuthState.LoggedIn(user)
+        _authState.value = AuthState.LoggedIn(user, Role.fromUser(user))
     }
 
     fun logout() {

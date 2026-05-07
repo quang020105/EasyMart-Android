@@ -108,7 +108,11 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
 
     val config = getScreenConfig(currentRoute)
     val showTopBar = config?.showTopBar == true
-    val showBottomBar = config?.showBottomBar == true
+    val isAdminGraph = currentDestination?.hierarchy?.any {
+        it.route == Screen.AdminGraph.route
+    } == true
+
+    val showBottomBar = config?.showBottomBar == true && !isAdminGraph
 
 
     //kiểm tra xem màn hiện tại có nằm trong bất kì graph nào hay không
@@ -261,6 +265,7 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
                     }
                 )
 
+
 //                NavigationBar(
 //                    modifier = Modifier
 //                        .fillMaxWidth()
@@ -329,11 +334,3 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
 //    val icon: Int,
 //    val graphRoute: String
 //)
-
-
-
-
-
-
-
-

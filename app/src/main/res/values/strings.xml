@@ -21,4 +21,5 @@
     <string name="label_recommended_products">Sản phẩm gợi ý</string>
     <string name="action_buy_now">Mua ngay</string>
     <string name="label_quantity">Số lượng</string>
+    <string name="label_admin_dashboard">Quản trị</string>
 </resources>

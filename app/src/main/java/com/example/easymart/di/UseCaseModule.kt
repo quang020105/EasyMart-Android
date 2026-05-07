@@ -22,6 +22,7 @@ import com.example.easymart.domain.usecase.auth.LogoutUseCase
 import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
 import com.example.easymart.domain.usecase.auth.SendPasswordResetEmailUseCase
 import com.example.easymart.domain.usecase.auth.SignUpUseCase
+import com.example.easymart.domain.usecase.auth.GetCurrentUserWithRoleUseCase
 import com.example.easymart.domain.usecase.cart.AddToCartUseCase
 import com.example.easymart.domain.usecase.cart.ClearAllCartsUseCase
 import com.example.easymart.domain.usecase.cart.MergeGuestCartIntoUserUseCase
@@ -219,5 +220,10 @@ object UseCaseModule {
     @Provides
     fun provideSendPasswordResetEmailUseCase(authRepo: AuthRepository) =
         SendPasswordResetEmailUseCase(authRepo)
+
+    @Provides
+    fun provideGetCurrentUserWithRoleUseCase(
+        authRepo: AuthRepository
+    ) = GetCurrentUserWithRoleUseCase(authRepo)
 
 }

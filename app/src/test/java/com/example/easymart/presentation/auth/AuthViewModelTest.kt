@@ -15,7 +15,7 @@ class AuthViewModelTest {
     }
 
     @Test
-    fun onUserLoggedIn_updatesAuthState() {
+    fun onUserLoggedIn_updatesAuthState_withRole() {
         // TODO: implement
     }
 
