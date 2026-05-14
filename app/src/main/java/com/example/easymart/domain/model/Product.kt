@@ -11,7 +11,14 @@ data class Product(
     val category: String = "",
     val stockQuantity: Int = 0,
     val soldQuantity: Int = 0,
-    val rating: ProductRating = ProductRating()
+    val rating: ProductRating = ProductRating(),
+    val isVisible: Boolean = true,
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis(),
+    val isDeleted: Boolean = false,
+    val isSynced: Boolean = true,
+    val storagePath: String? = null,
+    val localImageUri: String? = null
 )
 
 // Rating cho sản phẩm theo API FakeStore.

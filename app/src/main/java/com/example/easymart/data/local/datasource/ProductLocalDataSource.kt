@@ -10,10 +10,22 @@ class ProductLocalDataSource @Inject constructor(
 ) {
     fun observeProducts(): Flow<List<ProductEntity>> = productDao.observeAll()
 
+    fun observeActiveProducts(): Flow<List<ProductEntity>> = productDao.observeActive()
+
     fun observeProductById(productId: Int): Flow<ProductEntity?> = productDao.observeById(productId)
 
     suspend fun upsertAll(items: List<ProductEntity>) = productDao.upsertAll(items)
 
     suspend fun upsert(item: ProductEntity) = productDao.upsert(item)
-}
 
+    suspend fun getUnsynced(): List<ProductEntity> = productDao.getUnsynced()
+
+    suspend fun getAllOnce(): List<ProductEntity> = productDao.getAllOnce()
+
+    suspend fun markSynced(
+        id: Int,
+        updatedAt: Long,
+        imageUrl: String,
+        storagePath: String?
+    ) = productDao.markSynced(id, updatedAt, imageUrl, storagePath)
+}

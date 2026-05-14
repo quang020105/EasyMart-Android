@@ -10,4 +10,6 @@ interface ProductRepository {
     fun getProductById(productId: Int): Flow<Resource<Product>>
     suspend fun refreshProducts(): Resource<Unit>
     suspend fun refreshProductById(productId: Int): Resource<Unit>
+    suspend fun upsertProduct(product: Product): Resource<Unit>
+    suspend fun syncProducts(): Resource<Unit>
 }

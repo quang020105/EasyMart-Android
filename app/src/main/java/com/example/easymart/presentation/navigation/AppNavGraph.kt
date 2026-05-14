@@ -58,7 +58,8 @@ import com.example.easymart.presentation.ui.auth.signup.SignUpViewModel
 import com.example.easymart.presentation.ui.splash.SplashScreen
 import com.example.easymart.presentation.ui.auth.forgot_password.ForgotPasswordRoute
 import com.example.easymart.presentation.ui.auth.forgot_password.ForgotPasswordViewModel
-import com.example.easymart.presentation.ui.admin.products.AdminProductsRoute
+import com.example.easymart.presentation.ui.admin.products.add_edit.AdminAddEditProductRoute
+import com.example.easymart.presentation.ui.admin.products.management.AdminProductsRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -701,8 +702,17 @@ fun AppNavGraph(
             ) {
                 AdminProductsRoute(
                     onNavigateBack = { navController.navigateUp() },
-                    onAddProduct = { /* TODO: open add product */ },
+                    onAddProduct = { navController.navigate(Screen.AdminAddProduct.route) },
                     onEditProduct = { /* TODO: open edit product */ }
+                )
+            }
+
+            composableWithAnim(
+                route = Screen.AdminAddProduct.route,
+                anim = NavAnim.HORIZONTAL
+            ) {
+                AdminAddEditProductRoute(
+                    onNavigateBack = { navController.navigateUp() }
                 )
             }
 
@@ -820,6 +830,8 @@ fun AppNavGraph(
         }
     }
 }
+
+
 
 
 

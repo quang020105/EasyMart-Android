@@ -1,11 +1,11 @@
 package com.example.easymart.data.mapper
 
 import com.example.easymart.data.local.entity.ProductEntity
-import com.example.easymart.data.remote.dto.ProductDto
+import com.example.easymart.data.remote.dto.ProductApiDto
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.model.ProductRating
 
-fun ProductDto.toDomain(): Product {
+fun ProductApiDto.toDomain(): Product {
     return Product(
         id = id,
         name = title,
@@ -17,7 +17,7 @@ fun ProductDto.toDomain(): Product {
     )
 }
 
-fun ProductDto.toEntity(): ProductEntity {
+fun ProductApiDto.toEntity(): ProductEntity {
     return ProductEntity(
         id = id,
         name = title,
@@ -27,7 +27,13 @@ fun ProductDto.toEntity(): ProductEntity {
         category = category,
         updatedAt = System.currentTimeMillis(),
         ratingRate = rating.rate,
-        ratingCount = rating.count
+        ratingCount = rating.count,
+        isVisible = true,
+        createdAt = System.currentTimeMillis(),
+        isDeleted = false,
+        isSynced = true,
+        storagePath = null,
+        localImageUri = null
     )
 }
 
@@ -39,7 +45,14 @@ fun ProductEntity.toDomain(): Product {
         price = price,
         imageUrl = imageUrl,
         category = category,
-        rating = ProductRating(rate = ratingRate, count = ratingCount)
+        rating = ProductRating(rate = ratingRate, count = ratingCount),
+        isVisible = isVisible,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        isDeleted = isDeleted,
+        isSynced = isSynced,
+        storagePath = storagePath,
+        localImageUri = localImageUri
     )
 }
 
@@ -51,8 +64,14 @@ fun Product.toEntity(): ProductEntity {
         price = price,
         imageUrl = imageUrl,
         category = category,
-        updatedAt = System.currentTimeMillis(),
+        updatedAt = updatedAt,
         ratingRate = rating.rate,
-        ratingCount = rating.count
+        ratingCount = rating.count,
+        isVisible = isVisible,
+        createdAt = createdAt,
+        isDeleted = isDeleted,
+        isSynced = isSynced,
+        storagePath = storagePath,
+        localImageUri = localImageUri
     )
 }

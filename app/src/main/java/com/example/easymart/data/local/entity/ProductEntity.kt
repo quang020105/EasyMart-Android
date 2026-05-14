@@ -14,5 +14,11 @@ data class ProductEntity(
     val category: String,
     val updatedAt: Long,
     val ratingRate: Double,
-    val ratingCount: Int
+    val ratingCount: Int,
+    val isVisible: Boolean,
+    val createdAt: Long,
+    val isDeleted: Boolean,
+    val isSynced: Boolean,
+    val storagePath: String?,
+    val localImageUri: String?
 )

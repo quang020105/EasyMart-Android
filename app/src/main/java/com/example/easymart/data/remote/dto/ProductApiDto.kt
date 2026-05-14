@@ -1,8 +1,6 @@
 package com.example.easymart.data.remote.dto
 
-import com.example.easymart.domain.model.Category
-
-data class ProductDto(
+data class ProductApiDto(
     val id: Int,
     val title: String,
     val price: Double,

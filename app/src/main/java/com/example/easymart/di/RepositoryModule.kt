@@ -15,7 +15,8 @@ import com.example.easymart.data.remote.datasource.AddressRemoteDataSource
 import com.example.easymart.data.remote.datasource.CartRemoteDataSource
 import com.example.easymart.data.remote.datasource.FirestoreAddressRemoteDataSource
 import com.example.easymart.data.remote.datasource.FirestoreCartRemoteDataSource
-import com.example.easymart.data.remote.datasource.ProductRemoteDataSource
+import com.example.easymart.data.remote.datasource_impl.RetrofitProductRemoteDataSource
+import com.example.easymart.data.remote.datasource_impl.FirestoreProductRemoteDataSource
 import com.example.easymart.data.repositoryimpl.AddressRepositoryImpl
 import com.example.easymart.data.repositoryimpl.CartRepositoryImpl
 import com.example.easymart.data.repositoryimpl.FirebaseAuthRepositoryImpl
@@ -37,6 +38,7 @@ import com.example.easymart.domain.repository.ProductRepository
 import com.example.easymart.domain.repository.SearchRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -55,15 +57,23 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideProductRemoteDataSource(api: ProductApi): ProductRemoteDataSource =
-        ProductRemoteDataSource(api)
+    fun provideProductRemoteDataSource(api: ProductApi): RetrofitProductRemoteDataSource =
+        RetrofitProductRemoteDataSource(api)
+
+    @Provides
+    @Singleton
+    fun provideProductFirestoreRemoteDataSource(
+        firestore: FirebaseFirestore,
+        storage: FirebaseStorage
+    ): FirestoreProductRemoteDataSource = FirestoreProductRemoteDataSource(firestore, storage)
 
     @Provides
     @Singleton
     fun provideProductRepository(
         localDS: ProductLocalDataSource,
-        remoteDS: ProductRemoteDataSource
-    ): ProductRepository = ProductRepositoryImpl(localDS, remoteDS)
+        remoteDS: RetrofitProductRemoteDataSource,
+        firestoreDS: FirestoreProductRemoteDataSource
+    ): ProductRepository = ProductRepositoryImpl(localDS, remoteDS, firestoreDS)
 
     @Provides
     @Singleton

@@ -6,7 +6,7 @@ import com.example.easymart.data.remote.api.AlgoliaApi
 import com.example.easymart.data.remote.api.LocationApi
 import com.example.easymart.data.remote.api.PaymentApi
 import com.example.easymart.data.remote.api.ProductApi
-import com.example.easymart.data.remote.dto.ProductDto
+import com.example.easymart.data.remote.dto.ProductApiDto
 import com.example.easymart.data.remote.provider.ProductDtoDeserializer
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -42,7 +42,7 @@ object NetworkModule {
     @Singleton
     @Named("searchProductGson")
     fun provideGsonSearchProducts(): Gson = GsonBuilder()
-        .registerTypeAdapter(ProductDto::class.java, ProductDtoDeserializer()).create()
+        .registerTypeAdapter(ProductApiDto::class.java, ProductDtoDeserializer()).create()
 
     @Provides
     @Singleton

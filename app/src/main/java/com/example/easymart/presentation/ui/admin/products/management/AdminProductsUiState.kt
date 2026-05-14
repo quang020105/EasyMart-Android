@@ -1,4 +1,4 @@
-package com.example.easymart.presentation.ui.admin.products
+package com.example.easymart.presentation.ui.admin.products.management
 
 import androidx.compose.runtime.Immutable
 import com.example.easymart.domain.model.Product
@@ -14,4 +14,3 @@ data class AdminProductsUiState(
     val lowStockThreshold: Int = 5,
     val error: String? = null
 )
-

@@ -1,9 +1,10 @@
-package com.example.easymart.presentation.ui.admin.products
+package com.example.easymart.presentation.ui.admin.products.management
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.example.easymart.presentation.ui.admin.products.management.AdminProductsViewModel
 
 @Composable
 fun AdminProductsRoute(

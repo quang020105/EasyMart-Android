@@ -43,6 +43,8 @@ import com.example.easymart.domain.usecase.payment.PollPayOsPaymentStatusUseCase
 import com.example.easymart.domain.usecase.payment.UpdateLocalOrderPaymentStatusUseCase
 import com.example.easymart.domain.usecase.product.GetAllProductUseCase
 import com.example.easymart.domain.usecase.product.GetProductUseCase
+import com.example.easymart.domain.usecase.product.UpsertProductUseCase
+import com.example.easymart.domain.usecase.product.SyncProductsUseCase
 import com.example.easymart.domain.usecase.search.GetSuggestionUseCase
 import com.example.easymart.domain.usecase.search.SearchProductUseCase
 import dagger.Module
@@ -59,6 +61,14 @@ object UseCaseModule {
     @Provides
     fun provideGetProductsUseCase(productRepo: ProductRepository): GetAllProductUseCase =
         GetAllProductUseCase(productRepo)
+
+    @Provides
+    fun provideUpsertProduct(productRepo: ProductRepository): UpsertProductUseCase =
+        UpsertProductUseCase(productRepo)
+
+    @Provides
+    fun provideSyncProductsUseCase(productRepo: ProductRepository): SyncProductsUseCase =
+        SyncProductsUseCase(productRepo)
 
 
     //cart

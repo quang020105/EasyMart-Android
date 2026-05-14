@@ -13,6 +13,9 @@ interface ProductDao {
     @Query("SELECT * FROM product")
     fun observeAll(): Flow<List<ProductEntity>>
 
+    @Query("SELECT * FROM product WHERE isDeleted = 0")
+    fun observeActive(): Flow<List<ProductEntity>>
+
     @Query("SELECT * FROM product WHERE id = :id LIMIT 1")
     fun observeById(id: Int): Flow<ProductEntity?>
 
@@ -21,6 +24,20 @@ interface ProductDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(item: ProductEntity)
+
+    @Query("SELECT * FROM product WHERE isSynced = 0")
+    suspend fun getUnsynced(): List<ProductEntity>
+
+    @Query("SELECT * FROM product")
+    suspend fun getAllOnce(): List<ProductEntity>
+
+    @Query("UPDATE product SET isSynced = 1, updatedAt = :updatedAt, imageUrl = :imageUrl, storagePath = :storagePath, localImageUri = NULL WHERE id = :id")
+    suspend fun markSynced(
+        id: Int,
+        updatedAt: Long,
+        imageUrl: String,
+        storagePath: String?
+    )
 
     @Query("DELETE FROM product")
     suspend fun clearAll()
@@ -31,4 +48,3 @@ interface ProductDao {
         upsertAll(items)
     }
 }
-

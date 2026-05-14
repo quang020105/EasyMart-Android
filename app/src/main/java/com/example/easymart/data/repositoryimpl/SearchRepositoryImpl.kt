@@ -4,7 +4,7 @@ import android.util.Log
 import com.algolia.client.model.search.SearchParamsObject
 import com.example.easymart.data.mapper.toDomain
 import com.example.easymart.data.remote.api.AlgoliaKeyRequest
-import com.example.easymart.data.remote.dto.ProductDto
+import com.example.easymart.data.remote.dto.ProductApiDto
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.repository.SearchRepository
 import com.example.easymart.data.remote.provider.AlgoliaProvider
@@ -35,7 +35,7 @@ class SearchRepositoryImpl @Inject constructor(
                 try {
                     // Parse JSON từ hit, hit là JsonObject
                     val jsonString = gson.toJson(hit.additionalProperties)
-                    val productDto = gson.fromJson(jsonString, ProductDto::class.java)
+                    val productDto = gson.fromJson(jsonString, ProductApiDto::class.java)
                     productDto.toDomain()
                 } catch (e: Exception) {
                     null
@@ -65,7 +65,7 @@ class SearchRepositoryImpl @Inject constructor(
                 Log.d("SearchRepo", "hit.additionalProperties: ${gson.toJson(hit.additionalProperties)}")
                 try {
                     val jsonString = gson.toJson(hit.additionalProperties)
-                    val productDto = gson.fromJson(jsonString, ProductDto::class.java)
+                    val productDto = gson.fromJson(jsonString, ProductApiDto::class.java)
                     Log.d("SearchRepo", productDto.title)
                     productDto.title
                 } catch (e: Exception) {

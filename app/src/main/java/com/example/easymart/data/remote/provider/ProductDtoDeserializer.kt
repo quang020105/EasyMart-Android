@@ -1,10 +1,10 @@
 package com.example.easymart.data.remote.provider
 
-import com.example.easymart.data.remote.dto.ProductDto
+import com.example.easymart.data.remote.dto.ProductApiDto
 import com.google.gson.*
 import java.lang.reflect.Type
 
-class ProductDtoDeserializer : JsonDeserializer<ProductDto> {
+class ProductDtoDeserializer : JsonDeserializer<ProductApiDto> {
     private fun unwrap(elem: JsonElement): JsonElement {
         when {
             elem.isJsonNull -> return elem
@@ -27,8 +27,8 @@ class ProductDtoDeserializer : JsonDeserializer<ProductDto> {
         }
     }
 
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ProductDto {
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): ProductApiDto {
         val unwrapped = unwrap(json)
-        return Gson().fromJson(unwrapped, ProductDto::class.java)
+        return Gson().fromJson(unwrapped, ProductApiDto::class.java)
     }
 }

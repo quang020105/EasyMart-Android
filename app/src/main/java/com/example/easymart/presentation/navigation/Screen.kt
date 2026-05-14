@@ -76,4 +76,5 @@ sealed class Screen(val route: String) {
     data object AdminProducts : Screen("admin_products")
     data object AdminOrders : Screen("admin_orders")
     data object AdminCategories : Screen("admin_categories")
+    data object AdminAddProduct : Screen("admin_products/add")
 }

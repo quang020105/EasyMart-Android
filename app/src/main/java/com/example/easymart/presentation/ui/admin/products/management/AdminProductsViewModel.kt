@@ -1,4 +1,4 @@
-package com.example.easymart.presentation.ui.admin.products
+package com.example.easymart.presentation.ui.admin.products.management
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -69,4 +69,3 @@ class AdminProductsViewModel @Inject constructor(
         }
     }
 }
-
