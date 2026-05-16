@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.model.ProductRating
-import com.example.easymart.domain.usecase.product.GetAllProductUseCase
 import com.example.easymart.domain.usecase.product.GetProductUseCase
 import com.example.easymart.domain.usecase.product.UpsertProductUseCase
 import com.example.easymart.presentation.common.AppEventBus
@@ -30,6 +29,7 @@ class AdminAddEditProductViewModel @Inject constructor(
     fun onPriceChange(value: String) = updateField { copy(price = value, priceError = null) }
     fun onDescriptionChange(value: String) = updateField { copy(description = value, descriptionError = null) }
     fun onCategoryChange(value: String) = updateField { copy(category = value, categoryError = null) }
+    fun onQuantityChange(value: String) = updateField { copy(quantity = value, quantityError = null) }
     fun onImageUriChange(value: String) = updateField { copy(imageUri = value, imageUriError = null) }
 
     fun loadProduct(productId: Int) {
@@ -50,6 +50,7 @@ class AdminAddEditProductViewModel @Inject constructor(
                             price = product.price.toString(),
                             description = product.description.orEmpty(),
                             category = product.category,
+                            quantity = product.stockQuantity.toString(),
                             imageUri = product.localImageUri ?: product.imageUrl
                         )
                     }
@@ -75,19 +76,23 @@ class AdminAddEditProductViewModel @Inject constructor(
             ProductRating(rate = 0.0, count = 0)
         }
 
+        val imageValue = current.imageUri.trim()
+        val isRemoteImage = imageValue.startsWith("http", ignoreCase = true)
+
         val product = Product(
             id = id,
             name = current.title.trim(),
             description = current.description.trim(),
             price = current.price.trim().toDouble(),
-            imageUrl = current.imageUri.trim(),
-            localImageUri = current.imageUri.trim(),
+            imageUrl = imageValue,
+            localImageUri = if (isRemoteImage) null else imageValue,
             category = current.category.trim(),
             rating = rating,
             isVisible = current.isVisible,
             createdAt = createdAt,
             updatedAt = now,
-            storagePath = current.storagePath
+            storagePath = current.storagePath,
+            stockQuantity = current.quantity.trim().toInt()
         )
 
         viewModelScope.launch {
@@ -117,6 +122,7 @@ class AdminAddEditProductViewModel @Inject constructor(
             priceError = null,
             descriptionError = null,
             categoryError = null,
+            quantityError = null,
             imageUriError = null,
             error = null
         )
@@ -141,6 +147,12 @@ class AdminAddEditProductViewModel @Inject constructor(
 
         if (state.category.trim().isEmpty()) {
             next = next.copy(categoryError = "Vui lòng nhập danh mục")
+            isValid = false
+        }
+
+        val quantity = state.quantity.trim().toIntOrNull()
+        if (quantity == null || quantity < 0) {
+            next = next.copy(quantityError = "Số lượng phải là số >= 0")
             isValid = false
         }
 

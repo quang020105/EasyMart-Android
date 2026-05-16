@@ -15,6 +15,7 @@ fun ProductEntity.toRemoteDto(): ProductFirestoreDto {
         category = category,
         ratingRate = ratingRate,
         ratingCount = ratingCount,
+        stockQuantity = stockQuantity,
         isVisible = isVisible,
         createdAt = createdAt,
         updatedAt = updatedAt,
@@ -34,6 +35,7 @@ fun ProductFirestoreDto.toEntity(): ProductEntity {
         updatedAt = updatedAt,
         ratingRate = ratingRate,
         ratingCount = ratingCount,
+        stockQuantity = stockQuantity,
         isVisible = isVisible,
         createdAt = createdAt,
         isDeleted = isDeleted,
@@ -51,7 +53,7 @@ fun ProductFirestoreDto.toDomain(): Product {
         price = price,
         imageUrl = imageUrl,
         category = category,
-        stockQuantity = 0, // API không cung cấp thông tin này
+        stockQuantity = stockQuantity,
         soldQuantity = 0, // API không cung cấp thông tin này
         rating = ProductRating(rate = ratingRate, count = ratingCount),
         isVisible = isVisible,
@@ -61,4 +63,3 @@ fun ProductFirestoreDto.toDomain(): Product {
         storagePath = storagePath
     )
 }
-

@@ -12,6 +12,7 @@ data class AdminAddEditProductUiState(
     val price: String = "",
     val description: String = "",
     val category: String = "",
+    val quantity: String = "",
     val imageUri: String = "",
     val isLoading: Boolean = false,
     val error: String? = null,
@@ -20,5 +21,6 @@ data class AdminAddEditProductUiState(
     val priceError: String? = null,
     val descriptionError: String? = null,
     val categoryError: String? = null,
+    val quantityError: String? = null,
     val imageUriError: String? = null
 )

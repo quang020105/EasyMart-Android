@@ -28,7 +28,8 @@ fun AdminAddEditProductRoute(
         onCategoryChange = viewModel::onCategoryChange,
         onImageSelected = viewModel::onImageUriChange,
         onSave = viewModel::saveProduct,
-        onNavigateBack = onNavigateBack
+        onNavigateBack = onNavigateBack,
+        onQuantityChange = viewModel::onQuantityChange
     )
 
     if (uiState.success) {

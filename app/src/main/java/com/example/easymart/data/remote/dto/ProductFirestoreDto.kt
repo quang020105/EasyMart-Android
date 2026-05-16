@@ -9,10 +9,10 @@ data class ProductFirestoreDto(
     val category: String = "",
     val ratingRate: Double = 0.0,
     val ratingCount: Int = 0,
+    val stockQuantity: Int = 0,
     val isVisible: Boolean = true,
     val createdAt: Long = 0L,
     val updatedAt: Long = 0L,
     val isDeleted: Boolean = false,
     val storagePath: String? = null
 )
-
