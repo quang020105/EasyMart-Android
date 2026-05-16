@@ -17,12 +17,10 @@ import com.example.easymart.domain.model.Product
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.admin.products.components.HeaderSection
-import com.example.easymart.presentation.ui.admin.products.management.AdminProductsUiState
 import com.example.easymart.presentation.ui.admin.products.components.AdminProductCard
 import com.example.easymart.presentation.ui.admin.products.components.EmptyState
 import com.example.easymart.presentation.ui.admin.products.components.ErrorBanner
 import com.example.easymart.presentation.ui.admin.products.components.FilterSection
-import com.example.easymart.presentation.ui.admin.products.components.HeaderSection
 import com.example.easymart.presentation.ui.admin.products.components.SummaryRow
 import com.example.easymart.presentation.ui.mock.mockProducts
 
@@ -32,16 +30,24 @@ fun AdminProductsScreen(
     onSearchQueryChange: (String) -> Unit,
     onSelectCategory: (String?) -> Unit,
     onToggleLowStock: (Boolean) -> Unit,
+    onSelectSource: (ProductSourceFilter) -> Unit,
+    onSelectSort: (AdminProductSort) -> Unit,
     onRefresh: () -> Unit,
     onNavigateBack: () -> Unit,
     onAddProduct: () -> Unit,
-    onEditProduct: (Int) -> Unit
+    onEditProduct: (Int) -> Unit,
+    onToggleVisibility: (Product, Boolean) -> Unit
 ) {
     val dimens = LocalAppDimens.current
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Box(modifier = Modifier.fillMaxSize()) {
             val filtered = filterProducts(uiState)
+            val totalCount = uiState.products.size
+            val visibleCount = uiState.products.count { it.isVisible }
+            val apiCount =
+                uiState.products.count { it.storagePath.isNullOrBlank() && it.localImageUri.isNullOrBlank() }
+            val addedCount = totalCount - apiCount
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -49,6 +55,7 @@ fun AdminProductsScreen(
                 contentPadding = PaddingValues(
                     start = dimens.screenPadding,
                     end = dimens.screenPadding,
+                    top = dimens.spaceSm,
                     bottom = dimens.spaceLg
                 )
             ) {
@@ -63,47 +70,64 @@ fun AdminProductsScreen(
 
                 item {
                     FilterSection(
+                        totalCount = totalCount,
+                        apiCount = apiCount,
+                        addedCount = addedCount,
                         categories = uiState.categories,
                         selectedCategory = uiState.selectedCategory,
                         onlyLowStock = uiState.onlyLowStock,
+                        sourceFilter = uiState.sourceFilter,
+                        sortType = uiState.sortType,
                         onSelectCategory = onSelectCategory,
-                        onToggleLowStock = onToggleLowStock
+                        onToggleLowStock = onToggleLowStock,
+                        onSelectSource = onSelectSource,
+                        onSelectSort = onSelectSort
                     )
                 }
 
                 item {
                     SummaryRow(
-                        total = filtered.size,
-                        lowStockCount = filtered.count { it.stockQuantity in 0..uiState.lowStockThreshold }
+                        total = totalCount,
+                        visibleCount = visibleCount
                     )
                 }
 
                 items(filtered, key = { it.id }) { product ->
-                    AdminProductCard(product = product, onEdit = { onEditProduct(product.id) })
+                    AdminProductCard(
+                        product = product,
+                        onEdit = { onEditProduct(product.id) },
+                        onImport = {},
+                        onToggleVisibility = { checked -> onToggleVisibility(product, checked) }
+                    )
+                }
+
+                item {
+                    if (uiState.isLoading) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    if (!uiState.isLoading && filtered.isEmpty()) {
+                        EmptyState(onRefresh = onRefresh)
+                    }
+
+                    if (uiState.error != null) {
+                        ErrorBanner(message = uiState.error, onRefresh = onRefresh)
+                    }
                 }
             }
 
-            if (uiState.isLoading) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
-
-            if (!uiState.isLoading && filtered.isEmpty()) {
-                EmptyState(onRefresh = onRefresh)
-            }
-
-            if (uiState.error != null) {
-                ErrorBanner(message = uiState.error, onRefresh = onRefresh)
-            }
         }
     }
 }
 
 
-
 fun filterProducts(uiState: AdminProductsUiState): List<Product> {
-    return uiState.products
+    val sourceFiltered = uiState.products
         .filter { product ->
             if (uiState.selectedCategory == null) true else product.category == uiState.selectedCategory
         }
@@ -111,8 +135,24 @@ fun filterProducts(uiState: AdminProductsUiState): List<Product> {
             if (uiState.onlyLowStock) product.stockQuantity in 0..uiState.lowStockThreshold else true
         }
         .filter { product ->
-            if (uiState.searchQuery.isBlank()) true else product.name.contains(uiState.searchQuery, ignoreCase = true)
+            if (uiState.searchQuery.isBlank()) true else product.name.contains(
+                uiState.searchQuery,
+                ignoreCase = true
+            )
         }
+        .filter { product ->
+            when (uiState.sourceFilter) {
+                ProductSourceFilter.ALL -> true
+                ProductSourceFilter.API -> product.storagePath.isNullOrBlank() && product.localImageUri.isNullOrBlank()
+                ProductSourceFilter.ADDED -> product.storagePath?.isNotBlank() == true
+            }
+        }
+
+    return when (uiState.sortType) {
+        AdminProductSort.UPDATED_DESC -> sourceFiltered.sortedByDescending { it.updatedAt }
+        AdminProductSort.NAME_ASC -> sourceFiltered.sortedBy { it.name.lowercase() }
+        AdminProductSort.PRICE_ASC -> sourceFiltered.sortedBy { it.price }
+    }
 }
 
 fun formatPrice(price: Double): String {
@@ -137,10 +177,13 @@ fun AdminProductsScreenPreview() {
             onSearchQueryChange = {},
             onSelectCategory = {},
             onToggleLowStock = {},
+            onSelectSource = {},
+            onSelectSort = {},
             onRefresh = {},
             onNavigateBack = {},
             onAddProduct = {},
-            onEditProduct = {}
+            onEditProduct = {},
+            onToggleVisibility = { _, _ -> }
         )
     }
 }
@@ -163,10 +206,13 @@ fun AdminProductsScreenPreview2() {
             onSearchQueryChange = {},
             onSelectCategory = {},
             onToggleLowStock = {},
+            onSelectSource = {},
+            onSelectSort = {},
             onRefresh = {},
             onNavigateBack = {},
             onAddProduct = {},
-            onEditProduct = {}
+            onEditProduct = {},
+            onToggleVisibility = { _, _ -> }
         )
     }
 }

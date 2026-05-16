@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.model.ProductRating
 import com.example.easymart.domain.usecase.product.GetAllProductUseCase
+import com.example.easymart.domain.usecase.product.GetProductUseCase
 import com.example.easymart.domain.usecase.product.UpsertProductUseCase
 import com.example.easymart.presentation.common.AppEventBus
 import com.example.easymart.presentation.common.Resource
@@ -12,13 +13,15 @@ import com.example.easymart.presentation.common.ui.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AdminAddEditProductViewModel @Inject constructor(
-    private val upsertProductUseCase: UpsertProductUseCase
+    private val upsertProductUseCase: UpsertProductUseCase,
+    private val getProductUseCase: GetProductUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AdminAddEditProductUiState())
     val uiState = _uiState.asStateFlow()
@@ -29,6 +32,32 @@ class AdminAddEditProductViewModel @Inject constructor(
     fun onCategoryChange(value: String) = updateField { copy(category = value, categoryError = null) }
     fun onImageUriChange(value: String) = updateField { copy(imageUri = value, imageUriError = null) }
 
+    fun loadProduct(productId: Int) {
+        viewModelScope.launch {
+            getProductUseCase(productId).collectLatest { result ->
+                if (result is Resource.Success) {
+                    val product = result.data
+                    _uiState.update {
+                        it.copy(
+                            productId = product.id,
+                            isEdit = true,
+                            createdAt = product.createdAt,
+                            ratingRate = product.rating.rate,
+                            ratingCount = product.rating.count,
+                            isVisible = product.isVisible,
+                            storagePath = product.storagePath,
+                            title = product.name,
+                            price = product.price.toString(),
+                            description = product.description.orEmpty(),
+                            category = product.category,
+                            imageUri = product.localImageUri ?: product.imageUrl
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     fun saveProduct() {
         val current = _uiState.value
         val validated = validate(current)
@@ -38,18 +67,27 @@ class AdminAddEditProductViewModel @Inject constructor(
         }
 
         val now = System.currentTimeMillis()
+        val id = current.productId ?: now.hashCode()
+        val createdAt = if (current.isEdit && current.createdAt > 0L) current.createdAt else now
+        val rating = if (current.isEdit) {
+            ProductRating(rate = current.ratingRate, count = current.ratingCount)
+        } else {
+            ProductRating(rate = 0.0, count = 0)
+        }
+
         val product = Product(
-            id = now.hashCode(),
+            id = id,
             name = current.title.trim(),
             description = current.description.trim(),
             price = current.price.trim().toDouble(),
             imageUrl = current.imageUri.trim(),
             localImageUri = current.imageUri.trim(),
             category = current.category.trim(),
-            rating = ProductRating(rate = 0.0, count = 0),
-            isVisible = true,
-            createdAt = now,
-            updatedAt = now
+            rating = rating,
+            isVisible = current.isVisible,
+            createdAt = createdAt,
+            updatedAt = now,
+            storagePath = current.storagePath
         )
 
         viewModelScope.launch {

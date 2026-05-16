@@ -1,5 +1,6 @@
 package com.example.easymart.data.repositoryimpl
 
+import android.util.Log
 import com.example.easymart.data.local.datasource.ProductLocalDataSource
 import com.example.easymart.data.mapper.toDomain
 import com.example.easymart.data.mapper.toEntity
@@ -84,6 +85,7 @@ class ProductRepositoryImpl @Inject constructor(
                 isDeleted = false,
                 isSynced = false
             )
+            Log.d("ProductRepositoryImpl", "upsertProduct: $entity")
             localDS.upsert(entity)
             syncProduct(entity)
             Resource.Success(Unit)
@@ -120,11 +122,20 @@ class ProductRepositoryImpl @Inject constructor(
 
             // 3) Xoa local neu remote khong con va local da synced
             localAll.forEach { local ->
-                if (remoteById[local.id] == null && local.isSynced) {
+                if (remoteById[local.id] == null && local.isSynced && local.storagePath != null) {
                     localDS.upsert(local.copy(isDeleted = true, updatedAt = System.currentTimeMillis()))
                 }
             }
 
+            Resource.Success(Unit)
+        } catch (e: Exception) {
+            Resource.Error("Lỗi " + e.message)
+        }
+    }
+
+    override suspend fun updateVisibilityLocalOnly(productId: Int, isVisible: Boolean): Resource<Unit> {
+        return try {
+            localDS.updateVisibility(productId, isVisible, System.currentTimeMillis())
             Resource.Success(Unit)
         } catch (e: Exception) {
             Resource.Error("Lỗi " + e.message)

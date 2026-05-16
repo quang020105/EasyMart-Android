@@ -703,7 +703,9 @@ fun AppNavGraph(
                 AdminProductsRoute(
                     onNavigateBack = { navController.navigateUp() },
                     onAddProduct = { navController.navigate(Screen.AdminAddProduct.route) },
-                    onEditProduct = { /* TODO: open edit product */ }
+                    onEditProduct = { productId ->
+                        navController.navigate(Screen.AdminEditProduct.createRoute(productId))
+                    }
                 )
             }
 
@@ -712,6 +714,18 @@ fun AppNavGraph(
                 anim = NavAnim.HORIZONTAL
             ) {
                 AdminAddEditProductRoute(
+                    onNavigateBack = { navController.navigateUp() }
+                )
+            }
+
+            composableWithAnim(
+                route = Screen.AdminEditProduct.route,
+                anim = NavAnim.HORIZONTAL,
+                arguments = listOf(navArgument("productId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val productId = backStackEntry.arguments?.getInt("productId") ?: return@composableWithAnim
+                AdminAddEditProductRoute(
+                    productId = productId,
                     onNavigateBack = { navController.navigateUp() }
                 )
             }

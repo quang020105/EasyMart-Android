@@ -1,6 +1,13 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit
 
 data class AdminAddEditProductUiState(
+    val productId: Int? = null,
+    val isEdit: Boolean = false,
+    val createdAt: Long = 0L,
+    val ratingRate: Double = 0.0,
+    val ratingCount: Int = 0,
+    val isVisible: Boolean = true,
+    val storagePath: String? = null,
     val title: String = "",
     val price: String = "",
     val description: String = "",

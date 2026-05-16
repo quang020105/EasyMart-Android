@@ -12,4 +12,5 @@ interface ProductRepository {
     suspend fun refreshProductById(productId: Int): Resource<Unit>
     suspend fun upsertProduct(product: Product): Resource<Unit>
     suspend fun syncProducts(): Resource<Unit>
+    suspend fun updateVisibilityLocalOnly(productId: Int, isVisible: Boolean): Resource<Unit>
 }

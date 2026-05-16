@@ -1,5 +1,9 @@
 package com.example.easymart.presentation.ui.admin.products.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,89 +13,166 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.SouthWest
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.easymart.domain.model.Product
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.admin.products.management.formatPrice
-import com.example.easymart.presentation.ui.common.components.ProductCard
 import com.example.easymart.presentation.ui.mock.mockSimpleProduct
-
+import androidx.compose.ui.graphics.Color
 
 @Composable
-fun AdminProductCard(product: Product, onEdit: () -> Unit) {
+fun AdminProductCard(
+    product: Product,
+    onEdit: () -> Unit,
+    onImport: () -> Unit,
+    onToggleVisibility: (Boolean) -> Unit
+) {
     val dimens = LocalAppDimens.current
+    val isFromApi = product.storagePath.isNullOrBlank() && product.localImageUri.isNullOrBlank()
+    val statusLabel = if (isFromApi) "Có sẵn từ API" else "Đã thêm"
+    val statusColor = if (isFromApi) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer
+
+    val visibleContainer = Color(0xFFE6F4EA)
+    val visibleContent = Color(0xFF1B7F3B)
+    //val outlineGreen = Color(0xFF2E7D32)
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(dimens.radiusLarge),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = dimens.cardElevation)
     ) {
-        Row(modifier = Modifier.padding(dimens.spaceMd), verticalAlignment = Alignment.CenterVertically) {
-//            Box(
-//                modifier = Modifier
-//                    .size(68.dp)
-//                    .clip(RoundedCornerShape(dimens.radiusMedium))
-//                    .background(MaterialTheme.colorScheme.surfaceVariant)
-//            ) {
-//                AsyncImage(
-//                    model = product.imageUrl,
-//                    contentDescription = null,
-//                    modifier = Modifier.fillMaxSize(),
-//                    contentScale = ContentScale.Crop
-//                )
-//            }
-            ProductCard(
-                product = product,
-                modifier = Modifier.size(68.dp)
-            )
+        Column(modifier = Modifier.padding(dimens.spaceMd)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(72.dp)
+                        .clip(RoundedCornerShape(dimens.radiusMedium))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                ) {
+                    AsyncImage(
+                        model = product.imageUrl,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.Fit
+                    )
+                }
 
-            Spacer(modifier = Modifier.width(dimens.spaceMd))
+                Spacer(modifier = Modifier.width(dimens.spaceMd))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = product.name,
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = product.category,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = formatPrice(product.price),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = product.name,
+                        style = MaterialTheme.typography.titleSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = product.category,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = formatPrice(product.price),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(dimens.spaceXs))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(dimens.spaceXs)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(statusColor)
+                                .padding(horizontal = 8.dp, vertical = 3.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = statusLabel, style = MaterialTheme.typography.labelSmall)
+                        }
+                        Text(
+                            text = "Cập nhật: ${formatDate(product.updatedAt)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                Column(horizontalAlignment = Alignment.End) {
+                    StockChip(
+                        isVisible = product.isVisible,
+                        container = visibleContainer,
+                        content = visibleContent
+                    )
+                    Spacer(modifier = Modifier.height(dimens.spaceXs))
+                    Switch(checked = product.isVisible, onCheckedChange = onToggleVisibility)
+                }
             }
 
-            Column(horizontalAlignment = Alignment.End) {
-                StockChip(product.stockQuantity)
-                Spacer(modifier = Modifier.height(dimens.spaceXs))
-                FilledTonalButton(onClick = onEdit) {
-                    Text("Sửa")
+            Spacer(modifier = Modifier.height(dimens.spaceSm))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                if (isFromApi) {
+                    OutlinedButton(
+                        onClick = onImport,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Icon(Icons.Filled.SouthWest, contentDescription = null)
+                        Spacer(modifier = Modifier.width(dimens.spaceXs))
+                        Text("Import")
+                    }
+                    Spacer(modifier = Modifier.width(dimens.spaceXs))
+                } else {
+                    IconButton(onClick = onEdit) {
+                        Icon(Icons.Filled.Edit, contentDescription = "Sửa")
+                    }
+                }
+                IconButton(onClick = { }) {
+                    Icon(Icons.Filled.MoreVert, contentDescription = null)
                 }
             }
         }
     }
 }
 
+private fun formatDate(timestamp: Long): String {
+    if (timestamp <= 0L) return "--/--/----"
+    val date = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+    return date.format(java.util.Date(timestamp))
+}
+
 @Preview
 @Composable
 fun AdminProductCardPreview() {
     EasyMartTheme {
-        AdminProductCard(product = mockSimpleProduct, onEdit = {})
+        AdminProductCard(product = mockSimpleProduct, onEdit = {}, onImport = {}, onToggleVisibility = {})
     }
 }

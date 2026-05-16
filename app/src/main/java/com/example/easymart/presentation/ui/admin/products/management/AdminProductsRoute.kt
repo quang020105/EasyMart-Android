@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.example.easymart.presentation.ui.admin.products.management.AdminProductsViewModel
 
 @Composable
 fun AdminProductsRoute(
@@ -20,10 +19,12 @@ fun AdminProductsRoute(
         onSearchQueryChange = viewModel::onSearchQueryChange,
         onSelectCategory = viewModel::onSelectCategory,
         onToggleLowStock = viewModel::onToggleLowStock,
+        onSelectSource = viewModel::onSelectSource,
+        onSelectSort = viewModel::onSelectSort,
         onRefresh = viewModel::refresh,
         onNavigateBack = onNavigateBack,
         onAddProduct = onAddProduct,
-        onEditProduct = onEditProduct
+        onEditProduct = onEditProduct,
+        onToggleVisibility = viewModel::onToggleVisibility
     )
 }
-

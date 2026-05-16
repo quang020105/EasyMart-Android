@@ -45,6 +45,7 @@ import com.example.easymart.domain.usecase.product.GetAllProductUseCase
 import com.example.easymart.domain.usecase.product.GetProductUseCase
 import com.example.easymart.domain.usecase.product.UpsertProductUseCase
 import com.example.easymart.domain.usecase.product.SyncProductsUseCase
+import com.example.easymart.domain.usecase.product.UpdateProductVisibilityLocalOnlyUseCase
 import com.example.easymart.domain.usecase.search.GetSuggestionUseCase
 import com.example.easymart.domain.usecase.search.SearchProductUseCase
 import dagger.Module
@@ -65,6 +66,11 @@ object UseCaseModule {
     @Provides
     fun provideUpsertProduct(productRepo: ProductRepository): UpsertProductUseCase =
         UpsertProductUseCase(productRepo)
+
+
+    @Provides
+    fun provideUpdateProductVisibilityLocalOnlyUseCase(productRepo: ProductRepository): UpdateProductVisibilityLocalOnlyUseCase =
+        UpdateProductVisibilityLocalOnlyUseCase(productRepo)
 
     @Provides
     fun provideSyncProductsUseCase(productRepo: ProductRepository): SyncProductsUseCase =

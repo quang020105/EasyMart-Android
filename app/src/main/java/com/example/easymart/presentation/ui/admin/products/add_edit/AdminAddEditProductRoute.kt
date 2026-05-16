@@ -9,9 +9,16 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 @Composable
 fun AdminAddEditProductRoute(
     viewModel: AdminAddEditProductViewModel = hiltViewModel(),
+    productId: Int? = null,
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(productId) {
+        if (productId != null && productId > 0) {
+            viewModel.loadProduct(productId)
+        }
+    }
 
     AdminAddEditProductScreen(
         uiState = uiState,

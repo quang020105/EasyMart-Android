@@ -42,6 +42,13 @@ interface ProductDao {
     @Query("DELETE FROM product")
     suspend fun clearAll()
 
+    @Query("UPDATE product SET isVisible = :isVisible, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun updateVisibility(
+        id: Int,
+        isVisible: Boolean,
+        updatedAt: Long
+    )
+
     @Transaction
     suspend fun replaceAll(items: List<ProductEntity>) {
         clearAll()
