@@ -62,9 +62,7 @@ fun AdminProductsScreen(
                 item {
                     HeaderSection(
                         query = uiState.searchQuery,
-                        onQueryChange = onSearchQueryChange,
-                        onNavigateBack = onNavigateBack,
-                        onAddProduct = onAddProduct
+                        onQueryChange = onSearchQueryChange
                     )
                 }
 

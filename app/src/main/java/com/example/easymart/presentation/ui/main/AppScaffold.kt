@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,6 +50,7 @@ import com.example.easymart.presentation.ui.main.bottomnav.EasyMartBottomBar
 import com.example.easymart.presentation.ui.search.SearchViewModel
 import com.example.easymart.presentation.ui.search.components.SearchTopbar
 import com.example.easymart.presentation.sync.AppSyncViewModel
+import com.example.easymart.presentation.ui.main.topbar_components.AddProductActionButton
 
 @SuppressLint("UnrememberedGetBackStackEntry")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -234,6 +237,15 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
                                     }
                                 }
                             },
+                            actions = {
+                                if (currentRoute == Screen.AdminProducts.route) {
+                                    AddProductActionButton(
+                                        onClick = {
+                                            navController.navigate(Screen.AdminAddProduct.route)
+                                        }
+                                    )
+                                }
+                            }
                         )
 
                     }

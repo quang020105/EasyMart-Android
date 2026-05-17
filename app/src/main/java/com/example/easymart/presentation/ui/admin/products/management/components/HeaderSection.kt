@@ -11,14 +11,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Tune
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -32,9 +27,7 @@ import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 @Composable
 fun HeaderSection(
     query: String,
-    onQueryChange: (String) -> Unit,
-    onNavigateBack: () -> Unit,
-    onAddProduct: () -> Unit
+    onQueryChange: (String) -> Unit
 ) {
     val dimens = LocalAppDimens.current
     Column(
@@ -42,36 +35,6 @@ fun HeaderSection(
             .fillMaxWidth()
             .padding(horizontal = dimens.screenPadding, vertical = dimens.spaceSm)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
-        ) {
-//            Row(verticalAlignment = Alignment.CenterVertically) {
-//                IconButton(onClick = onNavigateBack) {
-//                    Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-//                }
-//                Text(
-//                    text = "Quản lý sản phẩm",
-//                    style = MaterialTheme.typography.titleLarge,
-//                    color = MaterialTheme.colorScheme.onBackground
-//                )
-//            }
-
-
-            Button(
-                onClick = onAddProduct,
-                shape = RoundedCornerShape(dimens.radiusXl),
-                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(dimens.iconMedium))
-                Spacer(modifier = Modifier.width(dimens.spaceXs))
-                Text("Thêm sản phẩm")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(dimens.spaceSm))
         OutlinedTextField(
             value = query,
             onValueChange = onQueryChange,
@@ -98,9 +61,7 @@ fun HeaderSectionPreview() {
     EasyMartTheme {
         HeaderSection(
             query = "",
-            onQueryChange = {},
-            onNavigateBack = {},
-            onAddProduct = {}
+            onQueryChange = {}
         )
     }
 }
