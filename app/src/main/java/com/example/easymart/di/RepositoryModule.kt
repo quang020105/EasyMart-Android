@@ -7,6 +7,7 @@ import com.example.easymart.data.local.dao.ProductDao
 import com.example.easymart.data.local.dao.WalletDao
 import com.example.easymart.data.local.datasource.CartLocalDataSource
 import com.example.easymart.data.local.datasource.ProductLocalDataSource
+import com.example.easymart.data.local.ocr.MlKitOcrDataSource
 import com.example.easymart.data.remote.api.AlgoliaApi
 import com.example.easymart.data.remote.api.LocationApi
 import com.example.easymart.data.remote.api.PaymentApi
@@ -17,6 +18,7 @@ import com.example.easymart.data.remote.datasource.FirestoreAddressRemoteDataSou
 import com.example.easymart.data.remote.datasource.FirestoreCartRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.RetrofitProductRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.FirestoreProductRemoteDataSource
+import com.example.easymart.data.remote.ocr.GeminiOcrDataSource
 import com.example.easymart.data.repositoryimpl.AddressRepositoryImpl
 import com.example.easymart.data.repositoryimpl.CartRepositoryImpl
 import com.example.easymart.data.repositoryimpl.FirebaseAuthRepositoryImpl
@@ -25,6 +27,7 @@ import com.example.easymart.data.repositoryimpl.OrderRepositoryImpl
 import com.example.easymart.data.repositoryimpl.PaymentRepositoryImpl
 import com.example.easymart.data.repositoryimpl.ProductRepositoryImpl
 import com.example.easymart.data.repositoryimpl.SearchRepositoryImpl
+import com.example.easymart.data.repositoryimpl.OcrRepositoryImpl
 import com.example.easymart.domain.payment.process.CODProcessor
 import com.example.easymart.domain.payment.process.EWalletProcessor
 import com.example.easymart.domain.payment.process.OnlineGatewayProcessor
@@ -36,6 +39,7 @@ import com.example.easymart.domain.repository.OrderRepository
 import com.example.easymart.domain.repository.PaymentRepository
 import com.example.easymart.domain.repository.ProductRepository
 import com.example.easymart.domain.repository.SearchRepository
+import com.example.easymart.domain.repository.OcrRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -135,4 +139,10 @@ object RepositoryModule {
         firestore: FirebaseFirestore
     ): AuthRepository = FirebaseAuthRepositoryImpl(auth, firestore)
 
+    @Provides
+    @Singleton
+    fun provideOcrRepository(
+        ocrDataSource: MlKitOcrDataSource,
+        geminiOcrDataSource: GeminiOcrDataSource
+    ): OcrRepository = OcrRepositoryImpl(ocrDataSource, geminiOcrDataSource)
 }

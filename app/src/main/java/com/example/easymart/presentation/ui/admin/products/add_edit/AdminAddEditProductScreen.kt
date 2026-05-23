@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,10 +34,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -64,6 +68,8 @@ import java.util.Date
 import java.util.Locale
 import androidx.core.content.FileProvider
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Dialog
@@ -79,16 +85,20 @@ fun AdminAddEditProductScreen(
     onImageSelected: (String) -> Unit,
     onSave: () -> Unit,
     onNavigateBack: () -> Unit,
-    onQuantityChange: (String) -> Unit
+    onQuantityChange: (String) -> Unit,
+    onScanWithAi: () -> Unit,
+    onRetryScan: () -> Unit
 ) {
     val dimens = LocalAppDimens.current
     val context = LocalContext.current
     var showSourceSheet by remember { mutableStateOf(false) }
     var showImagePreview by remember { mutableStateOf(false) }
-    // lưu URI tạm thời khi chụp ảnh từ camera
+    var showOcrText by remember { mutableStateOf(false) }
     var pendingCameraUri by remember { mutableStateOf<Uri?>(null) }
 
-    // nhận kết quả chụp ảnh từ camera
+    val isBusy = uiState.isLoading || uiState.isScanning
+    val aiHighlightColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.35f)
+
     val takePictureLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
         onResult = { success ->
@@ -98,7 +108,6 @@ fun AdminAddEditProductScreen(
         }
     )
 
-    // nhận kết quả chọn ảnh từ thư viện
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
@@ -106,52 +115,8 @@ fun AdminAddEditProductScreen(
         }
     )
 
-    // chọn chụp ảnh hay chọn từ thư viện
-//    if (showSourceSheet) {
-//        ModalBottomSheet(onDismissRequest = { showSourceSheet = false }) {
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(dimens.spaceMd),
-//                verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
-//            ) {
-//                Text(
-//                    text = "Chọn nguồn ảnh",
-//                    style = MaterialTheme.typography.titleMedium,
-//                    fontWeight = FontWeight.SemiBold
-//                )
-//                TextButton(
-//                    onClick = {
-//                        showSourceSheet = false
-//                        imagePicker.launch("image/*")
-//                    },
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Text("Chọn từ thư viện")
-//                }
-//                TextButton(
-//                    onClick = {
-//                        showSourceSheet = false
-//                        val uri = createImageUri(context)
-//                        pendingCameraUri = uri
-//                        takePictureLauncher.launch(uri)
-//                    },
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    Text("Chụp ảnh")
-//                }
-//                Spacer(modifier = Modifier.height(dimens.spaceSm))
-//            }
-//        }
-//    }
-
-
-
-    // chọn chụp ảnh hay chọn từ thư viện
     if (showSourceSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showSourceSheet = false }
-        ) {
+        ModalBottomSheet(onDismissRequest = { showSourceSheet = false }) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -162,26 +127,18 @@ fun AdminAddEditProductScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    //Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            modifier = Modifier.weight(1f),
-                            text = "Chọn nguồn ảnh",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-//                        Text(
-//                            text = "Chọn ảnh từ thư viện hoặc chụp mới bằng camera",
-//                            style = MaterialTheme.typography.bodyMedium,
-//                            color = MaterialTheme.colorScheme.onSurfaceVariant
-//                        )
-//                    }
-
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = "Chọn nguồn ảnh",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
                     TextButton(onClick = { showSourceSheet = false }) {
                         Text("Đóng")
                     }
                 }
 
-                androidx.compose.material3.HorizontalDivider()
+                HorizontalDivider()
 
                 Card(
                     modifier = Modifier
@@ -286,7 +243,6 @@ fun AdminAddEditProductScreen(
         }
     }
 
-
     if (showImagePreview && uiState.imageUri.isNotBlank()) {
         Dialog(onDismissRequest = { showImagePreview = false }) {
             Box(
@@ -316,8 +272,6 @@ fun AdminAddEditProductScreen(
         ) {
             Spacer(modifier = Modifier.height(dimens.spaceSm))
 
-            // Header da co o tang cao hon
-
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(dimens.radiusLarge),
@@ -342,7 +296,11 @@ fun AdminAddEditProductScreen(
                         placeholder = { Text("Nhập tên sản phẩm") },
                         modifier = Modifier.fillMaxWidth(),
                         isError = uiState.titleError != null,
-                        supportingText = uiState.titleError?.let { { Text(it) } }
+                        supportingText = uiState.titleError?.let { { Text(it) } },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = if (uiState.aiFilledTitle) aiHighlightColor else Color.Transparent,
+                            unfocusedContainerColor = if (uiState.aiFilledTitle) aiHighlightColor else Color.Transparent
+                        )
                     )
 
                     OutlinedTextField(
@@ -386,7 +344,11 @@ fun AdminAddEditProductScreen(
                                     contentDescription = null,
                                     tint = Color.Unspecified
                                 )
-                            }
+                            },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = if (uiState.aiFilledCategory) aiHighlightColor else Color.Transparent,
+                                unfocusedContainerColor = if (uiState.aiFilledCategory) aiHighlightColor else Color.Transparent
+                            )
                         )
 
                         OutlinedTextField(
@@ -423,7 +385,11 @@ fun AdminAddEditProductScreen(
                                 contentDescription = null,
                                 tint = Color.Unspecified
                             )
-                        }
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = if (uiState.aiFilledDescription) aiHighlightColor else Color.Transparent,
+                            unfocusedContainerColor = if (uiState.aiFilledDescription) aiHighlightColor else Color.Transparent
+                        )
                     )
                 }
             }
@@ -449,93 +415,29 @@ fun AdminAddEditProductScreen(
                             tint = Color.Unspecified
                         )
                         Spacer(modifier = Modifier.width(dimens.spaceSm))
-                        Text(
-                            text = "Ảnh sản phẩm",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.SemiBold
-                        )
-//                        Spacer(modifier = Modifier.weight(1f))
-//                        Text(
-//                            text = "Tối đa 5 ảnh",
-//                            style = MaterialTheme.typography.bodySmall,
-//                            color = MaterialTheme.colorScheme.onSurfaceVariant
-//                        )
-                    }
-
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(160.dp)
-                            .clickable { showSourceSheet = true },
-                        shape = RoundedCornerShape(dimens.radiusMedium),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(dimens.spaceMd),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.pic_add_picture),
-                                contentDescription = null,
-                                tint = Color.Unspecified
-                            )
-                            Spacer(modifier = Modifier.height(dimens.spaceXs))
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Thêm ảnh từ thiết bị",
-                                style = MaterialTheme.typography.titleSmall,
-                                color = MaterialTheme.colorScheme.primary
+                                text = "AI Product Scan",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold
                             )
                             Text(
-                                text = "Định dạng: JPG, PNG ",
+                                text = "Chọn ảnh, quét OCR và nhận gợi ý thông minh",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                    }
-
-                    if (uiState.imageUriError != null) {
-                        Text(
-                            text = uiState.imageUriError,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            }
-
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                shape = RoundedCornerShape(dimens.radiusLarge),
-                elevation = CardDefaults.cardElevation(dimens.cardElevation)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(dimens.spaceMd),
-                    verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Filled.Image,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.width(dimens.spaceSm))
-                        Text(
-                            text = "Preview ảnh",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.SemiBold
+                        AiScanStatusBadge(
+                            isScanning = uiState.isScanning,
+                            isSuccess = uiState.scanSuccess,
+                            isError = uiState.scanError != null
                         )
                     }
 
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(180.dp)
+                            .height(200.dp)
                             .clip(RoundedCornerShape(dimens.radiusMedium))
                             .background(MaterialTheme.colorScheme.surfaceVariant)
                             .clickable(enabled = uiState.imageUri.isNotBlank()) {
@@ -564,17 +466,182 @@ fun AdminAddEditProductScreen(
                             }
                         }
                     }
+
+                    if (uiState.imageUriError != null) {
+                        Text(
+                            text = uiState.imageUriError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm)
+                    ) {
+                        FilledTonalButton(
+                            onClick = onScanWithAi,
+                            enabled = !isBusy && uiState.imageUri.isNotBlank(),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            if (uiState.isScanning) {
+                                CircularProgressIndicator(
+                                    strokeWidth = 2.dp,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                            }
+                            Text("Quét bằng AI")
+                        }
+
+                        OutlinedButton(
+                            onClick = { showSourceSheet = true },
+                            enabled = !isBusy,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Đổi ảnh")
+                        }
+                    }
+
+                    if (uiState.isScanning) {
+                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                        Text(
+                            text = "Đang quét ảnh, vui lòng chờ...",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    if (uiState.scanError != null) {
+                        Text(
+                            text = uiState.scanError,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                        TextButton(onClick = onRetryScan, enabled = !uiState.isScanning) {
+                            Text("Thử lại")
+                        }
+                        Log.d("AdminAddEditProductScreen", "scanError: ${uiState.scanError}")
+                    }
+                }
+            }
+
+            val hasSuggestions = listOf(
+                uiState.suggestedTitle,
+                uiState.suggestedCategory,
+                uiState.suggestedDescription
+            ).any { !it.isNullOrBlank() }
+
+            if (uiState.scanSuccess || hasSuggestions) {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    shape = RoundedCornerShape(dimens.radiusLarge),
+                    elevation = CardDefaults.cardElevation(dimens.cardElevation)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(dimens.spaceMd),
+                        verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm)
+                        ) {
+                            Text(
+                                text = "AI Suggestions",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "AI Suggestion",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            }
+                        }
+
+                        SuggestionRow("Tên gợi ý", uiState.suggestedTitle)
+                        SuggestionRow("Danh mục gợi ý", uiState.suggestedCategory)
+                        SuggestionRow("Mô tả gợi ý", uiState.suggestedDescription)
+
+                        if (uiState.suggestionConfidence != null) {
+                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Text(
+                                    text = "Độ tin cậy: ${(uiState.suggestionConfidence * 100).toInt()}%",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                                LinearProgressIndicator(
+                                    progress = uiState.suggestionConfidence.coerceIn(0f, 1f),
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                shape = RoundedCornerShape(dimens.radiusLarge),
+                elevation = CardDefaults.cardElevation(dimens.cardElevation)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(dimens.spaceMd),
+                    verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "OCR raw text",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        TextButton(onClick = { showOcrText = !showOcrText }) {
+                            Text(if (showOcrText) "Ẩn" else "Xem")
+                        }
+                    }
+
+                    AnimatedVisibility(visible = showOcrText) {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            if (uiState.ocrText.isNotBlank()) {
+                                Text(
+                                    text = uiState.ocrText,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            } else {
+                                Text(
+                                    text = "Chưa có dữ liệu OCR.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
             if (uiState.error != null) {
                 Text(text = uiState.error, color = MaterialTheme.colorScheme.error)
             }
-            Log.d("AdminAddEditProductScreen", "uiState: ${uiState.error}")
+
+            Log.d("AdminAddEditProductScreen", "error: ${uiState.error}")
 
             Button(
                 onClick = onSave,
-                enabled = !uiState.isLoading,
+                enabled = !isBusy,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -598,6 +665,59 @@ fun AdminAddEditProductScreen(
     }
 }
 
+@Composable
+private fun AiScanStatusBadge(
+    isScanning: Boolean,
+    isSuccess: Boolean,
+    isError: Boolean
+) {
+    val (label, container, content) = when {
+        isScanning -> Triple(
+            "Đang quét",
+            MaterialTheme.colorScheme.tertiaryContainer,
+            MaterialTheme.colorScheme.onTertiaryContainer
+        )
+        isError -> Triple(
+            "Lỗi",
+            MaterialTheme.colorScheme.errorContainer,
+            MaterialTheme.colorScheme.onErrorContainer
+        )
+        isSuccess -> Triple(
+            "Hoàn tất",
+            MaterialTheme.colorScheme.primaryContainer,
+            MaterialTheme.colorScheme.onPrimaryContainer
+        )
+        else -> Triple(
+            "Chưa quét",
+            MaterialTheme.colorScheme.surfaceVariant,
+            MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(10.dp))
+            .background(container)
+            .padding(horizontal = 10.dp, vertical = 4.dp)
+    ) {
+        Text(text = label, style = MaterialTheme.typography.labelSmall, color = content)
+    }
+}
+
+@Composable
+private fun SuggestionRow(label: String, value: String?) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = value?.takeIf { it.isNotBlank() } ?: "Chưa có gợi ý",
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+}
 
 @Preview
 @Composable
@@ -621,7 +741,9 @@ fun AdminAddEditProductScreenPreview() {
             onImageSelected = {},
             onSave = {},
             onNavigateBack = {},
-            onQuantityChange = {}
+            onQuantityChange = {},
+            onScanWithAi = {},
+            onRetryScan = {}
         )
     }
 }

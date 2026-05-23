@@ -22,5 +22,16 @@ data class AdminAddEditProductUiState(
     val descriptionError: String? = null,
     val categoryError: String? = null,
     val quantityError: String? = null,
-    val imageUriError: String? = null
+    val imageUriError: String? = null,
+    val isScanning: Boolean = false,
+    val ocrText: String = "",
+    val scanError: String? = null,
+    val scanSuccess: Boolean = false,
+    val suggestedTitle: String? = null,
+    val suggestedCategory: String? = null,
+    val suggestedDescription: String? = null,
+    val suggestionConfidence: Float? = null,
+    val aiFilledTitle: Boolean = false,
+    val aiFilledCategory: Boolean = false,
+    val aiFilledDescription: Boolean = false
 )

@@ -1,11 +1,13 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.model.ProductRating
 import com.example.easymart.domain.usecase.product.GetProductUseCase
 import com.example.easymart.domain.usecase.product.UpsertProductUseCase
+import com.example.easymart.domain.usecase.ocr.AnalyzeProductImageUseCase
 import com.example.easymart.presentation.common.AppEventBus
 import com.example.easymart.presentation.common.Resource
 import com.example.easymart.presentation.common.ui.UiEvent
@@ -20,15 +22,16 @@ import javax.inject.Inject
 @HiltViewModel
 class AdminAddEditProductViewModel @Inject constructor(
     private val upsertProductUseCase: UpsertProductUseCase,
-    private val getProductUseCase: GetProductUseCase
+    private val getProductUseCase: GetProductUseCase,
+    private val analyzeProductImageUseCase: AnalyzeProductImageUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AdminAddEditProductUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun onTitleChange(value: String) = updateField { copy(title = value, titleError = null) }
+    fun onTitleChange(value: String) = updateField { copy(title = value, titleError = null, aiFilledTitle = false) }
     fun onPriceChange(value: String) = updateField { copy(price = value, priceError = null) }
-    fun onDescriptionChange(value: String) = updateField { copy(description = value, descriptionError = null) }
-    fun onCategoryChange(value: String) = updateField { copy(category = value, categoryError = null) }
+    fun onDescriptionChange(value: String) = updateField { copy(description = value, descriptionError = null, aiFilledDescription = false) }
+    fun onCategoryChange(value: String) = updateField { copy(category = value, categoryError = null, aiFilledCategory = false) }
     fun onQuantityChange(value: String) = updateField { copy(quantity = value, quantityError = null) }
     fun onImageUriChange(value: String) = updateField { copy(imageUri = value, imageUriError = null) }
 
@@ -110,6 +113,78 @@ class AdminAddEditProductViewModel @Inject constructor(
 
     fun resetSuccess() {
         _uiState.update { it.copy(success = false) }
+    }
+
+    fun onImagePicked(uri: String) {
+        _uiState.update {
+            it.copy(
+                imageUri = uri,
+                imageUriError = null,
+                isScanning = false,
+                scanError = null,
+                scanSuccess = false,
+                ocrText = "",
+                suggestedTitle = null,
+                suggestedCategory = null,
+                suggestedDescription = null,
+                suggestionConfidence = null,
+                aiFilledTitle = false,
+                aiFilledCategory = false,
+                aiFilledDescription = false
+            )
+        }
+    }
+
+    fun onScanWithAi() {
+        val uri = _uiState.value.imageUri.trim()
+        if (uri.isBlank()) {
+            _uiState.update { it.copy(scanError = "Vui lòng chọn ảnh trước khi quét") }
+            return
+        }
+        startScan(uri)
+    }
+
+    fun onRetryScan() {
+        val uri = _uiState.value.imageUri.trim()
+        if (uri.isBlank()) return
+        startScan(uri)
+    }
+
+    private fun startScan(uri: String) {
+        _uiState.update { it.copy(isScanning = true, scanError = null, scanSuccess = false) }
+        viewModelScope.launch {
+            runCatching { analyzeProductImageUseCase(uri) }
+                .onSuccess { result ->
+                    _uiState.update {
+                        it.copy(
+                            isScanning = false,
+                            scanSuccess = true,
+                            ocrText = result.rawText,
+                            suggestedTitle = result.suggestedTitle,
+                            suggestedCategory = result.suggestedCategory,
+                            suggestedDescription = result.suggestedDescription,
+                            suggestionConfidence = result.suggestionConfidence,
+                            title = result.suggestedTitle ?: it.title,
+                            category = result.suggestedCategory ?: it.category,
+                            description = result.suggestedDescription ?: it.description,
+                            aiFilledTitle = result.suggestedTitle != null,
+                            aiFilledCategory = result.suggestedCategory != null,
+                            aiFilledDescription = result.suggestedDescription != null
+                        )
+                    }
+                    Log.d("AdminAddEditProductViewModel", "AI result: $result")
+                }
+                .onFailure { throwable ->
+                    _uiState.update {
+                        it.copy(
+                            isScanning = false,
+                            scanError = throwable.message ?: "Không thể quét ảnh",
+                            scanSuccess = false
+                        )
+                    }
+                    Log.d("AdminAddEditProductViewModel", "AI scan failed", throwable)
+                }
+        }
     }
 
     private fun updateField (updater: AdminAddEditProductUiState.() -> AdminAddEditProductUiState) {

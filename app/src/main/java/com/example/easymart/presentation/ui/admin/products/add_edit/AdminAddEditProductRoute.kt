@@ -26,10 +26,12 @@ fun AdminAddEditProductRoute(
         onPriceChange = viewModel::onPriceChange,
         onDescriptionChange = viewModel::onDescriptionChange,
         onCategoryChange = viewModel::onCategoryChange,
-        onImageSelected = viewModel::onImageUriChange,
+        onImageSelected = viewModel::onImagePicked,
         onSave = viewModel::saveProduct,
         onNavigateBack = onNavigateBack,
-        onQuantityChange = viewModel::onQuantityChange
+        onQuantityChange = viewModel::onQuantityChange,
+        onScanWithAi = viewModel::onScanWithAi,
+        onRetryScan = viewModel::onRetryScan
     )
 
     if (uiState.success) {

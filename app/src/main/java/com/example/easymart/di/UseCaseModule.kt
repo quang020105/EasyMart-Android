@@ -7,6 +7,7 @@ import com.example.easymart.domain.repository.AuthRepository
 import com.example.easymart.domain.repository.CartRepository
 import com.example.easymart.domain.repository.LocationRepository
 import com.example.easymart.domain.repository.OrderRepository
+import com.example.easymart.domain.repository.OcrRepository
 import com.example.easymart.domain.repository.PaymentRepository
 import com.example.easymart.domain.repository.ProductRepository
 import com.example.easymart.domain.repository.SearchRepository
@@ -37,6 +38,7 @@ import com.example.easymart.domain.usecase.order.GetObserveAllOrdersUseCase
 import com.example.easymart.domain.usecase.order.GetOrderDetailUseCase
 import com.example.easymart.domain.usecase.order.GetOrderItemUseCase
 import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
+import com.example.easymart.domain.usecase.ocr.AnalyzeProductImageUseCase
 import com.example.easymart.domain.usecase.payment.GetWalletBalanceUseCase
 import com.example.easymart.domain.usecase.payment.ProcessPaymentUseCase
 import com.example.easymart.domain.usecase.payment.PollPayOsPaymentStatusUseCase
@@ -241,5 +243,10 @@ object UseCaseModule {
     fun provideGetCurrentUserWithRoleUseCase(
         authRepo: AuthRepository
     ) = GetCurrentUserWithRoleUseCase(authRepo)
+
+    @Provides
+    fun provideAnalyzeProductImageUseCase(
+        ocrRepository: OcrRepository
+    ) = AnalyzeProductImageUseCase(ocrRepository)
 
 }

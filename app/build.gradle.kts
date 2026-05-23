@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,6 +10,15 @@ plugins {
     id("com.google.gms.google-services")   // bật dịch vụ của google (firebase)
     //id ("com.google.devtools.ksp")       // <-- bật KSP cho module này
 }
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(FileInputStream(localPropertiesFile))
+    }
+}
+
+val geminiApiKey = localProperties.getProperty("GEMINI_API_KEY") ?: ""
 
 android {
     namespace = "com.example.easymart"
@@ -21,6 +33,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
     }
 
     buildTypes {
@@ -48,6 +61,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -104,8 +118,16 @@ dependencies {
     //tìm kiếm nhanh bằng algolia
     implementation(libs.ktor.client.okhttp)
     implementation(libs.algoliasearch.client.kotlin.jvm)
-    implementation(libs.ktor.client.android)
-    implementation(libs.ktor.client.cio)
+    // nếu lỗi thì thử thêm 2 dependency này
+//    implementation(libs.ktor.client.android)
+//    implementation(libs.ktor.client.cio)
+
+//    implementation(libs.ktor.client.plugins)
+
+    //
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.content.negotiation)
 
     //foundation
     implementation(libs.androidx.foundation)
@@ -121,7 +143,7 @@ dependencies {
 
     // Hilt + WorkManager
     implementation(libs.androidx.hilt.work)
-    kapt(libs.androidx.hilt.compiler)
+    //kapt(libs.androidx.hilt.compiler)
 
     //firebase
     implementation(platform(libs.firebase.bom))
@@ -146,4 +168,8 @@ dependencies {
     // Assertion (optional)
     testImplementation(libs.truth)
 
+    implementation(libs.mlkit.text.recognition)
+
+    // Google Generative AI API client library
+    implementation(libs.generativeai)
 }
