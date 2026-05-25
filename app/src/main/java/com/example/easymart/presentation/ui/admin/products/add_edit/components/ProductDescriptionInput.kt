@@ -1,102 +1,108 @@
 @file:OptIn(ExperimentalFoundationApi::class)
+
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
 
-
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment as ComposeAlignment
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.easymart.presentation.theme.EasyMartTheme
-
-private val BorderIdle = Color(0xFFE5E7EB)
-private val HintColor = Color(0xFF9CA3AF)
-private val TextColor = Color(0xFF111827)
+import com.example.easymart.presentation.theme.colors.LocalAppColors
+import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 
 @Composable
 fun ProductDescriptionInput(
     text: String,
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    maxLength: Int = 1000,
     hint: String = "Nhập mô tả chi tiết về sản phẩm...",
+    maxLength: Int = 1000,
+    minLines: Int = 4,
+    maxLines: Int = 8
 ) {
+
+    val dims = LocalAppDimens.current
+    val appColors = LocalAppColors.current
+
     var isFocused by remember { mutableStateOf(false) }
 
-    val borderColor = if (isFocused) MaterialTheme.colorScheme.primary else BorderIdle
+    val borderColor =
+        if (isFocused) {
+            appColors.focusRing
+        } else {
+            MaterialTheme.colorScheme.outlineVariant
+        }
+
+    val textStyle = MaterialTheme.typography.bodyMedium.copy(
+        fontSize = dims.textBody,
+        color = appColors.textPrimary
+    )
 
     Card(
-        modifier = modifier
-            .height(120.dp),
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(1.dp, borderColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        modifier = modifier,
+        shape = RoundedCornerShape(dims.radiusLarge),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        border = BorderStroke(
+            dims.dividerThickness,
+            borderColor
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 0.dp
+        )
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dims.spaceMd)
+        ) {
 
             Row(
-                modifier = Modifier.fillMaxSize(),
-                verticalAlignment = ComposeAlignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(start = 14.dp, end = 14.dp),
-                    verticalAlignment = ComposeAlignment.CenterVertically
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
                     Icon(
                         imageVector = Icons.Default.Menu,
                         contentDescription = null,
-                        tint = HintColor,
-                        modifier = Modifier.size(20.dp)
+                        tint = appColors.iconMuted,
+                        modifier = Modifier.size(dims.iconMedium)
                     )
+
+                    Spacer(modifier = Modifier.height(dims.spaceSm))
 
                     Box(
                         modifier = Modifier
-                            .padding(start = 14.dp)
-                            .width(1.dp)
-                            .height(20.dp)
-                            .background(BorderIdle)
+                            .width(dims.dividerThickness)
+                            .height(48.dp)
+                            .background(MaterialTheme.colorScheme.outlineVariant)
                     )
                 }
+
+                Spacer(modifier = Modifier.width(dims.spaceMd))
 
                 BasicTextField(
                     value = text,
@@ -107,67 +113,78 @@ fun ProductDescriptionInput(
                     },
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxHeight()
-                        .padding(end = 16.dp, top = 16.dp, bottom = 16.dp)
-                        .onFocusChanged { isFocused = it.isFocused },
-                    textStyle = TextStyle(
-                        color = TextColor,
-                        fontSize = 15.sp,
-                        lineHeight = 20.sp
-                    ),
+                        .onFocusChanged {
+                            isFocused = it.isFocused
+                        },
+                    textStyle = textStyle,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Default
                     ),
-                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-                    minLines = 4,
-                    maxLines = 6,
+                    cursorBrush = SolidColor(appColors.focusRing),
+                    minLines = minLines,
+                    maxLines = maxLines,
                     decorationBox = { innerTextField ->
-                        Box(modifier = Modifier.fillMaxSize()) {
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = dims.spaceLg),
+                            contentAlignment = Alignment.TopStart
+                        ) {
+
                             if (text.isEmpty()) {
                                 Text(
                                     text = hint,
-                                    color = HintColor,
-                                    fontSize = 15.sp,
-                                    lineHeight = 20.sp
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontSize = dims.textBody
                                 )
                             }
+
                             innerTextField()
                         }
                     }
                 )
             }
 
-            Text(
-                text = "${text.length}/$maxLength",
-                color = HintColor,
-                fontSize = 12.sp,
-                modifier = Modifier
-                    .align(ComposeAlignment.BottomEnd)
-                    .padding(12.dp)
-            )
+            Spacer(modifier = Modifier.height(dims.spaceSm))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+
+                Text(
+                    text = "${text.length}/$maxLength",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = dims.textSmall
+                )
+            }
         }
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF8FAFC)
+@Preview(showBackground = true)
 @Composable
 private fun ProductDescriptionInputPreview() {
-    var text by rememberSaveable { mutableStateOf("") }
+
+    var text by remember {
+        mutableStateOf("")
+    }
 
     EasyMartTheme {
+
         Surface {
-            Column(
+
+            ProductDescriptionInput(
+                text = text,
+                onTextChange = {
+                    text = it
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-            ) {
-                ProductDescriptionInput(
-                    text = text,
-                    onTextChange = { text = it },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+            )
         }
     }
 }

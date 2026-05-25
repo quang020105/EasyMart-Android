@@ -17,12 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.easymart.presentation.theme.colors.DarkAppColors
 import com.example.easymart.presentation.theme.colors.LightAppColors
 import com.example.easymart.presentation.theme.colors.LocalAppColors
-import com.example.easymart.presentation.theme.colors.Pink80
-import com.example.easymart.presentation.theme.colors.Purple80
-import com.example.easymart.presentation.theme.colors.PurpleGrey80
-import com.example.easymart.presentation.theme.colors.dark_aiAccent
-import com.example.easymart.presentation.theme.colors.dark_aiAccentLight
-import com.example.easymart.presentation.theme.colors.dark_aiAccentSoft
+
 import com.example.easymart.presentation.theme.colors.dark_background
 import com.example.easymart.presentation.theme.colors.dark_disabledContainer
 import com.example.easymart.presentation.theme.colors.dark_disabledContent
