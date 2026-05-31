@@ -11,6 +11,7 @@ data class ProductEntity(
     val description: String?,
     val price: Double,
     val imageUrl: String,
+    val imageUrlsJson: String = "[]",
     val category: String,
     val updatedAt: Long,
     val ratingRate: Double,
@@ -21,5 +22,6 @@ data class ProductEntity(
     val isDeleted: Boolean,
     val isSynced: Boolean,
     val storagePath: String?,
-    val localImageUri: String?
+    val localImageUri: String?,
+    val localImageUrisJson: String = "[]"
 )

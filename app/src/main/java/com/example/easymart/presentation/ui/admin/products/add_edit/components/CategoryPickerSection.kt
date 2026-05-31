@@ -22,14 +22,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Category
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -39,7 +39,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,10 +58,9 @@ fun CategoryPickerSection(
     value: String,
     onValueChange: (String) -> Unit,
     categories: List<String>,
-    onAddNewCategory: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var expanded by remember { mutableStateOf(true) }
+    var expanded by remember { mutableStateOf(false) }
 
     val filteredCategories = remember(value, categories) {
         val query = value.trim()
@@ -101,10 +99,17 @@ fun CategoryPickerSection(
             },
             trailingIcon = {
                 IconButton(onClick = { expanded = !expanded }) {
-                    Icon(
-                        imageVector = Icons.Outlined.KeyboardArrowDown,
-                        contentDescription = null
-                    )
+                    if(expanded){
+                        Icon(
+                            imageVector = Icons.Outlined.KeyboardArrowDown,
+                            contentDescription = null
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = null,
+                        )
+                    }
                 }
             },
             placeholder = {
@@ -132,42 +137,42 @@ fun CategoryPickerSection(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 4.dp),
                 shape = RoundedCornerShape(18.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    OutlinedTextField(
-                        value = value,
-                        onValueChange = onValueChange,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        singleLine = true,
-                        shape = RoundedCornerShape(14.dp),
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Outlined.Search,
-                                contentDescription = null
-                            )
-                        },
-                        placeholder = {
-                            Text("Tìm kiếm danh mục...")
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = Color(0xFFE4E7EC),
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White
-                        )
-                    )
+//                    OutlinedTextField(
+//                        value = value,
+//                        onValueChange = onValueChange,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(12.dp),
+//                        singleLine = true,
+//                        shape = RoundedCornerShape(14.dp),
+//                        leadingIcon = {
+//                            Icon(
+//                                imageVector = Icons.Outlined.Search,
+//                                contentDescription = null
+//                            )
+//                        },
+//                        placeholder = {
+//                            Text("Tìm kiếm danh mục...")
+//                        },
+//                        colors = OutlinedTextFieldDefaults.colors(
+//                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+//                            unfocusedBorderColor = Color(0xFFE4E7EC),
+//                            focusedContainerColor = Color.White,
+//                            unfocusedContainerColor = Color.White
+//                        )
+//                    )
 
-                    HorizontalDivider(
-                        Modifier,
-                        DividerDefaults.Thickness,
-                        color = Color(0xFFF0F2F5)
-                    )
+//                    HorizontalDivider(
+//                        Modifier,
+//                        DividerDefaults.Thickness,
+//                        color = Color(0xFFF0F2F5)
+//                    )
 
                     if (filteredCategories.isEmpty()) {
                         Box(
@@ -200,33 +205,23 @@ fun CategoryPickerSection(
                         }
                     }
 
-                    HorizontalDivider(
-                        Modifier,
-                        DividerDefaults.Thickness,
-                        color = Color(0xFFF0F2F5)
-                    )
-
-                    TextButton(
-                        onClick = {
-                            val newCategory = value.trim()
-                            if (newCategory.isNotBlank()) {
-                                onAddNewCategory(newCategory)
-                                expanded = false
-                            }
-                        },
-                        modifier = Modifier
-                            .align(Alignment.Start)
-                            .padding(start = 8.dp, end = 12.dp, bottom = 8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Add,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("Thêm danh mục mới")
-                    }
+//                    HorizontalDivider(
+//                        Modifier,
+//                        DividerDefaults.Thickness,
+//                        color = Color(0xFFF0F2F5)
+//                    )
+//
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(horizontal = 12.dp, vertical = 10.dp)
+//                    ) {
+//                        Text(
+//                            text = "Nhập danh mục mới để tự thêm vào danh sách",
+//                            style = MaterialTheme.typography.bodySmall,
+//                            color = Color(0xFF667085)
+//                        )
+//                    }
                 }
             }
         }
@@ -298,9 +293,10 @@ private fun CategoryPickerSectionPreview() {
                     "Phụ kiện",
                     "Giày dép",
                     "Đồ thể thao"
-                ),
-                onAddNewCategory = {}
+                )
             )
         }
     }
 }
+
+// thêm chế độ preview cho ảnh , kiểm tra độ xác thực AI

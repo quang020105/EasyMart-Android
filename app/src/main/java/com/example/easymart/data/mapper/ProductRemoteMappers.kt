@@ -4,6 +4,7 @@ import com.example.easymart.data.local.entity.ProductEntity
 import com.example.easymart.data.remote.dto.ProductFirestoreDto
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.model.ProductRating
+import com.google.gson.Gson
 
 fun ProductEntity.toRemoteDto(): ProductFirestoreDto {
     return ProductFirestoreDto(
@@ -12,6 +13,7 @@ fun ProductEntity.toRemoteDto(): ProductFirestoreDto {
         description = description,
         price = price,
         imageUrl = imageUrl,
+        imageUrls = decodeList(imageUrlsJson),
         category = category,
         ratingRate = ratingRate,
         ratingCount = ratingCount,
@@ -31,6 +33,7 @@ fun ProductFirestoreDto.toEntity(): ProductEntity {
         description = description,
         price = price,
         imageUrl = imageUrl,
+        imageUrlsJson = Gson().toJson(imageUrls),
         category = category,
         updatedAt = updatedAt,
         ratingRate = ratingRate,
@@ -41,7 +44,8 @@ fun ProductFirestoreDto.toEntity(): ProductEntity {
         isDeleted = isDeleted,
         isSynced = true,
         storagePath = storagePath,
-        localImageUri = null
+        localImageUri = null,
+        localImageUrisJson = "[]"
     )
 }
 
@@ -52,6 +56,7 @@ fun ProductFirestoreDto.toDomain(): Product {
         description = description,
         price = price,
         imageUrl = imageUrl,
+        imageUrls = imageUrls,
         category = category,
         stockQuantity = stockQuantity,
         soldQuantity = 0, // API không cung cấp thông tin này

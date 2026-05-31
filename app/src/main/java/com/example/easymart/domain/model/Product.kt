@@ -8,6 +8,7 @@ data class Product(
     val imageUrl: String,
     val imageRes: Int = 0,
     val images: List<ProductImage> = emptyList(),
+    val imageUrls: List<String> = emptyList(),
     val category: String = "",
     val stockQuantity: Int = 0,
     val soldQuantity: Int = 0,
@@ -18,7 +19,8 @@ data class Product(
     val isDeleted: Boolean = false,
     val isSynced: Boolean = true,
     val storagePath: String? = null,
-    val localImageUri: String? = null
+    val localImageUri: String? = null,
+    val localImageUris: List<String> = emptyList()
 )
 
 // Rating cho sản phẩm theo API FakeStore.

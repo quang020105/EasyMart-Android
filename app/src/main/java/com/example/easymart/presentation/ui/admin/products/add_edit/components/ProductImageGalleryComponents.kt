@@ -32,6 +32,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImagePainter
 import com.example.easymart.presentation.theme.EasyMartTheme
 
 @Composable
@@ -61,21 +63,22 @@ fun ProductImageGallerySection(
     onDeleteMainImageClick: () -> Unit,
     onThumbnailClick: (Int) -> Unit,
     onThumbnailDeleteClick: (Int) -> Unit,
+    onShowImageClick: () -> Unit,
     selectedThumbnailIndex: Int = 0,
     aiScanEnabled: Boolean = true,
     aiScanOnClick: () -> Unit,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier,
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
+//    Card(
+//        modifier = modifier.fillMaxWidth(),
+//        shape = RoundedCornerShape(24.dp),
+//        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+//        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+//    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(8.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -87,7 +90,7 @@ fun ProductImageGallerySection(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Hình ảnh sản phẩm",
+                    text = "Ảnh sản phẩm",
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     )
@@ -103,7 +106,8 @@ fun ProductImageGallerySection(
             } else {
                 ProductMainImageCard(
                     painter = mainImagePainter,
-                    onDeleteClick = onDeleteMainImageClick
+                    onDeleteClick = onDeleteMainImageClick,
+                    onShowImageClick = onShowImageClick
                 )
             }
 
@@ -113,12 +117,19 @@ fun ProductImageGallerySection(
                 text = if (thumbnailPainters.isEmpty()) {
                     "Chưa có ảnh phụ nào"
                 } else {
-                    "Ảnh khác (${thumbnailPainters.size}/10)"
+                    "Ảnh khác (${thumbnailPainters.size}/4)"
                 },
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                style = if(thumbnailPainters.size > 4){
+                    MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                } else {
+                    MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -174,15 +185,19 @@ fun ProductImageGallerySection(
                 enabled = aiScanEnabled
             )
         }
-    }
+    //}
 }
 
 @Composable
 fun ProductMainImageCard(
     painter: Painter,
     onDeleteClick: () -> Unit,
+    onShowImageClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val isLoading = painter is AsyncImagePainter && painter.state is AsyncImagePainter.State.Loading
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -200,8 +215,23 @@ fun ProductMainImageCard(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable(onClick = onShowImageClick)
                 .height(220.dp)
         )
+
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(Color.Black.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(50.dp)
+                )
+            }
+        }
 
         Surface(
             modifier = Modifier
@@ -239,7 +269,7 @@ fun ProductMainImageCard(
         }
 
         Text(
-            text = "Kéo để thay đổi ảnh chính",
+            text = "Chọn ảnh phụ để thay đổi ảnh chính",
             style = MaterialTheme.typography.labelMedium.copy(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             ),
@@ -261,6 +291,7 @@ fun ProductImageThumbnail(
     } else {
         MaterialTheme.colorScheme.outlineVariant
     }
+    val isLoading = painter is AsyncImagePainter && painter.state is AsyncImagePainter.State.Loading
 
     Box(
         modifier = modifier
@@ -282,6 +313,20 @@ fun ProductImageThumbnail(
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxWidth().height(70.dp)
         )
+
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(Color.Black.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
 
         if (selected) {
             Surface(
@@ -368,7 +413,8 @@ private fun ProductImageGallerySectionPreview() {
             onDeleteMainImageClick = {},
             onThumbnailClick = {},
             onThumbnailDeleteClick = {},
-            aiScanOnClick = { }
+            aiScanOnClick = {},
+            onShowImageClick = {}
         )
     }
 }
@@ -379,7 +425,8 @@ private fun ProductMainImageCardPreview() {
     EasyMartTheme {
         ProductMainImageCard(
             painter = ColorPainter(Color(0xFFF1F1F1)),
-            onDeleteClick = {}
+            onDeleteClick = {},
+            onShowImageClick = {}
         )
     }
 }
@@ -415,3 +462,6 @@ private fun AddImageTilePreview() {
         AddImageTile(onClick = {})
     }
 }
+
+
+// lỗi mất ảnh khi sửa sản phẩm

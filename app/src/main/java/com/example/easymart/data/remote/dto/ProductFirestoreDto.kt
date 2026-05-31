@@ -6,6 +6,7 @@ data class ProductFirestoreDto(
     val description: String? = null,
     val price: Double = 0.0,
     val imageUrl: String = "",
+    val imageUrls: List<String> = emptyList(),
     val category: String = "",
     val ratingRate: Double = 0.0,
     val ratingCount: Int = 0,

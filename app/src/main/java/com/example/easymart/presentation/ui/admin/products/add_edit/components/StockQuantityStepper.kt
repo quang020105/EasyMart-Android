@@ -4,6 +4,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -19,6 +20,7 @@ import com.example.easymart.presentation.theme.EasyMartTheme
 @Composable
 fun StockQuantityStepper(
     quantity: Int,
+    onQuantityChange: (Int) -> Unit,
     onIncrease: () -> Unit,
     onDecrease: () -> Unit,
     modifier: Modifier = Modifier,
@@ -37,12 +39,13 @@ fun StockQuantityStepper(
     ) {
         Row(
             modifier = Modifier
+                .fillMaxWidth()
                 .height(60.dp)
                 .padding(horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
 
-            // Nút giảm
             FilledTonalIconButton(
                 onClick = onDecrease,
                 enabled = quantity > minQuantity,
@@ -54,24 +57,37 @@ fun StockQuantityStepper(
                 )
             }
 
-            // Số lượng ở giữa
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = quantity.toString(),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold
-                    )
-                )
-            }
+            Spacer(modifier = Modifier.width(12.dp))
 
-            // Nút tăng
+            OutlinedTextField(
+                value = quantity.toString(),
+                onValueChange = { value ->
+                    val number = value.toIntOrNull()
+
+                    if (number != null &&
+                        number in minQuantity..maxQuantity
+                    ) {
+                        onQuantityChange(number)
+                    }
+
+                    if (value.isEmpty()) {
+                        onQuantityChange(0)
+                    }
+                },
+                modifier = Modifier.width(100.dp),
+                singleLine = true,
+                textStyle = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.SemiBold
+                ),
+                shape = RoundedCornerShape(12.dp)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
             FilledTonalIconButton(
                 onClick = onIncrease,
                 enabled = quantity < maxQuantity,
-                modifier = Modifier.size(42.dp)
+                modifier = Modifier.size(36.dp)
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
@@ -89,7 +105,8 @@ private fun StockQuantityStepperPreview() {
         StockQuantityStepper(
             quantity = 5,
             onIncrease = {},
-            onDecrease = {}
+            onDecrease = {},
+            onQuantityChange = {}
         )
     }
 }

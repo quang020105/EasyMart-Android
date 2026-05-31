@@ -26,8 +26,9 @@ class ProductLocalDataSource @Inject constructor(
         id: Int,
         updatedAt: Long,
         imageUrl: String,
+        imageUrlsJson: String,
         storagePath: String?
-    ) = productDao.markSynced(id, updatedAt, imageUrl, storagePath)
+    ) = productDao.markSynced(id, updatedAt, imageUrl, imageUrlsJson, storagePath)
 
     suspend fun updateVisibility(
         id: Int,

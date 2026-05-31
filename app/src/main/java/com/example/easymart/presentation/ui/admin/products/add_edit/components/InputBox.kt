@@ -120,7 +120,7 @@ fun InputBox(
                         modifier = Modifier.size(dims.iconMedium)
                     )
 
-                    Spacer(modifier = Modifier.width(dims.spaceMd))
+                    Spacer(modifier = Modifier.width(dims.spaceSm))
 
                     Box(
                         modifier = Modifier
@@ -142,6 +142,7 @@ fun InputBox(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
+                        .padding(end = if (showCounter) dims.space3xl else 0.dp)
                         .onFocusChanged { isFocused = it.isFocused },
                     textStyle = textStyle,
                     keyboardOptions = keyboardOptions,

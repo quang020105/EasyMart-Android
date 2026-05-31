@@ -34,7 +34,9 @@ fun ProductApiDto.toEntity(): ProductEntity {
         isDeleted = false,
         isSynced = true,
         storagePath = null,
-        localImageUri = null
+        localImageUri = null,
+        imageUrlsJson = "[]",
+        localImageUrisJson = "[]"
     )
 }
 
@@ -54,7 +56,9 @@ fun ProductEntity.toDomain(): Product {
         isDeleted = isDeleted,
         isSynced = isSynced,
         storagePath = storagePath,
-        localImageUri = localImageUri
+        localImageUri = localImageUri,
+        imageUrls = decodeList(imageUrlsJson),
+        localImageUris = decodeList(localImageUrisJson)
     )
 }
 
@@ -75,6 +79,8 @@ fun Product.toEntity(): ProductEntity {
         isDeleted = isDeleted,
         isSynced = isSynced,
         storagePath = storagePath,
-        localImageUri = localImageUri
+        localImageUri = localImageUri,
+        imageUrlsJson = encodeList(imageUrls),
+        localImageUrisJson = encodeList(localImageUris)
     )
 }

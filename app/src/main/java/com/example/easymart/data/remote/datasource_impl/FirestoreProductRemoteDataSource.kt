@@ -26,9 +26,13 @@ class FirestoreProductRemoteDataSource @Inject constructor(
             description = doc.getString("description"),
             price = doc.getDouble("price") ?: 0.0,
             imageUrl = doc.getString("imageUrl") ?: "",
+            imageUrls = (doc.get("imageUrls") as? List<*>)
+                ?.mapNotNull { it as? String }
+                ?: emptyList(),
             category = doc.getString("category") ?: "",
             ratingRate = doc.getDouble("ratingRate") ?: 0.0,
             ratingCount = doc.getLong("ratingCount")?.toInt() ?: 0,
+            stockQuantity = doc.getLong("stockQuantity")?.toInt() ?: 0,
             isVisible = doc.getBoolean("isVisible") ?: true,
             createdAt = doc.getLong("createdAt") ?: 0L,
             updatedAt = doc.getLong("updatedAt") ?: 0L,

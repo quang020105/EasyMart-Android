@@ -15,7 +15,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import com.example.easymart.data.local.entity.ProductEntity
+import com.example.easymart.data.mapper.decodeList
+import com.example.easymart.data.mapper.encodeList
 import com.example.easymart.data.remote.datasource_impl.FirestoreProductRemoteDataSource
+import com.google.gson.Gson
 
 class ProductRepositoryImpl @Inject constructor(
     private val localDS: ProductLocalDataSource,
@@ -111,12 +114,14 @@ class ProductRepositoryImpl @Inject constructor(
             remote.forEach { remoteItem ->
                 val local = localById[remoteItem.id]
                 if (local == null) {
+                    Log.d("ProductRepositoryImpl", "syncProducts: Thêm mới từ remote ${remoteItem.id}")
                     localDS.upsert(remoteItem.remoteToEntity())
                 } else {
-                    if (!local.isSynced && local.updatedAt > remoteItem.updatedAt) {
+                    if (!local.isSynced && local.updatedAt >= remoteItem.updatedAt) {
                         return@forEach
                     }
                     localDS.upsert(remoteItem.remoteToEntity())
+                    Log.d("ProductRepositoryImpl", "syncProducts: Cập nhật từ remote ${remoteItem}")
                 }
             }
 
@@ -143,19 +148,48 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     private suspend fun syncProduct(local: ProductEntity) {
-        val storagePath = local.storagePath ?: "products/${local.id}/main.jpg"
-        val imageUrl = if (!local.localImageUri.isNullOrBlank()) {
+        val now = System.currentTimeMillis()
+        val basePath = local.storagePath ?: "products/${local.id}"
+
+        val localSecondaryUris = decodeList(local.localImageUrisJson)
+        val existingRemoteSecondary = decodeList(local.imageUrlsJson)
+            .filter { it.isNotBlank() }
+            .filter { it.startsWith("http", ignoreCase = true) }
+
+        val existingRemoteMain = local.imageUrl
+            .takeIf { it.isNotBlank() && it.startsWith("http", ignoreCase = true) }
+
+        val uploadedMainUrl = if (!local.localImageUri.isNullOrBlank()) {
+            val storagePath = "${basePath}/main.jpg"
             firestoreDS.uploadImage(local.localImageUri, storagePath)
         } else {
-            local.imageUrl
+            null
         }
-        val now = System.currentTimeMillis()
+
+        val uploadedSecondaryUrls = if (localSecondaryUris.isNotEmpty()) {
+            localSecondaryUris.mapIndexed { index, uri ->
+                val storagePath = "${basePath}/secondary_$index.jpg"
+                firestoreDS.uploadImage(uri, storagePath)
+            }
+        } else {
+            emptyList()
+        }
+
+        val mergedSecondaryUrls = (existingRemoteSecondary + uploadedSecondaryUrls)
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+            .distinct()
+
+        val mainImageUrl = uploadedMainUrl ?: existingRemoteMain.orEmpty()
+
         val updated = local.copy(
-            imageUrl = imageUrl,
-            storagePath = storagePath,
+            imageUrl = mainImageUrl,
+            imageUrlsJson = encodeList(mergedSecondaryUrls),
+            storagePath = basePath,
             updatedAt = now
         )
+
         firestoreDS.upsertProduct(updated.toRemoteDto())
-        localDS.markSynced(local.id, now, imageUrl, storagePath)
+        localDS.markSynced(local.id, now, mainImageUrl, encodeList(mergedSecondaryUrls), basePath)
     }
 }

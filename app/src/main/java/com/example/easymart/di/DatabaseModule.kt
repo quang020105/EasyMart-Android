@@ -71,6 +71,13 @@ object DatabaseModule {
         }
     }
 
+    private val MIGRATION_25_26 = object : Migration(25, 26) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE product ADD COLUMN imageUrlsJson TEXT NOT NULL DEFAULT '[]'")
+            db.execSQL("ALTER TABLE product ADD COLUMN localImageUrisJson TEXT NOT NULL DEFAULT '[]'")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext appContext: Context): EasyMartDatabase {
@@ -85,7 +92,8 @@ object DatabaseModule {
                 MIGRATION_21_22,
                 MIGRATION_22_23,
                 MIGRATION_23_24,
-                MIGRATION_24_25
+                MIGRATION_24_25,
+                MIGRATION_25_26
             )
             .fallbackToDestructiveMigration(false).build()
     }

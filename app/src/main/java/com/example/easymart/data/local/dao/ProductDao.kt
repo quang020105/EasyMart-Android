@@ -31,11 +31,14 @@ interface ProductDao {
     @Query("SELECT * FROM product")
     suspend fun getAllOnce(): List<ProductEntity>
 
-    @Query("UPDATE product SET isSynced = 1, updatedAt = :updatedAt, imageUrl = :imageUrl, storagePath = :storagePath, localImageUri = NULL WHERE id = :id")
+    @Query(
+        "UPDATE product SET isSynced = 1, updatedAt = :updatedAt, imageUrl = :imageUrl, imageUrlsJson = :imageUrlsJson, storagePath = :storagePath, localImageUri = NULL, localImageUrisJson = '[]' WHERE id = :id"
+    )
     suspend fun markSynced(
         id: Int,
         updatedAt: Long,
         imageUrl: String,
+        imageUrlsJson: String,
         storagePath: String?
     )
 
