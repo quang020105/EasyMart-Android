@@ -40,7 +40,7 @@ fun ImageActionButton(
         ),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = containerColor,
-            contentColor = contentColor
+            contentColor = contentColor,
         ),
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
@@ -58,7 +58,8 @@ fun ImageActionButton(
             text = title,
             style = MaterialTheme.typography.labelLarge.copy(
                 fontWeight = FontWeight.Medium
-            )
+            ),
+            color = iconTint
         )
     }
 }

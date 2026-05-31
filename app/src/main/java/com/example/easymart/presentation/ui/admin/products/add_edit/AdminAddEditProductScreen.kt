@@ -74,6 +74,8 @@ import com.example.easymart.presentation.ui.admin.products.add_edit.components.P
 import com.example.easymart.presentation.ui.admin.products.add_edit.components.StockQuantityStepper
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImagePainter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -193,40 +195,80 @@ fun AdminAddEditProductScreen(
         onCancelClick = onRetryScan
     )
 
+    // preview ảnh chính khi click vào ảnh chính
     if (showMainImagePreview && uiState.mainImageUri.isNotBlank()) {
-        AlertDialog(
+        Dialog(
             onDismissRequest = { showMainImagePreview = false },
-            confirmButton = {
-                TextButton(onClick = { showMainImagePreview = false }) {
-                    Text("Đóng")
-                }
-            },
-            text = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(320.dp)
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false
+            )
+        ) {
+            val previewPainter = rememberAsyncImagePainter(uiState.mainImageUri)
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.86f))
+                    .padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    val previewPainter = rememberAsyncImagePainter(uiState.mainImageUri)
-                    Image(
-                        painter = previewPainter,
-                        contentDescription = "Preview ảnh chính",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                    if (previewPainter.state is AsyncImagePainter.State.Loading) {
-                        Box(
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Xem ảnh sản phẩm",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White,
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        TextButton(
+                            onClick = { showMainImagePreview = false }
+                        ) {
+                            Text(
+                                text = "Đóng",
+                                color = Color.White
+                            )
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(MaterialTheme.colorScheme.surface),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = previewPainter,
+                            contentDescription = "Ảnh sản phẩm",
+                            contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color.Black.copy(alpha = 0.15f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
+                                .padding(8.dp)
+                        )
+
+                        if (previewPainter.state is AsyncImagePainter.State.Loading) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.scrim.copy(alpha = 0.18f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
                     }
                 }
             }
-        )
+        }
     }
 
     Surface {
@@ -724,3 +766,40 @@ private fun createImageUri(context: Context): Uri {
         imageFile
     )
 }
+
+
+@Preview
+@Composable
+fun TestPreview(){
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(460.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = rememberAsyncImagePainter("https://firebasestorage.googleapis.com/v0/b/atomic-vault-448115-r9.firebasestorage.app/o/products%2F2115763499%2Fmain.jpg?alt=media&token=1e082b56-5c1d-434e-9d00-ed3d52d7c5e4"),
+                contentDescription = "Ảnh sản phẩm",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp)
+                    .clip(RoundedCornerShape(20.dp))
+            )
+
+
+        }
+    }
+}
+
+

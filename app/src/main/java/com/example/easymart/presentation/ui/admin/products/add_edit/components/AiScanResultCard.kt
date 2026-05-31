@@ -74,46 +74,25 @@ fun AiScanSuccessCard(
             }
 
             Text(
-                text = "AI đã trích xuất thông tin. Bạn có thể chỉnh sửa trước khi lưu.",
+                text = "AI đã trích xuất thông tin. Hãy kiểm tra lại thông tin trước khi lưu.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xFF4B5563)
             )
 
-            Row(
+            OutlinedButton(
+                onClick = onScanOtherClick,
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                shape = RoundedCornerShape(16.dp),
+                border = BorderStroke(1.dp, Color(0xFFBFDCC8))
             ) {
-                OutlinedButton(
-                    onClick = onScanOtherClick,
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(1.dp, Color(0xFFBFDCC8))
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Refresh,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Quét lại ảnh khác")
-                }
+                Icon(
+                    imageVector = Icons.Rounded.Refresh,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Quét lại ảnh khác")
 
-                Button(
-                    onClick = onEditClick,
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2563EB)
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Edit,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Chỉnh sửa")
-                }
             }
         }
     }
