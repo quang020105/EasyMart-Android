@@ -54,8 +54,6 @@ fun AdminProductCard(
     val statusLabel = if (isFromApi) "Có sẵn từ API" else "Đã thêm"
     val statusColor = if (isFromApi) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer
 
-    val visibleContainer = Color(0xFFE6F4EA)
-    val visibleContent = Color(0xFF1B7F3B)
     //val outlineGreen = Color(0xFF2E7D32)
 
     Card(
@@ -68,7 +66,7 @@ fun AdminProductCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
-                        .size(72.dp)
+                        .size(96.dp)
                         .clip(RoundedCornerShape(dimens.radiusMedium))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
@@ -100,32 +98,46 @@ fun AdminProductCard(
                         color = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.height(dimens.spaceXs))
+
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(dimens.spaceXs)
-                    ) {
-                        Row(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(10.dp))
                                 .background(statusColor)
-                                .padding(horizontal = 8.dp, vertical = 3.dp),
+                                .padding(horizontal = 8.dp, vertical = 8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(text = statusLabel, style = MaterialTheme.typography.labelSmall)
                         }
-                        Text(
-                            text = "Cập nhật: ${formatDate(product.updatedAt)}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+//                    Row(
+//                        verticalAlignment = Alignment.CenterVertically,
+//                        horizontalArrangement = Arrangement.spacedBy(dimens.spaceXs)
+//                    ) {
+//                        Row(
+//                            modifier = Modifier
+//                                .clip(RoundedCornerShape(10.dp))
+//                                .background(statusColor)
+//                                .padding(horizontal = 8.dp, vertical = 3.dp),
+//                            verticalAlignment = Alignment.CenterVertically
+//                        ) {
+//                            Text(text = statusLabel, style = MaterialTheme.typography.labelSmall)
+//                        }
+//                        Text(
+//                            text = "Cập nhật: ${formatDate(product.updatedAt)}",
+//                            style = MaterialTheme.typography.bodySmall,
+//                            color = MaterialTheme.colorScheme.onSurfaceVariant
+//                        )
+//                    }
+
+                    Text(
+                        text = "Cập nhật: ${formatDate(product.updatedAt)}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
 
                 Column(horizontalAlignment = Alignment.End) {
                     StockChip(
                         isVisible = product.isVisible,
-                        container = visibleContainer,
-                        content = visibleContent
                     )
                     Spacer(modifier = Modifier.height(dimens.spaceXs))
                     Switch(checked = product.isVisible, onCheckedChange = onToggleVisibility)
@@ -155,9 +167,9 @@ fun AdminProductCard(
                         Icon(Icons.Filled.Edit, contentDescription = "Sửa")
                     }
                 }
-                IconButton(onClick = { }) {
-                    Icon(Icons.Filled.MoreVert, contentDescription = null)
-                }
+//                IconButton(onClick = { }) {
+//                    Icon(Icons.Filled.MoreVert, contentDescription = null)
+//                }
             }
         }
     }
