@@ -38,6 +38,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,6 +78,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImagePainter
+import com.example.easymart.presentation.ui.admin.products.add_edit.components.ConfirmSaveProductDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,10 +107,18 @@ fun AdminAddEditProductScreen(
     var showOcrText by remember { mutableStateOf(false) }
     var pendingCameraUri by remember { mutableStateOf<Uri?>(null) }
     var showMainImagePreview by remember { mutableStateOf(false) }
+    var showConfirmDialog by remember { mutableStateOf(false) }
 
     val isBusy = uiState.isLoading || uiState.isScanning
     val aiHighlightColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.35f)
     val quantityValue = uiState.quantity.toIntOrNull() ?: 0
+    val scrollState = rememberScrollState()
+
+    LaunchedEffect(uiState.validationAttempt) {
+        if (uiState.validationAttempt > 0) {
+            scrollState.animateScrollTo(0)
+        }
+    }
 
     // lấy painter cho ảnh chính
     val mainImagePainter = if (uiState.mainImageUri.isNotBlank()) {
@@ -276,7 +286,7 @@ fun AdminAddEditProductScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(scrollState)
                     .padding(horizontal = dimens.screenPadding),
                 verticalArrangement = Arrangement.spacedBy(dimens.spaceMd)
             ) {
@@ -315,13 +325,6 @@ fun AdminAddEditProductScreen(
                                 borderColor = if (uiState.titleError != null) MaterialTheme.colorScheme.error else Color.Unspecified,
                                 focusBorderColor = if (uiState.titleError != null) MaterialTheme.colorScheme.error else Color.Unspecified
                             )
-                            if (uiState.titleError != null) {
-                                Text(
-                                    text = uiState.titleError,
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.bodySmall
-                            )
-                            }
 
                             Text(
                                 text = "Giá bán *",
@@ -340,13 +343,6 @@ fun AdminAddEditProductScreen(
                                 borderColor = if (uiState.priceError != null) MaterialTheme.colorScheme.error else Color.Unspecified,
                                 focusBorderColor = if (uiState.priceError != null) MaterialTheme.colorScheme.error else Color.Unspecified
                             )
-                            if (uiState.priceError != null) {
-                                Text(
-                                    text = uiState.priceError,
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.bodySmall
-                            )
-                            }
 
                             Text(
                                 text = "Số lượng tồn kho *",
@@ -368,26 +364,12 @@ fun AdminAddEditProductScreen(
                                     onQuantityChange = { onQuantityChange(it.toString()) },
                                 )
                             }
-                            if (uiState.quantityError != null) {
-                                Text(
-                                    text = uiState.quantityError,
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.bodySmall
-                            )
-                            }
 
                             CategoryPickerSection(
                                 value = uiState.category,
                                 onValueChange = onCategoryChange,
                                 categories = uiState.categories
                             )
-                            if (uiState.categoryError != null) {
-                                Text(
-                                    text = uiState.categoryError,
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.bodySmall
-                            )
-                            }
 
                             Text(
                                 text = "Mô tả sản phẩm *",
@@ -407,13 +389,6 @@ fun AdminAddEditProductScreen(
                                     text = uiState.description,
                                     onTextChange = onDescriptionChange,
                                     modifier = Modifier.fillMaxWidth()
-                            )
-                            }
-                            if (uiState.descriptionError != null) {
-                                Text(
-                                    text = uiState.descriptionError,
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.bodySmall
                             )
                             }
                         }
@@ -491,13 +466,7 @@ fun AdminAddEditProductScreen(
 //                            }
                         //}
 
-                        if (uiState.imageUriError != null) {
-                            Text(
-                                text = uiState.imageUriError,
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
+                        // bỏ hiển thị lỗi dạng text, dùng snackbar ở Route
                     }
                 }
 
@@ -621,12 +590,14 @@ fun AdminAddEditProductScreen(
                     }
                 }
 
-                if (uiState.error != null) {
-                    Text(text = uiState.error, color = MaterialTheme.colorScheme.error)
-                }
-
                 Button(
-                    onClick = onSave,
+                    onClick = {
+                        if (uiState.isEdit) {
+                            showConfirmDialog = true
+                        } else {
+                            onSave()
+                        }
+                    },
                     enabled = !isBusy,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -654,6 +625,19 @@ fun AdminAddEditProductScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = dimens.spaceMd)
+            )
+        }
+
+        // Dialog xác nhận khi đang ở chế độ edit
+        if (showConfirmDialog) {
+            ConfirmSaveProductDialog(
+                onDismiss = {
+                    showConfirmDialog = false
+                },
+                onConfirm = {
+                    showConfirmDialog = false
+                    onSave()
+                }
             )
         }
     }
@@ -766,40 +750,3 @@ private fun createImageUri(context: Context): Uri {
         imageFile
     )
 }
-
-
-@Preview
-@Composable
-fun TestPreview(){
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(460.dp),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = rememberAsyncImagePainter("https://firebasestorage.googleapis.com/v0/b/atomic-vault-448115-r9.firebasestorage.app/o/products%2F2115763499%2Fmain.jpg?alt=media&token=1e082b56-5c1d-434e-9d00-ed3d52d7c5e4"),
-                contentDescription = "Ảnh sản phẩm",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp)
-                    .clip(RoundedCornerShape(20.dp))
-            )
-
-
-        }
-    }
-}
-
-

@@ -110,7 +110,16 @@ class AdminAddEditProductViewModel @Inject constructor(
         val current = _uiState.value
         val validated = validate(current)
         if (!validated.first) {
-            _uiState.update { validated.second }
+            _uiState.update {
+                validated.second.copy(validationAttempt = it.validationAttempt + 1)
+            }
+            viewModelScope.launch {
+                _uiEvent.send(
+                    AdminAddEditProductUiEvent.ShowMessage(
+                        validated.second.error ?: "Vui lòng nhập đầy đủ các thông tin cần thiết"
+                    )
+                )
+            }
             return
         }
 
@@ -420,6 +429,10 @@ class AdminAddEditProductViewModel @Inject constructor(
         if (state.imageUris.size > 5) {
             next = next.copy(imageUriError = "Không được chọn quá 5 ảnh phụ")
             isValid = false
+        }
+
+        if (!isValid) {
+            next = next.copy(error = "Vui lòng nhập đầy đủ các thông tin cần thiết")
         }
 
         return isValid to next

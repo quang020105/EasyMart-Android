@@ -26,12 +26,12 @@ import androidx.compose.ui.unit.dp
 import com.example.easymart.domain.model.Product
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
-import com.example.easymart.presentation.ui.admin.products.components.AdminProductCard
-import com.example.easymart.presentation.ui.admin.products.components.EmptyState
-import com.example.easymart.presentation.ui.admin.products.components.ErrorBanner
-import com.example.easymart.presentation.ui.admin.products.components.FilterSection
+import com.example.easymart.presentation.ui.admin.products.management.components.AdminProductCard
+import com.example.easymart.presentation.ui.admin.products.management.components.EmptyState
+import com.example.easymart.presentation.ui.admin.products.management.components.ErrorBanner
+import com.example.easymart.presentation.ui.admin.products.management.components.FilterSection
 import com.example.easymart.presentation.ui.admin.products.management.components.HeaderSection
-import com.example.easymart.presentation.ui.admin.products.components.SummaryRow
+import com.example.easymart.presentation.ui.admin.products.management.components.SummaryRow
 import com.example.easymart.presentation.ui.mock.mockProducts
 
 @Composable
@@ -46,7 +46,8 @@ fun AdminProductsScreen(
     onNavigateBack: () -> Unit,
     onAddProduct: () -> Unit,
     onEditProduct: (Int) -> Unit,
-    onToggleVisibility: (Product, Boolean) -> Unit
+    onToggleVisibility: (Product, Boolean) -> Unit,
+    onViewProductDetail: (Int) -> Unit
 ) {
     val dimens = LocalAppDimens.current
 
@@ -138,7 +139,8 @@ fun AdminProductsScreen(
                             onImport = {},
                             onToggleVisibility = { checked ->
                                 onToggleVisibility(product, checked)
-                            }
+                            },
+                            onViewDetail = { onViewProductDetail(product.id) }
                         )
                     }
                 }
@@ -231,7 +233,8 @@ fun AdminProductsScreenPreview() {
             onNavigateBack = {},
             onAddProduct = {},
             onEditProduct = {},
-            onToggleVisibility = { _, _ -> }
+            onToggleVisibility = { _, _ -> },
+            onViewProductDetail = {}
         )
     }
 }

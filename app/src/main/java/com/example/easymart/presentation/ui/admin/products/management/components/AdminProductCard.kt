@@ -1,7 +1,8 @@
-package com.example.easymart.presentation.ui.admin.products.components
+package com.example.easymart.presentation.ui.admin.products.management.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.SouthWest
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,24 +40,27 @@ import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.admin.products.management.formatPrice
 import com.example.easymart.presentation.ui.mock.mockSimpleProduct
-import androidx.compose.ui.graphics.Color
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun AdminProductCard(
     product: Product,
     onEdit: () -> Unit,
     onImport: () -> Unit,
-    onToggleVisibility: (Boolean) -> Unit
+    onToggleVisibility: (Boolean) -> Unit,
+    onViewDetail: () -> Unit
 ) {
     val dimens = LocalAppDimens.current
     val isFromApi = product.storagePath.isNullOrBlank() && product.localImageUri.isNullOrBlank()
     val statusLabel = if (isFromApi) "Có sẵn từ API" else "Đã thêm"
     val statusColor = if (isFromApi) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer
 
-    //val outlineGreen = Color(0xFF2E7D32)
-
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onViewDetail() },
         shape = RoundedCornerShape(dimens.radiusLarge),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = dimens.cardElevation)
@@ -108,25 +111,6 @@ fun AdminProductCard(
                         ) {
                             Text(text = statusLabel, style = MaterialTheme.typography.labelSmall)
                         }
-//                    Row(
-//                        verticalAlignment = Alignment.CenterVertically,
-//                        horizontalArrangement = Arrangement.spacedBy(dimens.spaceXs)
-//                    ) {
-//                        Row(
-//                            modifier = Modifier
-//                                .clip(RoundedCornerShape(10.dp))
-//                                .background(statusColor)
-//                                .padding(horizontal = 8.dp, vertical = 3.dp),
-//                            verticalAlignment = Alignment.CenterVertically
-//                        ) {
-//                            Text(text = statusLabel, style = MaterialTheme.typography.labelSmall)
-//                        }
-//                        Text(
-//                            text = "Cập nhật: ${formatDate(product.updatedAt)}",
-//                            style = MaterialTheme.typography.bodySmall,
-//                            color = MaterialTheme.colorScheme.onSurfaceVariant
-//                        )
-//                    }
 
                     Text(
                         text = "Cập nhật: ${formatDate(product.updatedAt)}",
@@ -167,9 +151,6 @@ fun AdminProductCard(
                         Icon(Icons.Filled.Edit, contentDescription = "Sửa")
                     }
                 }
-//                IconButton(onClick = { }) {
-//                    Icon(Icons.Filled.MoreVert, contentDescription = null)
-//                }
             }
         }
     }
@@ -177,14 +158,20 @@ fun AdminProductCard(
 
 private fun formatDate(timestamp: Long): String {
     if (timestamp <= 0L) return "--/--/----"
-    val date = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
-    return date.format(java.util.Date(timestamp))
+    val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    return date.format(Date(timestamp))
 }
 
 @Preview
 @Composable
 fun AdminProductCardPreview() {
     EasyMartTheme {
-        AdminProductCard(product = mockSimpleProduct, onEdit = {}, onImport = {}, onToggleVisibility = {})
+        AdminProductCard(
+            product = mockSimpleProduct,
+            onEdit = {},
+            onImport = {},
+            onToggleVisibility = {},
+            onViewDetail = {}
+        )
     }
 }

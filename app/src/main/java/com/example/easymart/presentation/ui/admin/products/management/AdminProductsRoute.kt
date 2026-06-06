@@ -10,7 +10,8 @@ fun AdminProductsRoute(
     viewModel: AdminProductsViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onAddProduct: () -> Unit,
-    onEditProduct: (Int) -> Unit
+    onEditProduct: (Int) -> Unit,
+    onViewProductDetail: (Int) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -25,6 +26,7 @@ fun AdminProductsRoute(
         onNavigateBack = onNavigateBack,
         onAddProduct = onAddProduct,
         onEditProduct = onEditProduct,
-        onToggleVisibility = viewModel::onToggleVisibility
+        onToggleVisibility = viewModel::onToggleVisibility,
+        onViewProductDetail = onViewProductDetail
     )
 }

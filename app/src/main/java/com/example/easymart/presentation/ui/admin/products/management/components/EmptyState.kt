@@ -1,4 +1,4 @@
-package com.example.easymart.presentation.ui.admin.products.components
+package com.example.easymart.presentation.ui.admin.products.management.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

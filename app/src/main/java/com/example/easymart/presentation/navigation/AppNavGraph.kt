@@ -60,6 +60,7 @@ import com.example.easymart.presentation.ui.auth.forgot_password.ForgotPasswordR
 import com.example.easymart.presentation.ui.auth.forgot_password.ForgotPasswordViewModel
 import com.example.easymart.presentation.ui.admin.products.add_edit.AdminAddEditProductRoute
 import com.example.easymart.presentation.ui.admin.products.management.AdminProductsRoute
+import com.example.easymart.presentation.ui.admin.products.detail.AdminProductDetailRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -705,7 +706,25 @@ fun AppNavGraph(
                     onAddProduct = { navController.navigate(Screen.AdminAddProduct.route) },
                     onEditProduct = { productId ->
                         navController.navigate(Screen.AdminEditProduct.createRoute(productId))
+                    },
+                    onViewProductDetail = { productId ->
+                        navController.navigate(Screen.AdminProductDetail.createRoute(productId))
                     }
+                )
+            }
+
+            composableWithAnim(
+                route = Screen.AdminProductDetail.route,
+                anim = NavAnim.HORIZONTAL,
+                arguments = listOf(navArgument("productId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val productId = backStackEntry.arguments?.getInt("productId") ?: return@composableWithAnim
+                AdminProductDetailRoute(
+                    productId = productId,
+                    onEditProduct = { id ->
+                        navController.navigate(Screen.AdminEditProduct.createRoute(id))
+                    },
+                    onNavigateBack = { navController.navigateUp() }
                 )
             }
 

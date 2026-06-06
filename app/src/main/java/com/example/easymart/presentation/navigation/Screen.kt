@@ -80,4 +80,7 @@ sealed class Screen(val route: String) {
     data object AdminEditProduct : Screen("admin_products/edit/{productId}") {
         fun createRoute(productId: Int) = "admin_products/edit/$productId"
     }
+    data object AdminProductDetail : Screen("admin_products/detail/{productId}") {
+        fun createRoute(productId: Int) = "admin_products/detail/$productId"
+    }
 }

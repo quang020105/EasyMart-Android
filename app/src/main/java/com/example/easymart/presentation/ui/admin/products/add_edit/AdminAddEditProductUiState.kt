@@ -37,5 +37,6 @@ data class AdminAddEditProductUiState(
     val suggestionConfidence: Float? = null,
     val aiFilledTitle: Boolean = false,
     val aiFilledCategory: Boolean = false,
-    val aiFilledDescription: Boolean = false
+    val aiFilledDescription: Boolean = false,
+    val validationAttempt: Int = 0 // đếm số lần validate thất bại để UI lắng nghe để cuộn lên đầu trang
 )
