@@ -16,6 +16,8 @@ import com.example.easymart.data.remote.datasource.AddressRemoteDataSource
 import com.example.easymart.data.remote.datasource.CartRemoteDataSource
 import com.example.easymart.data.remote.datasource.FirestoreAddressRemoteDataSource
 import com.example.easymart.data.remote.datasource.FirestoreCartRemoteDataSource
+import com.example.easymart.data.remote.datasource.FirestoreOrderRemoteDataSource
+import com.example.easymart.data.remote.datasource.OrderRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.RetrofitProductRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.FirestoreProductRemoteDataSource
 import com.example.easymart.data.remote.ocr.GeminiOcrDataSource
@@ -104,6 +106,11 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun provideOrderRemoteDataSource(firestore: FirebaseFirestore): OrderRemoteDataSource =
+        FirestoreOrderRemoteDataSource(firestore)
+
+    @Provides
+    @Singleton
     fun provideAddressRepository(
         dao: AddressDao,
         remoteDS: AddressRemoteDataSource
@@ -130,7 +137,10 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideOrderRepository(dao: OrderDao): OrderRepository = OrderRepositoryImpl(dao)
+    fun provideOrderRepository(
+        dao: OrderDao,
+        remoteDS: OrderRemoteDataSource
+    ): OrderRepository = OrderRepositoryImpl(dao, remoteDS)
 
     @Provides
     @Singleton

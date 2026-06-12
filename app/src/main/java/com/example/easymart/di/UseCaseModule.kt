@@ -38,6 +38,8 @@ import com.example.easymart.domain.usecase.order.GetObserveAllOrdersUseCase
 import com.example.easymart.domain.usecase.order.GetOrderDetailUseCase
 import com.example.easymart.domain.usecase.order.GetOrderItemUseCase
 import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
+import com.example.easymart.domain.usecase.order.SyncOrderUseCase
+import com.example.easymart.domain.usecase.order.SyncPendingOrdersUseCase
 import com.example.easymart.domain.usecase.ocr.AnalyzeProductImageUseCase
 import com.example.easymart.domain.usecase.payment.GetWalletBalanceUseCase
 import com.example.easymart.domain.usecase.payment.ProcessPaymentUseCase
@@ -161,8 +163,10 @@ object UseCaseModule {
 
     //payment
     @Provides
-    fun provideProcessPaymentUseCase(paymentRepo: PaymentRepository): ProcessPaymentUseCase =
-        ProcessPaymentUseCase(paymentRepo)
+    fun provideProcessPaymentUseCase(
+        paymentRepo: PaymentRepository,
+        orderRepo: OrderRepository
+    ): ProcessPaymentUseCase = ProcessPaymentUseCase(paymentRepo, orderRepo)
 
     @Provides
     fun provideWalletBalanceUseCase(paymentRepo: PaymentRepository): GetWalletBalanceUseCase =
@@ -207,6 +211,16 @@ object UseCaseModule {
     fun provideGetOrderDetailUseCase(
         orderRepo: OrderRepository
     ) = GetOrderDetailUseCase(orderRepo)
+
+    @Provides
+    fun provideSyncOrderUseCase(
+        orderRepo: OrderRepository
+    ) = SyncOrderUseCase(orderRepo)
+
+    @Provides
+    fun provideSyncPendingOrdersUseCase(
+        orderRepo: OrderRepository
+    ) = SyncPendingOrdersUseCase(orderRepo)
 
 
     // auth

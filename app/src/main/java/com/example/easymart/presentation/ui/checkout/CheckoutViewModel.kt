@@ -13,9 +13,11 @@ import com.example.easymart.domain.model.PaymentResult
 import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
 import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
+import com.example.easymart.domain.usecase.order.SyncOrderUseCase
 import com.example.easymart.domain.usecase.payment.ProcessPaymentUseCase
 import com.example.easymart.domain.usecase.payment.PollPayOsPaymentStatusUseCase
 import com.example.easymart.domain.usecase.payment.UpdateLocalOrderPaymentStatusUseCase
+import com.example.easymart.domain.usecase.product.GetProductUseCase
 import com.example.easymart.presentation.common.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,7 +37,8 @@ class CheckoutViewModel @Inject constructor(
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
     private val pollPayOsPaymentStatusUseCase: PollPayOsPaymentStatusUseCase,
     private val updateLocalOrderPaymentStatusUseCase: UpdateLocalOrderPaymentStatusUseCase,
-    private val getProductUseCase: com.example.easymart.domain.usecase.product.GetProductUseCase
+    private val syncOrderUseCase: SyncOrderUseCase,
+    private val getProductUseCase: GetProductUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CheckoutUiState())
     val uiState: StateFlow<CheckoutUiState> = _uiState
@@ -161,6 +164,7 @@ class CheckoutViewModel @Inject constructor(
                                 _uiEvent.emit(
                                     CheckoutUiEvent.NavigateToSuccess
                                 )
+                                syncOrderInBackground(result.orderId)
                             }
                         }
 
@@ -211,6 +215,9 @@ class CheckoutViewModel @Inject constructor(
         if (status == PaymentStatus.SUCCESS || status == PaymentStatus.FAILED) {
             updateLocalOrderPaymentStatusUseCase(localOrderId, status)
         }
+        if (status == PaymentStatus.SUCCESS) {
+            syncOrderInBackground(localOrderId)
+        }
         return status
     }
 
@@ -246,5 +253,15 @@ class CheckoutViewModel @Inject constructor(
 
     fun clearQuickOrder() {
         _uiState.update { it.copy(quickOrderItems = emptyList(), isQuickOrderActive = false) }
+    }
+
+    private fun syncOrderInBackground(orderId: Int) {
+        viewModelScope.launch {
+            runCatching {
+                syncOrderUseCase(orderId)
+            }.onFailure { error ->
+                Log.e("CheckoutViewModel", "syncOrder failed: $orderId", error)
+            }
+        }
     }
 }

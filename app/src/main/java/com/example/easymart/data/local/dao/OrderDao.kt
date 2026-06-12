@@ -10,6 +10,7 @@ import com.example.easymart.data.local.entity.OrderItemEntity
 import com.example.easymart.data.local.relation.OrderWithItems
 import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.PaymentStatus
+import com.example.easymart.domain.model.SyncStatus
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -19,11 +20,19 @@ interface OrderDao {
     suspend fun getOrderWithItems(orderId: Int): OrderWithItems
 
     @Transaction
+    @Query("SELECT * FROM orders WHERE id = :orderId LIMIT 1")
+    suspend fun getOrderWithItemsOrNull(orderId: Int): OrderWithItems?
+
+    @Transaction
     @Query("SELECT * FROM orders where userId = :userId order by createdAt desc")
     fun getObserveAllOrdersWithItems(userId: String): Flow<List<OrderWithItems>>
 
     @Query("SELECT * FROM order_items WHERE id = :orderItemId")
     suspend fun getOrderItemById(orderItemId: Int): OrderItemEntity?
+
+    @Transaction
+    @Query("SELECT * FROM orders WHERE userId = :userId AND isSynced = 0 ORDER BY updatedAt ASC")
+    suspend fun getUnsyncedOrdersWithItems(userId: String): List<OrderWithItems>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrder(order: OrderEntity): Long
@@ -54,6 +63,24 @@ interface OrderDao {
     // server
     @Query("UPDATE orders SET serverOrderId = :serverOrderId WHERE id = :localId")
     suspend fun updateServerOrderId(localId: Int, serverOrderId: Int)
+
+    @Query(
+        """
+        UPDATE orders
+        SET remoteId = :remoteId,
+            isSynced = :isSynced,
+            syncStatus = :syncStatus,
+            updatedAt = :updatedAt
+        WHERE id = :orderId
+        """
+    )
+    suspend fun updateOrderSyncState(
+        orderId: Int,
+        remoteId: String?,
+        isSynced: Boolean,
+        syncStatus: SyncStatus,
+        updatedAt: Long
+    )
 
     @Query("UPDATE orders SET paymentStatus = :status WHERE serverOrderId = :serverOrderId")
     suspend fun updatePaymentStatusByServerId(serverOrderId: Int, status: String)

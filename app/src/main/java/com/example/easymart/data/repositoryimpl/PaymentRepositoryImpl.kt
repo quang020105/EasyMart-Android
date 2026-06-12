@@ -3,7 +3,6 @@ package com.example.easymart.data.repositoryimpl
 import android.util.Log
 import com.example.easymart.data.local.dao.OrderDao
 import com.example.easymart.data.local.dao.WalletDao
-import com.example.easymart.data.mapper.toEntity
 import com.example.easymart.data.remote.api.PaymentApi
 import com.example.easymart.data.remote.dto.PayOsItemDto
 import com.example.easymart.data.remote.dto.payment.PayOsCreatePaymentRequest
@@ -40,28 +39,22 @@ class PaymentRepositoryImpl @Inject constructor(
         order: Order,
         method: PaymentMethod
     ): Flow<PaymentResult> = flow {
-        val localOrderId = orderDao.insertOrderWithItems(
-            order = order.toEntity(),
-            orderItems = order.items.map { it.toEntity() }
-        )
-        val newOrder = order.copy(id = localOrderId)
-
         when (method) {
 
             PaymentMethod.COD,
             PaymentMethod.WALLET -> {
                 val processor = if (method == PaymentMethod.COD) codProcessor else eWalletProcesser
-                processor.process(newOrder).collect { emit(it) }
+                processor.process(order).collect { emit(it) }
             }
 
             PaymentMethod.ONLINE_GATEWAY -> {
-                emit(PaymentResult.Pending(localOrderId))
+                emit(PaymentResult.Pending(order.id))
 
                 val payOsResp = paymentApi.createPayOsPayment(
                     PayOsCreatePaymentRequest(
                         amount = order.totalAmount.toVNDLong(),
                         description = "Thanh toán cho EasyMart",
-                        localOrderId = localOrderId.toLong(),
+                        localOrderId = order.id.toLong(),
                         items = order.items.map { orderItem ->
                             PayOsItemDto(
                                 name = orderItem.product.name,
@@ -76,7 +69,7 @@ class PaymentRepositoryImpl @Inject constructor(
 
                 emit(
                     PaymentResult.Redirect(
-                        localOrderId = localOrderId,
+                        localOrderId = order.id,
                         deeplink = payOsResp.checkoutUrl,
                         qrImageUrl = payOsResp.qrCode,
                         orderCode = payOsResp.orderCode
@@ -91,13 +84,6 @@ class PaymentRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deductWallet(userId: String, amount: Long): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun saveOrderLocally(
-        order: Order,
-        status: PaymentStatus
-    ) {
         TODO("Not yet implemented")
     }
 

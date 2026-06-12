@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentStatus
+import com.example.easymart.domain.model.SyncStatus
 
 @Entity(tableName = "orders")
 data class OrderEntity(
@@ -20,5 +21,9 @@ data class OrderEntity(
     @Embedded(prefix = "shipping_") // nhúng địa chỉ giao hàng
     val shippingAddress: AddressEmbedded,
     val serverOrderId: Int? = null,    // server trả về
-    val createdAt: Long
+    val remoteId: String? = null,
+    val isSynced: Boolean = false,
+    val syncStatus: SyncStatus = SyncStatus.PENDING,
+    val createdAt: Long,
+    val updatedAt: Long = createdAt
 )

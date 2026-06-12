@@ -8,4 +8,7 @@ interface OrderRepository {
     fun getObserveAllOrders(userId: String): Flow<List<Order>>
     suspend fun getOrderItemById(orderItemId: Int): OrderItem?
     suspend fun getOrderById(orderId: Int): Order?
+    suspend fun saveOrderLocally(order: Order): Int
+    suspend fun syncOrder(orderId: Int)
+    suspend fun syncPendingOrders(userId: String)
 }

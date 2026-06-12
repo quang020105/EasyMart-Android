@@ -4,6 +4,8 @@ import com.example.easymart.data.local.entity.OrderEntity
 import com.example.easymart.data.local.entity.OrderItemEntity
 import com.example.easymart.data.local.relation.OrderWithItems
 import com.example.easymart.data.remote.dto.OrderItemDto
+import com.example.easymart.data.remote.dto.OrderRemoteDto
+import com.example.easymart.data.remote.dto.OrderRemoteItemDto
 import com.example.easymart.domain.model.CartItem
 import com.example.easymart.domain.model.Order
 import com.example.easymart.domain.model.OrderItem
@@ -14,6 +16,7 @@ import com.example.easymart.domain.model.Product
 
 fun Order.toEntity(): OrderEntity {
     return OrderEntity(
+        id = id,
         userId = userId,
         totalAmount = totalAmount,
         orderNumber = orderNumber,
@@ -21,7 +24,11 @@ fun Order.toEntity(): OrderEntity {
         orderStatus = status,
         paymentStatus = paymentStatus,
         paymentMethod = paymentMethod,
-        createdAt = System.currentTimeMillis()
+        remoteId = remoteId,
+        isSynced = isSynced,
+        syncStatus = syncStatus,
+        createdAt = createdAt,
+        updatedAt = updatedAt
     )
 }
 
@@ -39,6 +46,10 @@ fun OrderEntity.toDomain(
         paymentStatus = paymentStatus,
         shippingAddress = shippingAddress.toDomain(),
         createdAt = createdAt,
+        updatedAt = updatedAt,
+        remoteId = remoteId,
+        isSynced = isSynced,
+        syncStatus = syncStatus
     )
 }
 
@@ -83,7 +94,41 @@ fun OrderWithItems.toDomain(): Order {
         paymentStatus = order.paymentStatus,
         paymentMethod = order.paymentMethod,
         shippingAddress = order.shippingAddress.toDomain(),
-        createdAt = order.createdAt
+        createdAt = order.createdAt,
+        updatedAt = order.updatedAt,
+        remoteId = order.remoteId,
+        isSynced = order.isSynced,
+        syncStatus = order.syncStatus
+    )
+}
+
+fun OrderWithItems.toRemoteDto(): OrderRemoteDto {
+    val order = this.order
+    return OrderRemoteDto(
+        localId = order.id,
+        remoteId = order.remoteId,
+        userId = order.userId,
+        orderNumber = "ORD-${order.id}",
+        totalAmount = order.totalAmount,
+        orderStatus = order.orderStatus.name,
+        paymentStatus = order.paymentStatus.name,
+        paymentMethod = order.paymentMethod.name,
+        shippingName = order.shippingAddress.name,
+        shippingPhone = order.shippingAddress.phone,
+        shippingAddressString = order.shippingAddress.addressString,
+        createdAt = order.createdAt,
+        updatedAt = order.updatedAt,
+        items = items.map { it.toRemoteDto() }
+    )
+}
+
+private fun OrderItemEntity.toRemoteDto(): OrderRemoteItemDto {
+    return OrderRemoteItemDto(
+        productId = productId,
+        productName = productName,
+        productImage = productImage,
+        price = price,
+        quantity = quantity
     )
 }
 
