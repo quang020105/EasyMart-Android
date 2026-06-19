@@ -7,6 +7,7 @@ import com.example.easymart.domain.usecase.auth.GetCurrentUserUseCase
 import com.example.easymart.domain.usecase.cart.SyncCartUseCase
 import com.example.easymart.domain.usecase.network.ObserveNetworkStatusUseCase
 import com.example.easymart.domain.usecase.address.SyncAddressesUseCase
+import com.example.easymart.domain.usecase.order.ObserveRemoteOrdersUseCase
 import com.example.easymart.domain.usecase.order.SyncPendingOrdersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -21,7 +22,8 @@ class AppSyncViewModel @Inject constructor(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val syncCartUseCase: SyncCartUseCase,
     private val syncAddressesUseCase: SyncAddressesUseCase,
-    private val syncPendingOrdersUseCase: SyncPendingOrdersUseCase
+    private val syncPendingOrdersUseCase: SyncPendingOrdersUseCase,
+    private val observeRemoteOrdersUseCase: ObserveRemoteOrdersUseCase
 ) : ViewModel() {
 
     fun startSync() {
@@ -34,6 +36,7 @@ class AppSyncViewModel @Inject constructor(
                     syncCartUseCase(userId)
                     syncAddressesUseCase(userId)
                     syncPendingOrdersUseCase(userId)
+                    observeRemoteOrdersUseCase(userId).collect {}
                 }
         }
     }

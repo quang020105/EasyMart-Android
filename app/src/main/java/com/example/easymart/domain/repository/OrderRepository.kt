@@ -11,4 +11,6 @@ interface OrderRepository {
     suspend fun saveOrderLocally(order: Order): Int
     suspend fun syncOrder(orderId: Int)
     suspend fun syncPendingOrders(userId: String)
+    suspend fun pullRemoteOrders(userId: String)
+    fun observeRemoteOrders(userId: String): Flow<Unit>
 }

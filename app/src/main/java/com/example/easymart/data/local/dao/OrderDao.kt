@@ -90,4 +90,30 @@ interface OrderDao {
 
     @Query("SELECT * FROM orders WHERE id = :localId LIMIT 1")
     suspend fun getByLocalId(localId: Int): OrderEntity?
+
+    @Query("SELECT * FROM orders WHERE remoteId = :remoteId LIMIT 1")
+    suspend fun getByRemoteId(remoteId: String): OrderEntity?
+
+    @Query("DELETE FROM order_items WHERE orderId = :orderId")
+    suspend fun deleteOrderItems(orderId: Int)
+
+    @Transaction
+    suspend fun upsertRemoteOrderWithItems(
+        order: OrderEntity,
+        orderItems: List<OrderItemEntity>
+    ): Int {
+        val existing = order.remoteId?.let { getByRemoteId(it) }
+        val orderId = if (existing == null) {
+            insertOrder(order.copy(id = 0)).toInt()
+        } else {
+            insertOrder(order.copy(id = existing.id, serverOrderId = existing.serverOrderId))
+            existing.id
+        }
+
+        deleteOrderItems(orderId)
+        if (orderItems.isNotEmpty()) {
+            insertOrderItems(orderItems.map { it.copy(orderId = orderId) })
+        }
+        return orderId
+    }
 }

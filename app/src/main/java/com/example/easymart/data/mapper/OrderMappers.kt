@@ -1,5 +1,6 @@
 package com.example.easymart.data.mapper
 
+import com.example.easymart.data.local.entity.AddressEmbedded
 import com.example.easymart.data.local.entity.OrderEntity
 import com.example.easymart.data.local.entity.OrderItemEntity
 import com.example.easymart.data.local.relation.OrderWithItems
@@ -12,7 +13,9 @@ import com.example.easymart.domain.model.OrderItem
 import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.Payment
 import com.example.easymart.domain.model.PaymentMethod
+import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.domain.model.Product
+import com.example.easymart.domain.model.SyncStatus
 
 fun Order.toEntity(): OrderEntity {
     return OrderEntity(
@@ -38,7 +41,7 @@ fun OrderEntity.toDomain(
     return Order(
         id = id,
         userId = userId,
-        orderNumber = "ORD-$id",
+        orderNumber = orderNumber,
         items = items,
         totalAmount = totalAmount,
         status = OrderStatus.valueOf(orderStatus.name),
@@ -87,7 +90,7 @@ fun OrderWithItems.toDomain(): Order {
     return Order(
         id = order.id,
         userId = order.userId,
-        orderNumber = "ORD-${order.id}",
+        orderNumber = order.orderNumber,
         items = items,
         totalAmount = order.totalAmount,
         status = OrderStatus.valueOf(order.orderStatus.name),
@@ -108,7 +111,7 @@ fun OrderWithItems.toRemoteDto(): OrderRemoteDto {
         localId = order.id,
         remoteId = order.remoteId,
         userId = order.userId,
-        orderNumber = "ORD-${order.id}",
+        orderNumber = order.orderNumber.ifBlank { "ORD-${order.id}" },
         totalAmount = order.totalAmount,
         orderStatus = order.orderStatus.name,
         paymentStatus = order.paymentStatus.name,
@@ -122,6 +125,41 @@ fun OrderWithItems.toRemoteDto(): OrderRemoteDto {
     )
 }
 
+fun OrderRemoteDto.toEntity(existingLocalId: Int = 0): OrderEntity {
+    return OrderEntity(
+        id = existingLocalId,
+        userId = userId,
+        orderNumber = orderNumber.ifBlank {
+            if (localId > 0) "ORD-$localId" else remoteId.orEmpty()
+        },
+        totalAmount = totalAmount,
+        orderStatus = parseOrderStatus(orderStatus),
+        paymentStatus = parsePaymentStatus(paymentStatus),
+        paymentMethod = parsePaymentMethod(paymentMethod),
+        shippingAddress = AddressEmbedded(
+            name = shippingName,
+            phone = shippingPhone,
+            addressString = shippingAddressString
+        ),
+        remoteId = remoteId,
+        isSynced = true,
+        syncStatus = SyncStatus.SYNCED,
+        createdAt = createdAt,
+        updatedAt = updatedAt
+    )
+}
+
+fun OrderRemoteItemDto.toEntity(orderId: Int = 0): OrderItemEntity {
+    return OrderItemEntity(
+        orderId = orderId,
+        productId = productId,
+        productName = productName,
+        productImage = productImage,
+        price = price,
+        quantity = quantity
+    )
+}
+
 private fun OrderItemEntity.toRemoteDto(): OrderRemoteItemDto {
     return OrderRemoteItemDto(
         productId = productId,
@@ -131,6 +169,15 @@ private fun OrderItemEntity.toRemoteDto(): OrderRemoteItemDto {
         quantity = quantity
     )
 }
+
+private fun parseOrderStatus(value: String): OrderStatus =
+    runCatching { OrderStatus.valueOf(value) }.getOrDefault(OrderStatus.CREATED)
+
+private fun parsePaymentStatus(value: String): PaymentStatus =
+    runCatching { PaymentStatus.valueOf(value) }.getOrDefault(PaymentStatus.UNPAID)
+
+private fun parsePaymentMethod(value: String): PaymentMethod =
+    runCatching { PaymentMethod.valueOf(value) }.getOrDefault(PaymentMethod.COD)
 
 fun OrderItem.toDto(): OrderItemDto {
     return OrderItemDto(

@@ -37,6 +37,7 @@ import com.example.easymart.domain.usecase.order.CancelOrderUseCase
 import com.example.easymart.domain.usecase.order.GetObserveAllOrdersUseCase
 import com.example.easymart.domain.usecase.order.GetOrderDetailUseCase
 import com.example.easymart.domain.usecase.order.GetOrderItemUseCase
+import com.example.easymart.domain.usecase.order.ObserveRemoteOrdersUseCase
 import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
 import com.example.easymart.domain.usecase.order.SyncOrderUseCase
 import com.example.easymart.domain.usecase.order.SyncPendingOrdersUseCase
@@ -221,6 +222,11 @@ object UseCaseModule {
     fun provideSyncPendingOrdersUseCase(
         orderRepo: OrderRepository
     ) = SyncPendingOrdersUseCase(orderRepo)
+
+    @Provides
+    fun provideObserveRemoteOrdersUseCase(
+        orderRepo: OrderRepository
+    ) = ObserveRemoteOrdersUseCase(orderRepo)
 
 
     // auth
