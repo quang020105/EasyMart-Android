@@ -26,6 +26,7 @@ import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.utils.label
+import com.example.easymart.utils.toDisplayString
 
 @Composable
 fun PaymentInfoSection(
@@ -41,7 +42,7 @@ fun PaymentInfoSection(
 
         OrderDetailInfoRow(
             label = "Phương thức:",
-            value = paymentMethod.label(),
+            value = paymentMethod.toDisplayString(),
             icon = Icons.Rounded.Payment
         )
 

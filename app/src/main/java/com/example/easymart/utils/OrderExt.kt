@@ -135,14 +135,6 @@ fun PaymentStatus.label(): String {
     }
 }
 
-fun PaymentMethod.label(): String {
-    return when (this) {
-        PaymentMethod.COD -> "Thanh toán khi nhận hàng"
-        PaymentMethod.ONLINE_GATEWAY -> "Thanh toán trực tuyến"
-        PaymentMethod.WALLET -> "Ví điện tử"
-    }
-}
-
 @Composable
 fun PaymentMethod.colorScheme(): ChipColorScheme {
     return ChipColorScheme(

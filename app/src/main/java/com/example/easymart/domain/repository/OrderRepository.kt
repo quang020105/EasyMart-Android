@@ -13,4 +13,11 @@ interface OrderRepository {
     suspend fun syncPendingOrders(userId: String)
     suspend fun pullRemoteOrders(userId: String)
     fun observeRemoteOrders(userId: String): Flow<Unit>
+    fun observeAllOrdersForAdmin(): Flow<List<Order>>
+    suspend fun getOrderByRemoteId(remoteId: String): Order?
+    suspend fun updateOrderStatusForAdmin(
+        remoteId: String,
+        orderStatus: com.example.easymart.domain.model.OrderStatus,
+        paymentStatus: com.example.easymart.domain.model.PaymentStatus? = null
+    )
 }

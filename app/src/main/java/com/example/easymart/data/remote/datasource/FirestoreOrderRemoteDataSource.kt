@@ -5,6 +5,7 @@ import com.example.easymart.data.remote.dto.OrderRemoteDto
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -47,6 +48,41 @@ class FirestoreOrderRemoteDataSource @Inject constructor(
             }
 
         awaitClose { listener.remove() }
+    }
+
+    override fun observeAllOrders(): Flow<List<OrderRemoteDto>> = callbackFlow {
+        val listener = ordersRef()
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                trySend(snapshot?.documents.orEmpty().map { it.toOrderRemoteDto() })
+            }
+
+        awaitClose { listener.remove() }
+    }
+
+    override suspend fun getOrderByRemoteId(remoteId: String): OrderRemoteDto? {
+        val doc = ordersRef().document(remoteId).get().await()
+        return if (doc.exists()) doc.toOrderRemoteDto() else null
+    }
+
+    override suspend fun updateOrderStatus(
+        remoteId: String,
+        orderStatus: String,
+        paymentStatus: String?,
+        updatedAt: Long
+    ) {
+        val updates = mutableMapOf<String, Any>(
+            "orderStatus" to orderStatus,
+            "updatedAt" to updatedAt
+        )
+        if (paymentStatus != null) {
+            updates["paymentStatus"] = paymentStatus
+        }
+        ordersRef().document(remoteId).update(updates).await()
     }
 
     private fun DocumentSnapshot.toOrderRemoteDto(): OrderRemoteDto {

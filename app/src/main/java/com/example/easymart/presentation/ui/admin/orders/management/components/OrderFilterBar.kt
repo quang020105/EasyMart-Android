@@ -34,6 +34,7 @@ import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.utils.ChipColorScheme
 import com.example.easymart.utils.colorScheme
 import com.example.easymart.utils.label
+import com.example.easymart.utils.toDisplayString
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -75,7 +76,7 @@ fun OrderFilterBar(
             ) {
                 OrderStatus.entries.forEach { status ->
                     SelectableFilterChip(
-                        text = status.name,
+                        text = status.toDisplayString(),
                         selected = selectedOrderStatus == status,
                         colorScheme = status.colorScheme(),
                         onClick = {
@@ -95,7 +96,7 @@ fun OrderFilterBar(
             ) {
                 PaymentMethod.entries.forEach { method ->
                     SelectableFilterChip(
-                        text = method.label(),
+                        text = method.toDisplayString(),
                         selected = selectedPaymentMethod == method,
                         colorScheme = method.colorScheme(),
                         onClick = {
@@ -115,7 +116,7 @@ fun OrderFilterBar(
             ) {
                 PaymentStatus.entries.forEach { status ->
                     SelectableFilterChip(
-                        text = status.name,
+                        text = status.toDisplayString(),
                         selected = selectedPaymentStatus == status,
                         colorScheme = status.colorScheme(),
                         onClick = {

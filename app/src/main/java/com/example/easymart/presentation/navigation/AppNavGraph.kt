@@ -28,6 +28,8 @@ import com.example.easymart.presentation.auth.AuthViewModel
 import com.example.easymart.presentation.common.AppEventBus
 import com.example.easymart.presentation.common.ui.LoginRequiredBottomSheet
 import com.example.easymart.presentation.common.ui.UiEvent
+import com.example.easymart.presentation.ui.admin.orders.detail.AdminOrderDetailRoute
+import com.example.easymart.presentation.ui.admin.orders.management.AdminOrdersRoute
 import com.example.easymart.presentation.ui.admin.dashboard.AdminDashboardRoute
 import com.example.easymart.presentation.ui.admin.AdminPlaceholderScreen
 import com.example.easymart.presentation.ui.cart.CartRoute
@@ -694,7 +696,20 @@ fun AppNavGraph(
                 route = Screen.AdminOrders.route,
                 anim = NavAnim.HORIZONTAL
             ) {
-                AdminPlaceholderScreen("Quản lý đơn hàng")
+                AdminOrdersRoute(
+                    onViewOrderDetail = { remoteId ->
+                        navController.navigate(Screen.AdminOrderDetail.createRoute(remoteId))
+                    }
+                )
+            }
+
+            composableWithAnim(
+                route = Screen.AdminOrderDetail.route,
+                anim = NavAnim.HORIZONTAL,
+                arguments = listOf(navArgument("remoteId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val remoteId = backStackEntry.arguments?.getString("remoteId") ?: return@composableWithAnim
+                AdminOrderDetailRoute(remoteId = remoteId)
             }
 
             composableWithAnim(

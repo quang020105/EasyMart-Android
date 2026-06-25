@@ -3,8 +3,11 @@ package com.example.easymart.data.repositoryimpl
 import android.util.Log
 import com.example.easymart.data.local.dao.OrderDao
 import com.example.easymart.data.mapper.toDomain
+import com.example.easymart.data.mapper.toDomainOrder
 import com.example.easymart.domain.model.Order
 import com.example.easymart.domain.model.OrderItem
+import com.example.easymart.domain.model.OrderStatus
+import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.domain.model.SyncStatus
 import com.example.easymart.domain.repository.OrderRepository
 import com.example.easymart.data.mapper.toEntity
@@ -110,6 +113,31 @@ class OrderRepositoryImpl @Inject constructor(
         return remoteDS.observeOrders(userId).map { remoteOrders ->
             mergeRemoteOrders(userId, remoteOrders)
         }
+    }
+
+    override fun observeAllOrdersForAdmin(): Flow<List<Order>> {
+        return remoteDS.observeAllOrders().map { remoteOrders ->
+            remoteOrders
+                .map { it.toDomainOrder() }
+                .sortedByDescending { it.createdAt }
+        }
+    }
+
+    override suspend fun getOrderByRemoteId(remoteId: String): Order? {
+        return remoteDS.getOrderByRemoteId(remoteId)?.toDomainOrder()
+    }
+
+    override suspend fun updateOrderStatusForAdmin(
+        remoteId: String,
+        orderStatus: OrderStatus,
+        paymentStatus: PaymentStatus?
+    ) {
+        remoteDS.updateOrderStatus(
+            remoteId = remoteId,
+            orderStatus = orderStatus.name,
+            paymentStatus = paymentStatus?.name,
+            updatedAt = System.currentTimeMillis()
+        )
     }
 
     private suspend fun mergeRemoteOrders(userId: String, remoteOrders: List<OrderRemoteDto>) {

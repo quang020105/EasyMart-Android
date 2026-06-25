@@ -1,7 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.management
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,17 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,8 +30,8 @@ import com.example.easymart.presentation.ui.admin.orders.management.components.O
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdminOrderListScreen(
-    orders: List<AdminOrderUiModel>,
+fun AdminOrdersScreen(
+    orders: List<AdminOrdersUiModel>,
     modifier: Modifier = Modifier,
     searchQuery: String,
     selectedOrderStatus: OrderStatus?,
@@ -49,57 +41,11 @@ fun AdminOrderListScreen(
     onOrderStatusSelected: (OrderStatus?) -> Unit,
     onPaymentMethodSelected: (PaymentMethod?) -> Unit,
     onPaymentStatusSelected: (PaymentStatus?) -> Unit,
-    onOrderClick: (AdminOrderUiModel) -> Unit,
-    onNavigateBack: () -> Unit
+    onOrderClick: (AdminOrdersUiModel) -> Unit
 ) {
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = Color(0xFFF8FAFC),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "Danh sách đơn hàng",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF0F172A)
-                        )
-
-                        Text(
-                            text = "Quản lý toàn bộ đơn hàng",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color(0xFF64748B)
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = "Quay lại",
-                            tint = Color(0xFF0F172A)
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Rounded.FilterList,
-                            contentDescription = "Bộ lọc",
-                            tint = Color(0xFF2563EB)
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFFF8FAFC)
-                )
-            )
-        }
-    ) { innerPadding ->
+    Surface {
         LazyColumn(
-            modifier = Modifier
-                .padding(innerPadding)
+            modifier = modifier
                 .fillMaxSize(),
             contentPadding = PaddingValues(
                 start = 16.dp,
@@ -180,9 +126,9 @@ fun AdminOrderListScreen(
 @Composable
 private fun AdminOrderListScreenPreview() {
     EasyMartTheme {
-        AdminOrderListScreen(
+        AdminOrdersScreen(
             orders = listOf(
-                AdminOrderUiModel(
+                AdminOrdersUiModel(
                     id = "1",
                     customerName = "Nguyễn Văn A",
                     phoneNumber = "0123456789",
@@ -192,7 +138,7 @@ private fun AdminOrderListScreenPreview() {
                     paymentStatus = PaymentStatus.UNPAID,
                     createdDateText = "01/01/2024"
                 ),
-                AdminOrderUiModel(
+                AdminOrdersUiModel(
                     id = "2",
                     customerName = "Trần Thị B",
                     phoneNumber = "0987654321",
@@ -212,7 +158,6 @@ private fun AdminOrderListScreenPreview() {
             onPaymentMethodSelected = {},
             onPaymentStatusSelected = {},
             onOrderClick = {},
-            onNavigateBack = {}
         )
     }
 }

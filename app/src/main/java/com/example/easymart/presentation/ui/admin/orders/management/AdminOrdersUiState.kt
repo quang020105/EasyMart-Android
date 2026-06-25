@@ -6,9 +6,9 @@ import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentStatus
 
 @Immutable
-data class AdminOrderListUiState(
+data class AdminOrdersUiState(
     val isLoading: Boolean = false,
-    val orders: List<AdminOrderUiModel> = emptyList(),
+    val orders: List<AdminOrdersUiModel> = emptyList(),
     val searchQuery: String = "",
     val selectedOrderStatus: OrderStatus? = null,
     val selectedPaymentMethod: PaymentMethod? = null,

@@ -63,20 +63,6 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
     // lấy route hiện tại
     val currentRoute = navBackStackEntry?.destination?.route
 
-    //những màn cần ẩn cả topBar và bottomBar
-    val topBottomHiddenRoutes = setOf(
-        Screen.Splash.route,
-        Screen.Login.route,
-        Screen.SignUp.route
-    )
-
-    //những màn hiện bottomBar
-    val bottomBarRoutes = setOf(
-        Screen.Home.route,
-        Screen.Search.route,
-        Screen.Category.route,
-        Screen.Profile.route
-    )
 
     val bottomNavItems = listOf(
         BottomNavItem(

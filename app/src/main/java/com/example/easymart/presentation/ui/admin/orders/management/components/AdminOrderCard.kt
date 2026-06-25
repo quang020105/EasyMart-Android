@@ -42,17 +42,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.easymart.domain.model.Order
 import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.presentation.theme.EasyMartTheme
-import com.example.easymart.presentation.ui.admin.orders.management.AdminOrderUiModel
+import com.example.easymart.presentation.ui.admin.orders.management.AdminOrdersUiModel
 import com.example.easymart.utils.colorScheme
 
 @Composable
 fun AdminOrderCard(
-    order: AdminOrderUiModel,
+    order: AdminOrdersUiModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -243,7 +242,7 @@ fun AdminOrderCardPreview() {
                 .padding(16.dp)
         ) {
             AdminOrderCard(
-                order = AdminOrderUiModel(
+                order = AdminOrdersUiModel(
                     id = "ORD-001",
                     customerName = "Nguyễn Văn A",
                     phoneNumber = "0987654321",

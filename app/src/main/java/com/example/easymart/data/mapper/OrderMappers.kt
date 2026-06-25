@@ -149,6 +149,12 @@ fun OrderRemoteDto.toEntity(existingLocalId: Int = 0): OrderEntity {
     )
 }
 
+fun OrderRemoteDto.toDomainOrder(): Order {
+    return toEntity(existingLocalId = localId).toDomain(
+        items = items.map { it.toEntity().toDomain() }
+    )
+}
+
 fun OrderRemoteItemDto.toEntity(orderId: Int = 0): OrderItemEntity {
     return OrderItemEntity(
         orderId = orderId,

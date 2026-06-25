@@ -72,7 +72,7 @@ fun PaymentMethodChip(
         onClick = {},
         label = {
             Text(
-                text = method.label(),
+                text = method.toDisplayString(),
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1
             )

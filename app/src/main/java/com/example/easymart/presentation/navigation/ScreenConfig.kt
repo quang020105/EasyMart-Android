@@ -29,6 +29,7 @@ private val screenConfigs: List<Pair<String, ScreenConfig>> = listOf(
     // admin
     "admin_dashboard" to ScreenConfig(title = "Admin Dashboard", showTopBar = true, showBottomBar = false),
     "admin_products" to ScreenConfig(title = "Quản lý sản phẩm", showTopBar = true, showBottomBar = false),
+    "admin_orders/detail" to ScreenConfig(title = "Chi tiết đơn hàng", showTopBar = true, showBottomBar = false),
     "admin_orders" to ScreenConfig(title = "Quản lý đơn hàng", showTopBar = true, showBottomBar = false),
     "admin_categories" to ScreenConfig(title = "Quản lý danh mục", showTopBar = true, showBottomBar = false),
 

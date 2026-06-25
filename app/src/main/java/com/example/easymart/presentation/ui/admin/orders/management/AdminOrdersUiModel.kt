@@ -6,7 +6,7 @@ import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentStatus
 
 @Immutable
-data class AdminOrderUiModel(
+data class AdminOrdersUiModel(
     val id: String,
     val customerName: String,
     val phoneNumber: String,

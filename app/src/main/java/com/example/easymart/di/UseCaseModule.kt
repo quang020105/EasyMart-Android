@@ -34,13 +34,16 @@ import com.example.easymart.domain.usecase.location.GetDistrictsUseCase
 import com.example.easymart.domain.usecase.location.GetProvincesUseCase
 import com.example.easymart.domain.usecase.location.GetWardsUseCase
 import com.example.easymart.domain.usecase.order.CancelOrderUseCase
+import com.example.easymart.domain.usecase.order.GetAdminOrderDetailUseCase
 import com.example.easymart.domain.usecase.order.GetObserveAllOrdersUseCase
 import com.example.easymart.domain.usecase.order.GetOrderDetailUseCase
 import com.example.easymart.domain.usecase.order.GetOrderItemUseCase
+import com.example.easymart.domain.usecase.order.ObserveAdminOrdersUseCase
 import com.example.easymart.domain.usecase.order.ObserveRemoteOrdersUseCase
 import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
 import com.example.easymart.domain.usecase.order.SyncOrderUseCase
 import com.example.easymart.domain.usecase.order.SyncPendingOrdersUseCase
+import com.example.easymart.domain.usecase.order.UpdateAdminOrderStatusUseCase
 import com.example.easymart.domain.usecase.ocr.AnalyzeProductImageUseCase
 import com.example.easymart.domain.usecase.payment.GetWalletBalanceUseCase
 import com.example.easymart.domain.usecase.payment.ProcessPaymentUseCase
@@ -227,6 +230,21 @@ object UseCaseModule {
     fun provideObserveRemoteOrdersUseCase(
         orderRepo: OrderRepository
     ) = ObserveRemoteOrdersUseCase(orderRepo)
+
+    @Provides
+    fun provideObserveAdminOrdersUseCase(
+        orderRepo: OrderRepository
+    ) = ObserveAdminOrdersUseCase(orderRepo)
+
+    @Provides
+    fun provideGetAdminOrderDetailUseCase(
+        orderRepo: OrderRepository
+    ) = GetAdminOrderDetailUseCase(orderRepo)
+
+    @Provides
+    fun provideUpdateAdminOrderStatusUseCase(
+        orderRepo: OrderRepository
+    ) = UpdateAdminOrderStatusUseCase(orderRepo)
 
 
     // auth

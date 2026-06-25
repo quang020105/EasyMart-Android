@@ -34,6 +34,7 @@ import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.utils.colorScheme
 import com.example.easymart.utils.label
+import com.example.easymart.utils.toDisplayString
 import com.example.easymart.utils.toShortLabel
 
 @Composable
@@ -113,7 +114,7 @@ private fun PaymentMethodChip(
         modifier = modifier,
         label = {
             Text(
-                text = method.toShortLabel(),
+                text = method.toDisplayString(),
                 fontWeight = FontWeight.SemiBold
             )
         },
