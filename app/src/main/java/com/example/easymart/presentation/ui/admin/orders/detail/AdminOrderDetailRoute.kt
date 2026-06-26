@@ -43,7 +43,7 @@ fun AdminOrderDetailRoute(
         }
         else -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = uiState.errorMessage ?: "Khong tim thay don hang")
+                Text(text = uiState.errorMessage ?: "Không tìm thấy đơn hàng")
             }
         }
     }

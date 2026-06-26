@@ -229,7 +229,7 @@ class CheckoutViewModel @Inject constructor(
         viewModelScope.launch {
             getProductUseCase(productId).collect { resource ->
                 when (resource) {
-                    is com.example.easymart.presentation.common.Resource.Success -> {
+                    is Resource.Success -> {
                         val product = resource.data
                         val cartItem = CartItem(
                             id = product.id,

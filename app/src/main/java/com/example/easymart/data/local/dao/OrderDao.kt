@@ -24,6 +24,10 @@ interface OrderDao {
     suspend fun getOrderWithItemsOrNull(orderId: Int): OrderWithItems?
 
     @Transaction
+    @Query("SELECT * FROM orders WHERE id = :orderId LIMIT 1")
+    fun observeOrderWithItems(orderId: Int): Flow<OrderWithItems?>
+
+    @Transaction
     @Query("SELECT * FROM orders where userId = :userId order by createdAt desc")
     fun getObserveAllOrdersWithItems(userId: String): Flow<List<OrderWithItems>>
 
@@ -59,6 +63,23 @@ interface OrderDao {
     @Query("UPDATE orders set orderStatus = :status, paymentStatus = :paymentStatus WHERE id = :orderId")
     suspend fun updateOrderAndPaymentStatus(orderId: Int, status: OrderStatus, paymentStatus: PaymentStatus)
 
+    @Query(
+        """
+        UPDATE orders
+        SET remoteId = :remoteId,
+            orderStatus = :orderStatus,
+            paymentStatus = :paymentStatus,
+            updatedAt = :updatedAt
+        WHERE id = :orderId
+        """
+    )
+    suspend fun updateRemoteStatusForDirtyOrder(
+        orderId: Int,
+        remoteId: String,
+        orderStatus: OrderStatus,
+        paymentStatus: PaymentStatus,
+        updatedAt: Long
+    )
 
     // server
     @Query("UPDATE orders SET serverOrderId = :serverOrderId WHERE id = :localId")

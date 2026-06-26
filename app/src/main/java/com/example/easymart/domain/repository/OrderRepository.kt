@@ -2,10 +2,13 @@ package com.example.easymart.domain.repository
 
 import com.example.easymart.domain.model.Order
 import com.example.easymart.domain.model.OrderItem
+import com.example.easymart.domain.model.OrderStatus
+import com.example.easymart.domain.model.PaymentStatus
 import kotlinx.coroutines.flow.Flow
 
 interface OrderRepository {
     fun getObserveAllOrders(userId: String): Flow<List<Order>>
+    fun observeOrderById(orderId: Int): Flow<Order?>
     suspend fun getOrderItemById(orderItemId: Int): OrderItem?
     suspend fun getOrderById(orderId: Int): Order?
     suspend fun saveOrderLocally(order: Order): Int
@@ -17,7 +20,7 @@ interface OrderRepository {
     suspend fun getOrderByRemoteId(remoteId: String): Order?
     suspend fun updateOrderStatusForAdmin(
         remoteId: String,
-        orderStatus: com.example.easymart.domain.model.OrderStatus,
-        paymentStatus: com.example.easymart.domain.model.PaymentStatus? = null
+        orderStatus: OrderStatus,
+        paymentStatus: PaymentStatus? = null
     )
 }

@@ -26,6 +26,8 @@ class OrderRepositoryImpl @Inject constructor(
     override fun getObserveAllOrders(userId: String): Flow<List<Order>> =
         orderDao.getObserveAllOrdersWithItems(userId).map { list -> list.map { it.toDomain() } }
 
+    override fun observeOrderById(orderId: Int): Flow<Order?> =
+        orderDao.observeOrderWithItems(orderId).map { it?.toDomain() }
 
     override suspend fun getOrderItemById(orderItemId: Int): OrderItem? =
         orderDao.getOrderItemById(orderItemId)?.toDomain()
@@ -47,6 +49,7 @@ class OrderRepositoryImpl @Inject constructor(
         )
     }
 
+    // đồng bộ đơn hàng từ local lên remote
     override suspend fun syncOrder(orderId: Int) {
         val orderWithItems = orderDao.getOrderWithItemsOrNull(orderId) ?: return
         if (orderWithItems.order.isSynced && orderWithItems.order.syncStatus == SyncStatus.SYNCED) {
@@ -111,6 +114,7 @@ class OrderRepositoryImpl @Inject constructor(
 
     override fun observeRemoteOrders(userId: String): Flow<Unit> {
         return remoteDS.observeOrders(userId).map { remoteOrders ->
+            // Khi có dữ liệu mới từ remote , listener bên trong sẽ emit dữ liệu mới và hàm này sẽ được gọi
             mergeRemoteOrders(userId, remoteOrders)
         }
     }
@@ -140,13 +144,24 @@ class OrderRepositoryImpl @Inject constructor(
         )
     }
 
+    //  hợp nhất các đơn hàng từ remote vào local
     private suspend fun mergeRemoteOrders(userId: String, remoteOrders: List<OrderRemoteDto>) {
         remoteOrders.forEach { remote ->
             val remoteId = remote.remoteId
             if (remoteId.isNullOrBlank()) return@forEach
 
             val local = orderDao.getByRemoteId(remoteId)
-            if (local != null && !local.isSynced && local.updatedAt > remote.updatedAt) {
+
+            if (local != null && !local.isSynced) {
+                val remoteEntity = remote.toEntity(existingLocalId = local.id)
+                orderDao.updateRemoteStatusForDirtyOrder(
+                    orderId = local.id,
+                    remoteId = remoteId,
+                    orderStatus = remoteEntity.orderStatus,
+                    paymentStatus = remoteEntity.paymentStatus,
+                    updatedAt = maxOf(local.updatedAt, remote.updatedAt)
+                )
+                Log.d("OrderRepositoryImpl", "Remote status merged into dirty local order: $remoteId")
                 return@forEach
             }
 

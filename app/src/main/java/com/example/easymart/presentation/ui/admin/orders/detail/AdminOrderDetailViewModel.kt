@@ -34,7 +34,7 @@ class AdminOrderDetailViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             order = order?.toAdminOrderDetailUiModel(),
-                            errorMessage = if (order == null) "Khong tim thay don hang" else null
+                            errorMessage = if (order == null) "Không tìm thấy đơn hàng" else null
                         )
                     }
                 }

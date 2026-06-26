@@ -19,11 +19,12 @@ fun OrderSuccessRoute(
 
     //gọi tự động thay đổi trạng thái đơn hàng
     Log.d("OrderSuccessRoute", "OrderSuccessRoute: ${order?.id}")
-    LaunchedEffect(Unit) {
-        if (order != null) {
-            checkoutViewModel.startAutoProcessOrder()
-        }
-    }
+    // không dùng nữa vì admin sẽ xử lý đơn hàng, không cần tự động xử lý nữa
+//    LaunchedEffect(Unit) {
+//        if (order != null) {
+//            checkoutViewModel.startAutoProcessOrder()
+//        }
+//    }
 
     //xử lý khi nhấn nút back của thiết bị
     BackHandler {

@@ -49,7 +49,7 @@ class OrderViewModel @Inject constructor(
      // lắng nghe danh sách đơn hàng
      private fun observeOrders(userId: String){
           viewModelScope.launch {
-               getObserveAllOrdersUseCase(userId) //chưa xủ lý userId
+               getObserveAllOrdersUseCase(userId)
                     .onStart { _uiState.value = OrderListUiState.Loading }
                     .catch { throwable ->
                          _uiState.value =
