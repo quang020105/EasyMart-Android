@@ -12,22 +12,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Divider
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.easymart.domain.model.Order
-import com.example.easymart.domain.model.OrderStatus
+import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.common.components.ProductCard
@@ -35,6 +35,7 @@ import com.example.easymart.presentation.ui.common.components.RoundedActionButto
 import com.example.easymart.presentation.ui.mock.mockOrders
 import com.example.easymart.presentation.ui.order.extension.toColor
 import com.example.easymart.presentation.ui.order.extension.toPrimaryActionText
+import com.example.easymart.utils.colorScheme
 import com.example.easymart.utils.toDateTimeString
 import com.example.easymart.utils.toDisplayString
 import com.example.easymart.utils.toVNDString
@@ -48,73 +49,91 @@ fun OrderCard(
     onOpenDetail: (orderId: Int) -> Unit = {}
 ) {
     val dimens = LocalAppDimens.current
+
+    val displayOrderCode = order.orderNumber.ifBlank {
+        order.remoteId ?: "ORD-${order.id}"
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(all = dimens.spaceXs)
             .border(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f),
                 shape = RoundedCornerShape(dimens.radiusMedium)
             ),
         shape = RoundedCornerShape(dimens.radiusMedium),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-        elevation = CardDefaults.cardElevation(defaultElevation = dimens.spaceXs)
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-
         Column {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(all = dimens.spaceMd),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(
+                        start = dimens.spaceMd,
+                        top = dimens.spaceMd,
+                        end = dimens.spaceMd,
+                        bottom = dimens.spaceSm
+                    ),
+                verticalAlignment = Alignment.Top
             ) {
-                //mã đơn hàng và thời gian đặt hàng
-                Column(modifier = Modifier.weight(1f)) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
                     Text(
-                        text = "Đơn #" + order.id.toString(),
+                        text = displayOrderCode,
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
-                    Spacer(modifier = Modifier.height(dimens.spaceXs))
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
                     Text(
                         text = order.createdAt.toDateTimeString(),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    PaymentStatusChip(
+                        status = order.paymentStatus
                     )
                 }
 
-                //trạng thái đơn hàng
-                Surface(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(start = dimens.spaceSm),
-                    shape = RoundedCornerShape(dimens.radiusSmall),
-                    color = order.status.toColor()
-                ) {
-                    Text(
-                        modifier = Modifier.padding(horizontal = dimens.spaceSm, vertical = 6.dp),
-                        text = order.status.toDisplayString(),
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
+                Spacer(modifier = Modifier.width(dimens.spaceSm))
+
+                OrderStatusChip(
+                    statusText = order.status.toDisplayString(),
+                    containerColor = order.status.toColor()
+                )
             }
 
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.padding(
-                    vertical = dimens.spaceXs,
-                    horizontal = dimens.spaceSm
-                )
+                    horizontal = dimens.spaceMd,
+                    vertical = dimens.spaceXs
+                ),
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
             )
 
-
-            //các sản phẩm trong đơn hàng
-            order.items.forEachIndexed { idx, item ->
+            order.items.forEach { item ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = dimens.spaceSm, vertical = dimens.spaceXs),
+                        .padding(
+                            horizontal = dimens.spaceMd,
+                            vertical = dimens.spaceXs
+                        ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     ProductCard(
@@ -125,74 +144,163 @@ fun OrderCard(
                         onClick = {},
                         colorBackground = MaterialTheme.colorScheme.surfaceVariant
                     )
-                    Column(modifier = Modifier.weight(1f)) {
+
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
                         Text(
                             text = item.product.name,
                             style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.Medium,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+
                         Spacer(modifier = Modifier.height(4.dp))
+
                         Text(
                             text = "x${item.quantity}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    //giá tiền sản phẩm
+
+                    Spacer(modifier = Modifier.width(dimens.spaceSm))
+
                     Text(
                         text = item.totalPrice.toVNDString(),
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1
                     )
                 }
             }
 
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.padding(
-                    vertical = dimens.spaceXs,
-                    horizontal = dimens.spaceSm
-                )
+                    horizontal = dimens.spaceMd,
+                    vertical = dimens.spaceXs
+                ),
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
             )
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = dimens.spaceSm, vertical = dimens.spaceXs),
+                    .padding(
+                        start = dimens.spaceMd,
+                        top = dimens.spaceXs,
+                        end = dimens.spaceMd,
+                        bottom = dimens.spaceMd
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                Text(
-                    text = "Tổng: ${order.totalAmount.toDouble().toVNDString()}",
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                Column(
                     modifier = Modifier.weight(1f)
-                )
+                ) {
+                    Text(
+                        text = "Tổng thanh toán",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
 
+                    Spacer(modifier = Modifier.height(2.dp))
 
-                order.status.toPrimaryActionText()?.let { actionText ->
-                    RoundedActionButton(
-                        text = actionText,
-                        onClick = { onPrimaryAction(order) },
-                        horizontalPadding = dimens.spaceLg,
-                        textStyle = MaterialTheme.typography.bodySmall,
-                        cornerRadius = dimens.radiusMedium,
-                        verticalPadding = 1.dp
+                    Text(
+                        text = order.totalAmount.toDouble().toVNDString(),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold
                     )
                 }
 
+                order.status
+                    .toPrimaryActionText(order.paymentMethod, order.paymentStatus)
+                    ?.let { actionText ->
+                        RoundedActionButton(
+                            text = actionText,
+                            onClick = { onPrimaryAction(order) },
+                            horizontalPadding = dimens.spaceMd,
+                            textStyle = MaterialTheme.typography.bodySmall,
+                            cornerRadius = dimens.radiusMedium,
+                            verticalPadding = 4.dp
+                        )
 
-                Spacer(modifier = Modifier.width(dimens.spaceSm))
+                        Spacer(modifier = Modifier.width(dimens.spaceSm))
+                    }
+
                 RoundedActionButton(
-                    text = "Xem chi tiết",
-                    onClick = {onOpenDetail(order.id)},
-                    horizontalPadding = dimens.spaceLg,
-                    textStyle = MaterialTheme.typography.bodySmall
+                    text = "Chi tiết",
+                    onClick = { onOpenDetail(order.id) },
+                    horizontalPadding = dimens.spaceMd,
+                    textStyle = MaterialTheme.typography.bodySmall,
+                    cornerRadius = dimens.radiusMedium,
+                    verticalPadding = 4.dp
                 )
             }
-
-
         }
     }
 }
+
+@Composable
+private fun OrderStatusChip(
+    statusText: String,
+    containerColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier.wrapContentWidth(),
+        shape = RoundedCornerShape(999.dp),
+        color = containerColor
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+            text = statusText,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+private fun PaymentStatusChip(
+    status: PaymentStatus,
+    modifier: Modifier = Modifier
+) {
+    val chipColorScheme = status.colorScheme()
+    val chipShape = RoundedCornerShape(999.dp)
+
+    Surface(
+        modifier = modifier
+            .wrapContentWidth()
+            .border(
+                width = 1.dp,
+                color = chipColorScheme.borderColor,
+                shape = chipShape
+            ),
+        shape = chipShape,
+        color = chipColorScheme.containerColor
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+            text = status.toDisplayString(),
+            style = MaterialTheme.typography.labelMedium,
+            color = chipColorScheme.contentColor,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+
+
+
 
 @Preview(showBackground = false)
 @Composable

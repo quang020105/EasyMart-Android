@@ -145,7 +145,7 @@ private fun AdminOrderDetailScreenPreview() {
             order = AdminOrderDetailUiModel(
                 orderCode = "ORD-001245",
                 createdDateText = "04/06/2026 • 10:24",
-                orderStatus = OrderStatus.PROCESSING,
+                orderStatus = OrderStatus.PACKING,
                 paymentStatus = PaymentStatus.UNPAID,
                 paymentMethod = PaymentMethod.COD,
                 customerName = "Nguyễn Văn A",

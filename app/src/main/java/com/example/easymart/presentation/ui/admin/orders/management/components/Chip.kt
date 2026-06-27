@@ -55,7 +55,7 @@ fun PaymentStatusChip(
     modifier: Modifier = Modifier
 ) {
     StatusPill(
-        text = status.label(),
+        text = status.toDisplayString(),
         colorScheme = status.colorScheme(),
         modifier = modifier
     )
@@ -146,7 +146,7 @@ fun ChipsPreview() {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        OrderStatusChip(status = OrderStatus.PROCESSING)
+        OrderStatusChip(status = OrderStatus.PACKING)
 
         PaymentStatusChip(status = PaymentStatus.UNPAID)
 

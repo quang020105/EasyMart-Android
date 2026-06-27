@@ -29,7 +29,7 @@ fun OnlinePaymentProcessingRoute(
 
         Log.d("OnlinePaymentProcessing", "Payment status: $status")
         when (status) {
-            PaymentStatus.SUCCESS -> onSuccess()
+            PaymentStatus.PAID -> onSuccess()
             PaymentStatus.FAILED -> onFailed("Thanh toán thất bại hoặc đã bị huỷ")
             else -> onPendingTimeout()
         }

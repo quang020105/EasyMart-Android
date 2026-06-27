@@ -33,9 +33,7 @@ import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.utils.colorScheme
-import com.example.easymart.utils.label
 import com.example.easymart.utils.toDisplayString
-import com.example.easymart.utils.toShortLabel
 
 @Composable
 fun OrderHeaderSection(
@@ -192,7 +190,7 @@ private fun OrderHeaderSectionPreview() {
         OrderHeaderSection(
             orderCode = "ORD-001245",
             createdDateText = "04/06/2026 • 10:24",
-            orderStatus = OrderStatus.PROCESSING,
+            orderStatus = OrderStatus.PACKING,
             paymentStatus = PaymentStatus.UNPAID,
             paymentMethod = PaymentMethod.COD,
             modifier = Modifier.padding(16.dp)

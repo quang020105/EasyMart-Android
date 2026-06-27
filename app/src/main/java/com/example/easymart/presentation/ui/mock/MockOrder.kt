@@ -50,7 +50,7 @@ val mockOrders = listOf(
         ),
         totalAmount = 2_500_000,
         status = OrderStatus.CONFIRMED,
-        paymentStatus = PaymentStatus.SUCCESS,
+        paymentStatus = PaymentStatus.PAID,
         paymentMethod = PaymentMethod.ONLINE_GATEWAY,
         shippingAddress = Address(
             name = "Nguyen Van A",
@@ -73,7 +73,7 @@ val mockOrders = listOf(
         ),
         totalAmount = 1_200_000,
         status = OrderStatus.SHIPPING,
-        paymentStatus = PaymentStatus.SUCCESS,
+        paymentStatus = PaymentStatus.PAID,
         paymentMethod = PaymentMethod.COD,
         shippingAddress = Address(
             name = "Trung Nguyen",
@@ -96,7 +96,7 @@ val mockOrders = listOf(
         ),
         totalAmount = 3_000_000,
         status = OrderStatus.DELIVERED,
-        paymentStatus = PaymentStatus.SUCCESS,
+        paymentStatus = PaymentStatus.PAID,
         paymentMethod = PaymentMethod.ONLINE_GATEWAY,
         shippingAddress = Address(
             name = "Le Thi B",

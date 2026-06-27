@@ -46,7 +46,7 @@ fun AdminOrderStatusChip(
 private fun AdminOrderStatusChipPreview() {
     EasyMartTheme {
         AdminOrderStatusChip(
-            status = OrderStatus.PROCESSING
+            status = OrderStatus.PACKING
         )
     }
 }

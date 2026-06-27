@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Clock
 
 @HiltViewModel
 class CheckoutViewModel @Inject constructor(
@@ -212,10 +211,10 @@ class CheckoutViewModel @Inject constructor(
 
     suspend fun pollPayOsAndUpdate(orderCode: Long, localOrderId: Int): PaymentStatus {
         val status = pollPayOsPaymentStatusUseCase(orderCode)
-        if (status == PaymentStatus.SUCCESS || status == PaymentStatus.FAILED) {
+        if (status == PaymentStatus.PAID || status == PaymentStatus.FAILED) {
             updateLocalOrderPaymentStatusUseCase(localOrderId, status)
         }
-        if (status == PaymentStatus.SUCCESS) {
+        if (status == PaymentStatus.PAID) {
             syncOrderInBackground(localOrderId)
         }
         return status

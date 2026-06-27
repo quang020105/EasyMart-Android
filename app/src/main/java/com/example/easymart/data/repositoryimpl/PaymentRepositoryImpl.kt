@@ -117,7 +117,7 @@ class PaymentRepositoryImpl @Inject constructor(
         // Poll endpoint chuẩn (backend đã map theo webhook)
         val status = paymentApi.getPayOsPaymentStatus(orderCode).status
         return when (status.uppercase()) {
-            "PAID", "SUCCESS" -> PaymentStatus.SUCCESS
+            "PAID", "SUCCESS" -> PaymentStatus.PAID
             "CANCELLED", "CANCELED" -> PaymentStatus.FAILED
             "FAILED" -> PaymentStatus.FAILED
             else -> PaymentStatus.PENDING
@@ -132,7 +132,7 @@ class PaymentRepositoryImpl @Inject constructor(
         var attempt = 0
         while (attempt < maxRetries) {
             val status = getPayOsOrderStatus(orderCode)
-            if (status == PaymentStatus.SUCCESS || status == PaymentStatus.FAILED) {
+            if (status == PaymentStatus.PAID || status == PaymentStatus.FAILED) {
                 return status
             }
             attempt++
@@ -144,10 +144,16 @@ class PaymentRepositoryImpl @Inject constructor(
 
     override suspend fun updateLocalOrderPaymentStatus(localOrderId: Int, status: PaymentStatus) {
         val orderStatus = when (status) {
-            PaymentStatus.SUCCESS -> OrderStatus.CONFIRMED
-            PaymentStatus.FAILED -> OrderStatus.CANCELLED
+            PaymentStatus.PAID -> OrderStatus.CONFIRMED
+            PaymentStatus.FAILED, PaymentStatus.CANCELLED -> OrderStatus.CANCELLED
             PaymentStatus.UNPAID, PaymentStatus.PROCESSING, PaymentStatus.PENDING ->
                 OrderStatus.CREATED
+            PaymentStatus.REFUND_REQUIRED,
+            PaymentStatus.REFUNDING,
+            PaymentStatus.REFUNDED -> {
+                OrderStatus.CANCELLED
+            }
+
         }
         orderDao.updateOrderAndPaymentStatus(localOrderId, orderStatus, status)
     }

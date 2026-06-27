@@ -165,7 +165,7 @@ private fun OrderLeadingIcon(
     val icon = when (orderStatus) {
         OrderStatus.CREATED -> Icons.Rounded.ShoppingBag
         OrderStatus.CONFIRMED -> Icons.AutoMirrored.Rounded.ReceiptLong
-        OrderStatus.PROCESSING -> Icons.Rounded.Inventory2
+        OrderStatus.PACKING -> Icons.Rounded.Inventory2
         OrderStatus.SHIPPING -> Icons.Rounded.LocalShipping
         OrderStatus.DELIVERED -> Icons.Rounded.CheckCircle
         OrderStatus.CANCELLED -> Icons.Rounded.Cancel

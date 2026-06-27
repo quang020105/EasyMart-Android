@@ -50,7 +50,7 @@ fun PaymentInfoSection(
 
         OrderDetailInfoRow(
             label = "Trạng thái:",
-            value = paymentStatus.label(),
+            value = paymentStatus.toDisplayString(),
             icon = Icons.Rounded.WarningAmber
         )
 

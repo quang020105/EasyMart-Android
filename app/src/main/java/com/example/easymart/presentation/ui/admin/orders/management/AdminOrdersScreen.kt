@@ -145,7 +145,7 @@ private fun AdminOrderListScreenPreview() {
                     totalAmountText = "500.000 đ",
                     orderStatus = OrderStatus.DELIVERED,
                     paymentMethod = PaymentMethod.COD,
-                    paymentStatus = PaymentStatus.SUCCESS,
+                    paymentStatus = PaymentStatus.PAID,
                     createdDateText = "02/01/2024"
                 )
             ),

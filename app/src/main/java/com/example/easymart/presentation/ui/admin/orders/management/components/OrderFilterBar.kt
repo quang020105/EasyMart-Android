@@ -33,7 +33,6 @@ import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.utils.ChipColorScheme
 import com.example.easymart.utils.colorScheme
-import com.example.easymart.utils.label
 import com.example.easymart.utils.toDisplayString
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -202,9 +201,9 @@ private fun SelectableFilterChip(
 @Composable
 fun OrderFilterBarPreview() {
     OrderFilterBar(
-        selectedOrderStatus = OrderStatus.PROCESSING,
+        selectedOrderStatus = OrderStatus.PACKING,
         selectedPaymentMethod = PaymentMethod.COD,
-        selectedPaymentStatus = PaymentStatus.SUCCESS,
+        selectedPaymentStatus = PaymentStatus.PAID,
         onOrderStatusSelected = {},
         onPaymentMethodSelected = {},
         onPaymentStatusSelected = {}

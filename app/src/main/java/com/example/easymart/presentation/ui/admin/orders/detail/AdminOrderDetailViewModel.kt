@@ -72,7 +72,7 @@ class AdminOrderDetailViewModel @Inject constructor(
     )
 
     fun moveToProcessing() = requestStatusChange(
-        orderStatus = OrderStatus.PROCESSING,
+        orderStatus = OrderStatus.PACKING,
         title = "Chuyển sang chờ lấy hàng",
         message = "Bạn có chắc muốn chuyển đơn hàng sang trạng thái chờ lấy hàng?",
         confirmText = "Chuyển trạng thái"
@@ -87,8 +87,8 @@ class AdminOrderDetailViewModel @Inject constructor(
 
     fun confirmDelivered() {
         val paymentStatus = when (_uiState.value.order?.paymentStatus) {
-            PaymentStatus.SUCCESS -> null
-            else -> PaymentStatus.SUCCESS
+            PaymentStatus.PAID -> null
+            else -> PaymentStatus.PAID
         }
         requestStatusChange(
             orderStatus = OrderStatus.DELIVERED,

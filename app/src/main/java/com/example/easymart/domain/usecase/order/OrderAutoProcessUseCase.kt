@@ -30,7 +30,7 @@ class OrderAutoProcessUseCase @Inject constructor(
 //        val deliveredDelay = shippingDelay + (5..10).random()
 
         val confirmed = buildWork(orderId, OrderStatus.CONFIRMED, confirmedDelay)
-        val processing = buildWork(orderId, OrderStatus.PROCESSING, processingDelay)
+        val processing = buildWork(orderId, OrderStatus.PACKING, processingDelay)
         val shipping = buildWork(orderId, OrderStatus.SHIPPING, shippingDelay)
         val delivered = buildWork(orderId, OrderStatus.DELIVERED, deliveredDelay)
 

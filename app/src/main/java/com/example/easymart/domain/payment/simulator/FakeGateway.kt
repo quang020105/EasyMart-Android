@@ -17,7 +17,7 @@ class FakeGateway (
 
         val r = Random.Default.nextDouble()
         when {
-            r < 0.75 -> emit(PaymentResult.Success(order.id, PaymentStatus.SUCCESS))
+            r < 0.75 -> emit(PaymentResult.Success(order.id, PaymentStatus.PAID))
             r < 0.9 -> emit(PaymentResult.Failed(order.id, "Thẻ không hợp lệ"))
             else -> emit(PaymentResult.Failed(order.id, "Hết thời gian chờ, hãy thử lại"))
         }

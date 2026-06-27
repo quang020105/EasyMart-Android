@@ -1,6 +1,5 @@
 package com.example.easymart.utils
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -12,7 +11,7 @@ fun OrderStatus.toDisplayString(): String {
     return when (this) {
         OrderStatus.CREATED -> "Chờ xử lý"
         OrderStatus.CONFIRMED -> "Đã xác nhận"
-        OrderStatus.PROCESSING -> "Chờ lấy hàng"
+        OrderStatus.PACKING -> "Chờ lấy hàng"
         OrderStatus.SHIPPING -> "Đang giao"
         OrderStatus.DELIVERED -> "Đã giao"
         OrderStatus.CANCELLED -> "Đã hủy"
@@ -32,7 +31,7 @@ fun OrderStatus.toActionString(): String? {
 fun OrderStatus.toActionColor(): Color {
     return when (this) {
         OrderStatus.CREATED, OrderStatus.CONFIRMED -> Color(0xFFD32F2F)
-        OrderStatus.PROCESSING, OrderStatus.SHIPPING -> Color(0xFF1976D2)
+        OrderStatus.PACKING, OrderStatus.SHIPPING -> Color(0xFF1976D2)
         OrderStatus.DELIVERED, OrderStatus.CANCELLED -> Color(0xFF2E7D32)
     }
 }
@@ -45,7 +44,6 @@ data class ChipColorScheme(
     val borderColor: Color
 )
 
-@Composable
 fun OrderStatus.colorScheme(): ChipColorScheme {
     return when (this) {
         OrderStatus.CREATED -> ChipColorScheme(
@@ -60,7 +58,7 @@ fun OrderStatus.colorScheme(): ChipColorScheme {
             borderColor = Color(0xFFBFDBFE)
         )
 
-        OrderStatus.PROCESSING -> ChipColorScheme(
+        OrderStatus.PACKING -> ChipColorScheme(
             containerColor = Color(0xFFF5F3FF),
             contentColor = Color(0xFF7C3AED),
             borderColor = Color(0xFFC4B5FD)
@@ -89,7 +87,6 @@ fun OrderStatus.colorScheme(): ChipColorScheme {
 
 // màu sắc cho nút hành động dựa trên trạng thái thanh toán
 
-@Composable
 fun PaymentStatus.colorScheme(): ChipColorScheme {
     return when (this) {
         PaymentStatus.UNPAID -> ChipColorScheme(
@@ -98,13 +95,19 @@ fun PaymentStatus.colorScheme(): ChipColorScheme {
             borderColor = Color(0xFFCBD5E1)
         )
 
+        PaymentStatus.PENDING -> ChipColorScheme(
+            containerColor = Color(0xFFEFF6FF),
+            contentColor = Color(0xFF2563EB),
+            borderColor = Color(0xFFBFDBFE)
+        )
+
         PaymentStatus.PROCESSING -> ChipColorScheme(
             containerColor = Color(0xFFFFF7ED),
             contentColor = Color(0xFFEA580C),
             borderColor = Color(0xFFFED7AA)
         )
 
-        PaymentStatus.SUCCESS -> ChipColorScheme(
+        PaymentStatus.PAID -> ChipColorScheme(
             containerColor = Color(0xFFF0FDF4),
             contentColor = Color(0xFF16A34A),
             borderColor = Color(0xFFBBF7D0)
@@ -116,10 +119,28 @@ fun PaymentStatus.colorScheme(): ChipColorScheme {
             borderColor = Color(0xFFFECACA)
         )
 
-        PaymentStatus.PENDING -> ChipColorScheme(
-            containerColor = Color(0xFFEFF6FF),
-            contentColor = Color(0xFF2563EB),
-            borderColor = Color(0xFFBFDBFE)
+        PaymentStatus.CANCELLED -> ChipColorScheme(
+            containerColor = Color(0xFFF1F5F9),
+            contentColor = Color(0xFF475569),
+            borderColor = Color(0xFFCBD5E1)
+        )
+
+        PaymentStatus.REFUND_REQUIRED -> ChipColorScheme(
+            containerColor = Color(0xFFFFFBEB),
+            contentColor = Color(0xFFD97706),
+            borderColor = Color(0xFFFDE68A)
+        )
+
+        PaymentStatus.REFUNDING -> ChipColorScheme(
+            containerColor = Color(0xFFF5F3FF),
+            contentColor = Color(0xFF7C3AED),
+            borderColor = Color(0xDDD6FE)
+        )
+
+        PaymentStatus.REFUNDED -> ChipColorScheme(
+            containerColor = Color(0xFFECFDF5),
+            contentColor = Color(0xFF059669),
+            borderColor = Color(0xFFA7F3D0)
         )
     }
 }
@@ -128,10 +149,14 @@ fun PaymentStatus.colorScheme(): ChipColorScheme {
 fun PaymentStatus.label(): String {
     return when (this) {
         PaymentStatus.UNPAID -> "Chưa thanh toán"
-        PaymentStatus.PROCESSING -> "Đang xử lý"
-        PaymentStatus.SUCCESS -> "Đã thanh toán"
-        PaymentStatus.FAILED -> "Thanh toán thất bại"
         PaymentStatus.PENDING -> "Đang chờ thanh toán"
+        PaymentStatus.PROCESSING -> "Đang xử lý"
+        PaymentStatus.PAID -> "Đã thanh toán"
+        PaymentStatus.FAILED -> "Thanh toán thất bại"
+        PaymentStatus.CANCELLED -> "Đã hủy thanh toán"
+        PaymentStatus.REFUND_REQUIRED -> "Cần hoàn tiền"
+        PaymentStatus.REFUNDING -> "Đang hoàn tiền"
+        PaymentStatus.REFUNDED -> "Đã hoàn tiền"
     }
 }
 
@@ -149,7 +174,7 @@ fun OrderStatus.toAdminPrimaryActionString(): String? {
     return when (this) {
         OrderStatus.CREATED -> "Xác nhận đơn"
         OrderStatus.CONFIRMED -> "Chuyển sang chờ lấy hàng"
-        OrderStatus.PROCESSING -> "Chuyển sang đang giao"
+        OrderStatus.PACKING -> "Chuyển sang đang giao"
         OrderStatus.SHIPPING -> "Xác nhận đã giao"
         OrderStatus.DELIVERED,
         OrderStatus.CANCELLED -> null
@@ -160,7 +185,7 @@ fun OrderStatus.canAdminCancel(): Boolean {
     return when (this) {
         OrderStatus.CREATED,
         OrderStatus.CONFIRMED,
-        OrderStatus.PROCESSING -> true
+        OrderStatus.PACKING -> true
 
         OrderStatus.SHIPPING,
         OrderStatus.DELIVERED,
@@ -173,7 +198,7 @@ fun OrderStatus.hasAdminAction(): Boolean {
 }
 
 fun PaymentStatus.isPaid(): Boolean {
-    return this == PaymentStatus.SUCCESS
+    return this == PaymentStatus.PAID
 }
 
 

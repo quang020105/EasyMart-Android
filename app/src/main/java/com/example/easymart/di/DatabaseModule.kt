@@ -95,6 +95,28 @@ object DatabaseModule {
         }
     }
 
+    private val MIGRATION_29_30 = object : Migration(29, 30) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("""
+            UPDATE orders
+            SET orderStatus = 'PACKING'
+            WHERE orderStatus = 'PROCESSING'
+        """.trimIndent())
+        }
+    }
+
+    private val MIGRATION_30_31 = object : Migration(30, 31) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+            UPDATE orders
+            SET paymentStatus = 'PAID'
+            WHERE paymentStatus = 'SUCCESS'
+            """.trimIndent()
+            )
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext appContext: Context): EasyMartDatabase {
@@ -113,7 +135,9 @@ object DatabaseModule {
                 MIGRATION_25_26,
                 MIGRATION_26_27,
                 MIGRATION_27_28,
-                MIGRATION_28_29
+                MIGRATION_28_29,
+                MIGRATION_29_30,
+                MIGRATION_30_31
             )
             .fallbackToDestructiveMigration(false).build()
     }

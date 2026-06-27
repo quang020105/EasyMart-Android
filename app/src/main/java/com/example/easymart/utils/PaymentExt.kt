@@ -15,9 +15,13 @@ fun PaymentMethod.toDisplayString(): String {
 fun PaymentStatus.toDisplayString(): String {
     return when (this) {
         PaymentStatus.UNPAID -> "Chưa thanh toán"
+        PaymentStatus.PENDING -> "Đang chờ thanh toán"
         PaymentStatus.PROCESSING -> "Đang xử lý"
-        PaymentStatus.PENDING -> "Đang chờ"
-        PaymentStatus.SUCCESS -> "Đã thanh toán"
+        PaymentStatus.PAID -> "Đã thanh toán"
         PaymentStatus.FAILED -> "Thanh toán thất bại"
+        PaymentStatus.CANCELLED -> "Đã hủy thanh toán"
+        PaymentStatus.REFUND_REQUIRED -> "Cần hoàn tiền"
+        PaymentStatus.REFUNDING -> "Đang hoàn tiền"
+        PaymentStatus.REFUNDED -> "Đã hoàn tiền"
     }
 }

@@ -13,6 +13,7 @@ import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.utils.colorScheme
 import com.example.easymart.utils.label
+import com.example.easymart.utils.toDisplayString
 
 @Composable
 fun AdminPaymentStatusChip(
@@ -26,7 +27,7 @@ fun AdminPaymentStatusChip(
         modifier = modifier,
         label = {
             Text(
-                text = status.label(),
+                text = status.toDisplayString(),
                 fontWeight = FontWeight.SemiBold
             )
         },

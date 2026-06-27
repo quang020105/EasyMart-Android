@@ -35,12 +35,12 @@ class OnlineGatewayProcessor @Inject constructor(
             when (result) {
                 is PaymentResult.Success -> {
                     //cập nhật trạng thái thanh toán
-                    paymentDao.updatePaymentStatus(order.id, PaymentStatus.SUCCESS)
+                    paymentDao.updatePaymentStatus(order.id, PaymentStatus.PAID)
                     //cập nhật đơn hàng
                     orderDao.updateOrderAndPaymentStatus(
                         order.id,
                         OrderStatus.CONFIRMED,
-                        PaymentStatus.SUCCESS
+                        PaymentStatus.PAID
                     )
                     emit(result)
                 }

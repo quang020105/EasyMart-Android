@@ -72,7 +72,7 @@ fun AdminOrderActionSection(
                             when (orderStatus) {
                                 OrderStatus.CREATED -> onConfirmOrder()
                                 OrderStatus.CONFIRMED -> onMoveToProcessing()
-                                OrderStatus.PROCESSING -> onMoveToShipping()
+                                OrderStatus.PACKING -> onMoveToShipping()
                                 OrderStatus.SHIPPING -> onConfirmDelivered()
                                 OrderStatus.DELIVERED,
                                 OrderStatus.CANCELLED -> Unit
@@ -104,7 +104,7 @@ private fun OrderStatus.toPrimaryActionIcon(): ImageVector {
     return when (this) {
         OrderStatus.CREATED -> Icons.Rounded.Verified
         OrderStatus.CONFIRMED -> Icons.Rounded.Inventory2
-        OrderStatus.PROCESSING -> Icons.Rounded.LocalShipping
+        OrderStatus.PACKING -> Icons.Rounded.LocalShipping
         OrderStatus.SHIPPING -> Icons.Rounded.CheckCircle
         OrderStatus.DELIVERED,
         OrderStatus.CANCELLED -> Icons.Rounded.Security
@@ -185,7 +185,7 @@ private fun DangerActionButton(
 private fun AdminOrderActionSectionPreview() {
     EasyMartTheme {
         AdminOrderActionSection(
-            orderStatus = OrderStatus.PROCESSING,
+            orderStatus = OrderStatus.PACKING,
             isLoading = false,
             onConfirmOrder = {},
             onCancelOrder = {},
