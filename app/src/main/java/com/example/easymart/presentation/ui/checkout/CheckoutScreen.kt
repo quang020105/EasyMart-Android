@@ -321,7 +321,7 @@ fun CheckoutScreen(
                             }
 
                             Icon(
-                                painter = painterResource(id = paymentUi.iconRes),
+                                imageVector = paymentUi.icon,
                                 contentDescription = "Biểu tượng ví",
                                 tint = MaterialTheme.colorScheme.primary,
                             )

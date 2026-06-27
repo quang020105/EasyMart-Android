@@ -111,3 +111,13 @@ Cart module:
 
 
 #################
+
+
+
+
+### Cách chạy server để thanh toán qua PayOS : 
+* Cách 1:
+- npm start
+- mở terminal trên máy tính và chạy: adb devices
+- nếu thấy thiết bị, chạy tiếp: adb reverse tcp:3000 tcp:3000 , sau đó chạy lại app
+* Cách 2: Dùng ip của máy tính nhưng có thể phải tắt tường lửa

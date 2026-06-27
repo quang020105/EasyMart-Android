@@ -16,7 +16,7 @@
     <string name="title_payment_wallet">Ví điện tử</string>
     <string name="desc_payment_wallet">Số dư hiện tại: %s</string>
     <string name="title_payment_online">Thanh toán Online</string>
-    <string name="desc_payment_online">Thẻ ngân hàng, VNPay, MoMo...</string>
+    <string name="desc_payment_online">Thanh toán bằng mã QR</string>
     <string name="label_login">Đăng nhập</string>
     <string name="label_recommended_products">Sản phẩm gợi ý</string>
     <string name="action_buy_now">Mua ngay</string>

@@ -281,19 +281,35 @@ app.post("/webhook", async (req, res) => {
  * 3) App polling: lấy trạng thái theo orderCode
  * Response chuẩn: { orderCode, localOrderId, status }
  */
-app.get("/payment-status/:orderCode", (req, res) => {
-  const orderCode = Number(req.params.orderCode);
-  const order = orders.get(orderCode);
-  if (!order) {
-    return res.status(404).json({ message: "Order not found" });
+app.get("/payment-status/:orderCode", async (req, res) => {
+  try {
+    const orderCode = Number(req.params.orderCode);
+    const order = orders.get(orderCode);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (order.status === OrderStatus.PENDING) {
+      const payosOrder = await payOS.paymentRequests.get(orderCode);
+      order.status = normalizeStatus(payosOrder.status);
+      order.updatedAt = Date.now();
+      orders.set(orderCode, order);
+
+      console.log("Synced PayOS order:", orderCode, "=>", order.status);
+    }
+
+    return res.json({
+      orderCode: order.orderCode,
+      localOrderId: order.localOrderId,
+      status: normalizeStatus(order.status),
+      paymentLinkId: order.paymentLinkId,
+      updatedAt: order.updatedAt,
+    });
+  } catch (error) {
+    console.error("payment-status error:", error?.message || error);
+    return res.status(500).json({ message: "Cannot check payment status" });
   }
-  return res.json({
-    orderCode: order.orderCode,
-    localOrderId: order.localOrderId,
-    status: normalizeStatus(order.status),
-    paymentLinkId: order.paymentLinkId,
-    updatedAt: order.updatedAt,
-  });
 });
 
 /**
@@ -337,4 +353,8 @@ const HOST = process.env.HOST || "0.0.0.0";
 app.listen(PORT, HOST, () => {
   console.log(`Server running at http://${HOST}:${PORT}`);
 });
+
+// app.listen(3000, "0.0.0.0", () => {
+//   console.log("Server running at http://0.0.0.0:3000");
+// });
 

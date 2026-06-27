@@ -137,6 +137,7 @@ class PaymentRepositoryImpl @Inject constructor(
             }
             attempt++
             delay(delayMs)
+            Log.d("PaymentRepositoryImpl", "Polling PayOS orderCode=$orderCode attempt=$attempt status=$status")
         }
         return PaymentStatus.PENDING
     }

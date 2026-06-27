@@ -113,7 +113,7 @@ fun OrderSuccessScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter = painterResource(id = paymentUi.iconRes),
+                        imageVector = paymentUi.icon,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(dimens.iconMedium)
