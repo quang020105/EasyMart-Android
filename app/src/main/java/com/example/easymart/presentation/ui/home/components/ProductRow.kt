@@ -1,6 +1,5 @@
 package com.example.easymart.presentation.ui.home.components
 
-import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,16 +26,17 @@ fun ProductRow(
     onAddToCart: (Product) -> Unit
 ) {
     val dimens = LocalAppDimens.current
-    Row (
-        modifier = Modifier.fillMaxWidth()
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.background)
             .padding(vertical = dimens.spaceLg),
         verticalAlignment = Alignment.CenterVertically
-    ){
-        Column (
-            modifier = Modifier
-                .weight(1f)
-        ){
+    ) {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
             Text(
                 text = product.name,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),

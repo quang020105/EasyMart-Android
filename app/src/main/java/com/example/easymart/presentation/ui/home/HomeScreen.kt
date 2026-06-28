@@ -1,5 +1,6 @@
 package com.example.easymart.presentation.ui.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,35 +12,48 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddShoppingCart
+import androidx.compose.material.icons.filled.Inventory2
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import coil.size.Size
 import com.example.easymart.R
 import com.example.easymart.domain.model.Product
 import com.example.easymart.presentation.theme.EasyMartTheme
+import com.example.easymart.presentation.theme.colors.LocalAppColors
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.common.components.ItemProductRecommendCard
-import com.example.easymart.presentation.ui.common.components.ProductCard
-import com.example.easymart.presentation.ui.mock.mockSimpleProduct
+import com.example.easymart.presentation.ui.mock.mockProducts
 import com.example.easymart.utils.toVNDString
-
 
 @Composable
 fun HomeScreen(
@@ -49,74 +63,91 @@ fun HomeScreen(
     onProductClick: (Product) -> Unit,
 ) {
     val dimens = LocalAppDimens.current
-    Box(modifier = modifier.fillMaxSize()) {
+    val appColors = LocalAppColors.current
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(appColors.surfaceContainerLow)
+    ) {
         if (uiState.isLoading) {
-            // Loading UI
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
             }
-        } else {
-            Box(
-                modifier = modifier
-                    .fillMaxSize()
-                    .background(color = MaterialTheme.colorScheme.primary)
-            )
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.95f)
-                    .background(color = Color.Transparent)
-                    .align(Alignment.BottomCenter),
-                shape = RoundedCornerShape(topStart = dimens.radiusXl, topEnd = dimens.radiusXl),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            return@Box
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.24f)
+                .background(MaterialTheme.colorScheme.primary)
+        )
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.96f)
+                .align(Alignment.BottomCenter),
+            shape = RoundedCornerShape(topStart = dimens.radiusXl, topEnd = dimens.radiusXl),
+            colors = CardDefaults.cardColors(containerColor = appColors.surfaceContainerLow),
+            elevation = CardDefaults.cardElevation(defaultElevation = dimens.cardElevation)
+        ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(dimens.screenPadding),
+                verticalArrangement = Arrangement.spacedBy(dimens.spaceMd)
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(all = dimens.screenPadding)
-                ) {
+                item {
+                    HomePromoBanner()
+                }
+
+                uiState.error?.let { message ->
                     item {
-                        HomePromoBanner()
+                        HomeInfoBanner(message = message)
                     }
+                }
+
+                if (uiState.products.isEmpty()) {
                     item {
-                        Spacer(modifier = Modifier.height(dimens.spaceMd))
-                        Text(
-                            text = "Sản phẩm nổi bật",
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                        HomeEmptyState()
+                    }
+                } else {
+                    item {
+                        SectionHeader(
+                            title = "Sản phẩm nổi bật",
+                            subtitle = "Được đánh giá cao và đang bán tốt"
                         )
                     }
+
                     item {
-                        Spacer(modifier = Modifier.height(dimens.spaceSm))
-                        val featuredProduct = uiState.products.randomOrNull() ?: mockSimpleProduct
                         FeaturedProductCard(
-                            product = featuredProduct,
+                            product = uiState.products.featuredProduct(),
                             onClick = onProductClick,
                             onAddToCart = onAddToCart
                         )
                     }
+
                     item {
-                        Spacer(modifier = Modifier.height(dimens.spaceMd))
-                        Text(
-                            text = "Gợi ý cho bạn",
-                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                        SectionHeader(
+                            title = "Gợi ý cho bạn",
+                            subtitle = "${uiState.products.size} sản phẩm phù hợp"
                         )
-                        Spacer(modifier = Modifier.height(dimens.spaceSm))
                     }
 
                     items(uiState.products.chunked(2)) { rowProducts ->
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = dimens.spaceSm),
+                            modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm)
                         ) {
                             rowProducts.forEach { product ->
                                 ItemProductRecommendCard(
                                     product = product,
                                     onProductClick = onProductClick,
+                                    onAddToCart = onAddToCart,
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -127,7 +158,7 @@ fun HomeScreen(
                     }
 
                     item {
-                        Spacer(modifier = Modifier.height(dimens.spaceMd))
+                        Spacer(modifier = Modifier.height(dimens.spaceSm))
                     }
                 }
             }
@@ -138,44 +169,124 @@ fun HomeScreen(
 @Composable
 private fun HomePromoBanner() {
     val dimens = LocalAppDimens.current
+    val appColors = LocalAppColors.current
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp),
+            .heightIn(min = dimens.featuredCardHeight),
         shape = RoundedCornerShape(dimens.radiusLarge),
-        color = MaterialTheme.colorScheme.primary
+        color = MaterialTheme.colorScheme.primary,
+        shadowElevation = dimens.cardElevation
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = dimens.spaceLg, vertical = dimens.spaceMd),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Flash Sale",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-            Text(
-                text = "Giảm giá lên đến 50%",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-            Surface(
-                shape = RoundedCornerShape(20.dp),
-                color = MaterialTheme.colorScheme.surface
-            ) {
-                Text(
-                    text = "Mua ngay",
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(
-                        horizontal = dimens.spaceMd,
-                        vertical = dimens.spaceXs
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
+                .background(
+                    Brush.horizontalGradient(
+                        colors = listOf(
+                            appColors.primaryGradientStart,
+                            appColors.primaryGradientEnd
+                        )
+                    )
                 )
+                .padding(dimens.spaceLg)
+        ) {
+            Column(
+                modifier = Modifier.align(Alignment.CenterStart),
+                verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(dimens.radiusXl),
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.16f)
+                ) {
+                    Text(
+                        text = "FLASH SALE",
+                        modifier = Modifier.padding(
+                            horizontal = dimens.spaceMd,
+                            vertical = dimens.spaceXs
+                        ),
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+                Text(
+                    text = "Ưu đãi hôm nay",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+                Text(
+                    text = "Săn deal tốt, giao nhanh và chọn sản phẩm còn hàng.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.88f),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Surface(
+                    shape = RoundedCornerShape(dimens.radiusMedium),
+                    color = MaterialTheme.colorScheme.surface
+                ) {
+                    Text(
+                        text = "Mua ngay",
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        modifier = Modifier.padding(
+                            horizontal = dimens.spaceLg,
+                            vertical = dimens.spaceSm
+                        ),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+            Surface(
+                modifier = Modifier.align(Alignment.BottomEnd),
+                shape = RoundedCornerShape(dimens.radiusLarge),
+                color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.14f)
+            ) {
+                Column(
+                    modifier = Modifier.padding(dimens.spaceMd),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(
+                        text = "50%",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Text(
+                        text = "giảm tối đa",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.84f)
+                    )
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun SectionHeader(
+    title: String,
+    subtitle: String
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(LocalAppDimens.current.spaceXs)) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+            color = LocalAppColors.current.textPrimary
+        )
+        Text(
+            text = subtitle,
+            style = MaterialTheme.typography.bodyMedium,
+            color = LocalAppColors.current.textSecondary
+        )
     }
 }
 
@@ -186,75 +297,265 @@ private fun FeaturedProductCard(
     onAddToCart: (Product) -> Unit,
 ) {
     val dimens = LocalAppDimens.current
+    val appColors = LocalAppColors.current
+    val inStock = product.stockQuantity > 0
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(140.dp),
-        shape = RoundedCornerShape(dimens.radiusMedium),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            .heightIn(min = dimens.featuredCardHeight),
+        shape = RoundedCornerShape(dimens.radiusLarge),
+        colors = CardDefaults.cardColors(containerColor = appColors.surfaceContainer),
+        elevation = CardDefaults.cardElevation(defaultElevation = dimens.cardElevation),
+        border = androidx.compose.foundation.BorderStroke(
+            width = dimens.dividerThickness,
+            color = appColors.outlineVariant
+        ),
         onClick = { onClick(product) }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(dimens.spaceSm),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(dimens.spaceMd),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(dimens.spaceMd)
         ) {
-            ProductCard(
+            HomeProductImage(
                 product = product,
-                modifier = Modifier.size(100.dp),
-                cornerRadius = dimens.radiusSmall,
-                colorBackground = MaterialTheme.colorScheme.surfaceVariant,
-                onClick = onClick
+                modifier = Modifier
+                    .size(dimens.recommendedWidth)
+                    .clip(RoundedCornerShape(dimens.radiusMedium))
             )
-            Spacer(modifier = Modifier.width(dimens.spaceSm))
+
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(dimens.spaceXs)
             ) {
                 Text(
                     text = product.name,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = appColors.textPrimary,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(dimens.spaceXs))
                 Text(
                     text = product.price.toVNDString(),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.primary
                 )
-                Spacer(modifier = Modifier.height(dimens.spaceSm))
+                ProductMetaRow(product = product)
+                StockLabel(inStock = inStock, stockQuantity = product.stockQuantity)
+
                 Surface(
-                    shape = RoundedCornerShape(dimens.radiusSmall),
-                    color = MaterialTheme.colorScheme.primary
+                    onClick = { if (inStock) onAddToCart(product) },
+                    enabled = inStock,
+                    shape = RoundedCornerShape(dimens.radiusMedium),
+                    color = if (inStock) MaterialTheme.colorScheme.primary else appColors.disabledContainer,
+                    contentColor = if (inStock) MaterialTheme.colorScheme.onPrimary else appColors.disabledContent
                 ) {
-                    Text(
-                        text = "Mua ngay",
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onPrimary,
+                    Row(
                         modifier = Modifier.padding(
                             horizontal = dimens.spaceMd,
-                            vertical = dimens.spaceXs
+                            vertical = dimens.spaceSm
+                        ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(dimens.spaceXs)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.AddShoppingCart,
+                            contentDescription = null,
+                            modifier = Modifier.size(dimens.iconSmall)
                         )
-                    )
+                        Text(
+                            text = if (inStock) "Thêm vào giỏ" else "Tạm hết hàng",
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
                 }
             }
         }
     }
 }
 
+@Composable
+private fun HomeProductImage(
+    product: Product,
+    modifier: Modifier = Modifier
+) {
+    val dimens = LocalAppDimens.current
+    val appColors = LocalAppColors.current
+    val isPreview = LocalInspectionMode.current
+
+    Box(
+        modifier = modifier.background(appColors.surfaceContainerHigh),
+        contentAlignment = Alignment.Center
+    ) {
+        if (isPreview && product.imageRes != 0) {
+            Image(
+                painter = painterResource(product.imageRes),
+                contentDescription = product.name,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(dimens.spaceSm),
+                contentScale = ContentScale.Fit
+            )
+        } else {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(product.imageUrl)
+                    .crossfade(true)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .size(Size.ORIGINAL)
+                    .build(),
+                contentDescription = product.name,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(dimens.spaceSm),
+                contentScale = ContentScale.Fit,
+                error = painterResource(R.drawable.pic_shoe_1)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ProductMetaRow(product: Product) {
+    val dimens = LocalAppDimens.current
+    val appColors = LocalAppColors.current
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Star,
+            contentDescription = null,
+            modifier = Modifier.size(dimens.iconSmall),
+            tint = appColors.warning
+        )
+        Text(
+            text = if (product.rating.rate > 0) {
+                "${product.rating.rate} (${product.rating.count})"
+            } else {
+                "Chưa có đánh giá"
+            },
+            style = MaterialTheme.typography.bodySmall,
+            color = appColors.textSecondary,
+            maxLines = 1
+        )
+        Text(
+            text = "Đã bán ${product.soldQuantity}",
+            style = MaterialTheme.typography.bodySmall,
+            color = appColors.textSecondary,
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+private fun StockLabel(
+    inStock: Boolean,
+    stockQuantity: Int
+) {
+    val dimens = LocalAppDimens.current
+    val appColors = LocalAppColors.current
+
+    Surface(
+        shape = RoundedCornerShape(dimens.radiusXl),
+        color = if (inStock) appColors.successContainer else appColors.warningContainer,
+        contentColor = if (inStock) appColors.success else appColors.onWarning
+    ) {
+        Row(
+            modifier = Modifier.padding(
+                horizontal = dimens.spaceSm,
+                vertical = dimens.spaceXs
+            ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(dimens.spaceXs)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Inventory2,
+                contentDescription = null,
+                modifier = Modifier.size(dimens.iconSmall)
+            )
+            Text(
+                text = if (inStock) "Còn $stockQuantity sản phẩm" else "Hết hàng",
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
+            )
+        }
+    }
+}
+
+@Composable
+private fun HomeInfoBanner(message: String) {
+    val dimens = LocalAppDimens.current
+    val appColors = LocalAppColors.current
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(dimens.radiusMedium),
+        color = appColors.infoContainer
+    ) {
+        Text(
+            text = message,
+            modifier = Modifier.padding(dimens.spaceMd),
+            style = MaterialTheme.typography.bodyMedium,
+            color = appColors.info
+        )
+    }
+}
+
+@Composable
+private fun HomeEmptyState() {
+    val dimens = LocalAppDimens.current
+    val appColors = LocalAppColors.current
+
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(dimens.radiusLarge),
+        color = appColors.surfaceContainer,
+        border = androidx.compose.foundation.BorderStroke(
+            width = dimens.dividerThickness,
+            color = appColors.outlineVariant
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(dimens.spaceXl),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
+        ) {
+            Text(
+                text = "Chưa có sản phẩm",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = appColors.textPrimary
+            )
+            Text(
+                text = "Danh sách sản phẩm sẽ xuất hiện tại đây sau khi đồng bộ.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = appColors.textSecondary
+            )
+        }
+    }
+}
+
+private fun List<Product>.featuredProduct(): Product {
+    return sortedWith(
+        compareByDescending<Product> { it.rating.rate }
+            .thenByDescending { it.soldQuantity }
+            .thenByDescending { it.stockQuantity }
+    ).first()
+}
+
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    val fakeProducts = listOf(
-        Product(1, "Giày sneakers", "Description 1", 40.55, "", R.drawable.pic_shoe_1),
-        Product(2, "Product 2", "Description 2", 20.0, "", R.drawable.pic_shoe_1),
-        Product(3, "Product 3", "Description 3", 30.0, "", R.drawable.pic_shoe_1)
-    )
-
     EasyMartTheme {
         Surface {
             HomeScreen(
+                uiState = HomeUiState(products = mockProducts),
                 onAddToCart = {},
                 onProductClick = {}
             )

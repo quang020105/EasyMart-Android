@@ -1,17 +1,15 @@
 package com.example.easymart.presentation.ui.home.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import com.example.easymart.R
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,13 +23,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.example.easymart.presentation.theme.EasyMartTheme
-import com.example.easymart.presentation.theme.dimens.LocalAppDimens
-import androidx.compose.foundation.layout.width
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.easymart.R
+import com.example.easymart.presentation.theme.EasyMartTheme
+import com.example.easymart.presentation.theme.colors.LocalAppColors
+import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +40,9 @@ fun HomeTopbar(
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary
         ),
         title = {
             SearchBoxTopBar(onClick = onSearchClick)
@@ -62,25 +62,28 @@ fun SearchBoxTopBar(
     placeholder: String = "Tìm kiếm mọi thứ"
 ) {
     val dimens = LocalAppDimens.current
+    val appColors = LocalAppColors.current
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(44.dp)
+            .height(dimens.searchInputHeight)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surface
+        shape = RoundedCornerShape(dimens.radiusXl),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = dimens.dividerThickness
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = dimens.spaceSm),
+                .padding(horizontal = dimens.spaceMd),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_search),
                 contentDescription = null,
-                modifier = Modifier.size(14.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                modifier = Modifier.size(dimens.iconSmall),
+                tint = appColors.iconMuted
             )
             Spacer(modifier = Modifier.width(dimens.spaceSm))
             Text(
@@ -100,27 +103,37 @@ fun CartIconWithBadgeItem(
     onClick: () -> Unit
 ) {
     val dimens = LocalAppDimens.current
-    Box(modifier = Modifier.padding(horizontal = dimens.spaceMd).clickable(onClick = onClick)) {
+
+    Box(
+        modifier = Modifier
+            .padding(horizontal = dimens.spaceMd)
+            .size(dimens.buttonHeight)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
         Icon(
             painter = painterResource(R.drawable.ic_cart),
             contentDescription = "Giỏ hàng",
+            modifier = Modifier.size(dimens.iconLarge),
             tint = MaterialTheme.colorScheme.onPrimary
         )
         if (count > 0) {
             Surface(
                 modifier = Modifier
-                    .size(16.dp)
-                    .align(Alignment.TopEnd)
-                    .offset(x = (-2).dp, y = (2).dp),
-                tonalElevation = 40.dp,
+                    .size(dimens.qtyBtnSize)
+                    .align(Alignment.TopEnd),
                 shape = CircleShape,
-                color = MaterialTheme.colorScheme.error.copy(alpha = 0.85f)
+                color = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError,
+                shadowElevation = dimens.dividerThickness
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = if (count > 99) "99+" else count.toString(),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onPrimary
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        maxLines = 1
                     )
                 }
             }
