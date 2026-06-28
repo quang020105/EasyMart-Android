@@ -52,7 +52,7 @@ fun ProductDetailScreen(
 
     Box(modifier = modifier.fillMaxSize()) {
         when {
-            uiState.isLoading -> {
+            uiState.isLoading || (uiState.product == null && uiState.isRefreshing) -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center

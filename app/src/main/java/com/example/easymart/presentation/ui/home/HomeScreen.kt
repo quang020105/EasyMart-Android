@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -13,12 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,8 +37,6 @@ import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.common.components.ItemProductRecommendCard
 import com.example.easymart.presentation.ui.common.components.ProductCard
-import com.example.easymart.presentation.ui.home.components.ProductRow
-import com.example.easymart.presentation.ui.mock.mockProducts
 import com.example.easymart.presentation.ui.mock.mockSimpleProduct
 import com.example.easymart.utils.toVNDString
 
@@ -77,46 +73,61 @@ fun HomeScreen(
                 shape = RoundedCornerShape(topStart = dimens.radiusXl, topEnd = dimens.radiusXl),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
-                Column(
+                LazyColumn(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(all = dimens.screenPadding)
-                        .verticalScroll(rememberScrollState())
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(all = dimens.screenPadding)
                 ) {
-                    HomePromoBanner()
-                    Spacer(modifier = Modifier.height(dimens.spaceMd))
-                    Text(
-                        text = "Sản phẩm nổi bật",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                    )
-                    Spacer(modifier = Modifier.height(dimens.spaceSm))
-                    val featuredProduct = uiState.products.randomOrNull() ?: mockSimpleProduct
-                    FeaturedProductCard(
-                        product = featuredProduct,
-                        onClick = onProductClick,
-                        onAddToCart = onAddToCart
-                    )
-                    Spacer(modifier = Modifier.height(dimens.spaceMd))
-                    Text(
-                        text = "Gợi ý cho bạn",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                    )
-                    Spacer(modifier = Modifier.height(dimens.spaceSm))
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(520.dp),
-                        horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm),
-                        verticalArrangement = Arrangement.spacedBy(dimens.spaceSm),
-                        userScrollEnabled = false
-                    ) {
-                        items(uiState.products) { product ->
-                            ItemProductRecommendCard(
-                                product = product,
-                                onProductClick = onProductClick,
-                            )
+                    item {
+                        HomePromoBanner()
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(dimens.spaceMd))
+                        Text(
+                            text = "Sản phẩm nổi bật",
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(dimens.spaceSm))
+                        val featuredProduct = uiState.products.randomOrNull() ?: mockSimpleProduct
+                        FeaturedProductCard(
+                            product = featuredProduct,
+                            onClick = onProductClick,
+                            onAddToCart = onAddToCart
+                        )
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(dimens.spaceMd))
+                        Text(
+                            text = "Gợi ý cho bạn",
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                        )
+                        Spacer(modifier = Modifier.height(dimens.spaceSm))
+                    }
+
+                    items(uiState.products.chunked(2)) { rowProducts ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = dimens.spaceSm),
+                            horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm)
+                        ) {
+                            rowProducts.forEach { product ->
+                                ItemProductRecommendCard(
+                                    product = product,
+                                    onProductClick = onProductClick,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                            if (rowProducts.size == 1) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
                         }
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(dimens.spaceMd))
                     }
                 }
             }

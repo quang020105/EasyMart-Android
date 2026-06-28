@@ -33,6 +33,12 @@ class ProductDetailViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
     fun loadProduct(productId: Int) {
+        _uiState.value = _uiState.value.copy(
+            isLoading = true,
+            isRefreshing = true,
+            error = null,
+            refreshError = null
+        )
         observeProduct(productId)
         refreshProduct(productId)
     }
@@ -58,9 +64,10 @@ class ProductDetailViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
+                        val currentState = _uiState.value
                         _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            product = null,
+                            isLoading = currentState.product == null && currentState.isRefreshing,
+                            product = currentState.product,
                             error = resource.message
                         )
                     }
@@ -76,6 +83,7 @@ class ProductDetailViewModel @Inject constructor(
                 is Resource.Success -> _uiState.value = _uiState.value.copy(isRefreshing = false)
                 is Resource.Error -> _uiState.value = _uiState.value.copy(
                     isRefreshing = false,
+                    isLoading = false,
                     refreshError = result.message
                 )
                 is Resource.Loading -> Unit
