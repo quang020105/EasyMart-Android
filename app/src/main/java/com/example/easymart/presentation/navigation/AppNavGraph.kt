@@ -34,6 +34,7 @@ import com.example.easymart.presentation.ui.admin.dashboard.AdminDashboardRoute
 import com.example.easymart.presentation.ui.admin.AdminPlaceholderScreen
 import com.example.easymart.presentation.ui.cart.CartRoute
 import com.example.easymart.presentation.ui.cart.CartViewModel
+import com.example.easymart.presentation.ui.category.CategoryRoute
 import com.example.easymart.presentation.ui.checkout.CheckOutRoute
 import com.example.easymart.presentation.ui.checkout.CheckoutViewModel
 import com.example.easymart.presentation.ui.deliveryaddress.AddAddressRoute
@@ -663,7 +664,11 @@ fun AppNavGraph(
                 route = Screen.Category.route,
                 anim = NavAnim.NONE
             ) {
-                // CategoryRoute()
+                CategoryRoute(
+                    onNavigateToProduct = { product ->
+                        navController.navigate(Screen.ProductDetail.createRoute(product.id))
+                    }
+                )
             }
         }
 

@@ -62,7 +62,7 @@ fun HomeScreen(
             Box(
                 modifier = modifier
                     .fillMaxSize()
-                    .background(color = MaterialTheme.colorScheme.primaryContainer)
+                    .background(color = MaterialTheme.colorScheme.primary)
             )
             Card(
                 modifier = Modifier
@@ -143,7 +143,7 @@ private fun HomePromoBanner() {
             .fillMaxWidth()
             .height(120.dp),
         shape = RoundedCornerShape(dimens.radiusLarge),
-        color = MaterialTheme.colorScheme.primaryContainer
+        color = MaterialTheme.colorScheme.primary
     ) {
         Column(
             modifier = Modifier
@@ -154,12 +154,12 @@ private fun HomePromoBanner() {
             Text(
                 text = "Flash Sale",
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = MaterialTheme.colorScheme.onPrimary
             )
             Text(
                 text = "Giảm giá lên đến 50%",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = MaterialTheme.colorScheme.onPrimary
             )
             Surface(
                 shape = RoundedCornerShape(20.dp),

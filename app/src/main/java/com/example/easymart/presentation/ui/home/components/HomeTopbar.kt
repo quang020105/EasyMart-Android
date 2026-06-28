@@ -42,7 +42,7 @@ fun HomeTopbar(
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.primary
         ),
         title = {
             SearchBoxTopBar(onClick = onSearchClick)
@@ -79,7 +79,7 @@ fun SearchBoxTopBar(
             Icon(
                 painter = painterResource(id = R.drawable.ic_search),
                 contentDescription = null,
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(14.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.width(dimens.spaceSm))

@@ -44,12 +44,14 @@ import com.example.easymart.presentation.navigation.getScreenConfig
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.cart.CartViewModel
 import com.example.easymart.presentation.ui.cart.components.CartTopbar
+import com.example.easymart.presentation.ui.category.CategoryViewModel
 import com.example.easymart.presentation.ui.home.components.HomeTopbar
 import com.example.easymart.presentation.ui.main.bottomnav.BottomNavItem
 import com.example.easymart.presentation.ui.main.bottomnav.EasyMartBottomBar
 import com.example.easymart.presentation.ui.search.SearchViewModel
 import com.example.easymart.presentation.ui.search.components.SearchTopbar
 import com.example.easymart.presentation.sync.AppSyncViewModel
+import com.example.easymart.presentation.ui.category.components.CategoryTopbar
 import com.example.easymart.presentation.ui.main.topbar_components.AddProductActionButton
 
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -159,6 +161,22 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
                                 onCartClick = { navController.navigate(Screen.Cart.route) },
                                 onSearchClick = { navController.navigate(Screen.Search.route) },
                                 cartCount = uiState.items.size
+                            )
+                        }
+                    }
+                    Screen.Category.route -> {
+                        val entry = navBackStackEntry
+                        if (entry != null) {
+                            val cartViewModel = hiltViewModel<CartViewModel>(entry)
+                            val cartUiState by cartViewModel.uiState.collectAsState()
+                            val categoryViewModel = hiltViewModel<CategoryViewModel>(entry)
+                            val categoryUiState by categoryViewModel.uiState.collectAsState()
+                            CategoryTopbar(
+                                onCartClick = { navController.navigate(Screen.Cart.route) },
+                                searchQuery = categoryUiState.searchQuery,
+                                onSearchTextChange = categoryViewModel::onSearchQueryChange,
+                                onSearchClick = categoryViewModel::onSearchQueryChange,
+                                cartCount = cartUiState.items.size
                             )
                         }
                     }
