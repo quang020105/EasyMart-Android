@@ -2,6 +2,8 @@ package com.example.easymart.presentation.ui.category
 
 import androidx.compose.runtime.Immutable
 import com.example.easymart.domain.model.Product
+import com.example.easymart.presentation.ui.category.components.CustomerProductPriceFilter
+import com.example.easymart.presentation.ui.category.components.CustomerProductRatingFilter
 import com.example.easymart.presentation.ui.category.components.CustomerProductSort
 import com.example.easymart.presentation.ui.category.components.CustomerProductStockFilter
 
@@ -16,6 +18,8 @@ data class CategoryUiState(
     val searchQuery: String = "",
     val sort: CustomerProductSort = CustomerProductSort.FEATURED,
     val stockFilter: CustomerProductStockFilter = CustomerProductStockFilter.ALL,
+    val priceFilter: CustomerProductPriceFilter = CustomerProductPriceFilter.ALL,
+    val ratingFilter: CustomerProductRatingFilter = CustomerProductRatingFilter.ALL,
     val error: String? = null,
     val refreshError: String? = null
 )

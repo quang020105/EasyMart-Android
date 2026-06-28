@@ -8,6 +8,8 @@ import com.example.easymart.domain.usecase.auth.GetCurrentUserUseCase
 import com.example.easymart.domain.usecase.cart.AddToCartUseCase
 import com.example.easymart.domain.usecase.product.GetAllProductUseCase
 import com.example.easymart.presentation.common.Resource
+import com.example.easymart.presentation.ui.category.components.CustomerProductPriceFilter
+import com.example.easymart.presentation.ui.category.components.CustomerProductRatingFilter
 import com.example.easymart.presentation.ui.category.components.CustomerProductSort
 import com.example.easymart.presentation.ui.category.components.CustomerProductStockFilter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -67,6 +69,14 @@ class CategoryViewModel @Inject constructor(
 
     fun onStockFilterSelected(filter: CustomerProductStockFilter) {
         _uiState.updateAndApplyFilters { it.copy(stockFilter = filter) }
+    }
+
+    fun onPriceFilterSelected(filter: CustomerProductPriceFilter) {
+        _uiState.updateAndApplyFilters { it.copy(priceFilter = filter) }
+    }
+
+    fun onRatingFilterSelected(filter: CustomerProductRatingFilter) {
+        _uiState.updateAndApplyFilters { it.copy(ratingFilter = filter) }
     }
 
     fun onProductClick(product: Product) {
@@ -155,6 +165,17 @@ class CategoryViewModel @Inject constructor(
                     CustomerProductStockFilter.OUT_OF_STOCK -> product.stockQuantity <= 0
                 }
             }
+            .filter { product ->
+                val priceVnd = product.price * VND_RATE
+                val minPrice = priceFilter.minVnd
+                val maxPrice = priceFilter.maxVnd
+                (minPrice == null || priceVnd >= minPrice) &&
+                    (maxPrice == null || priceVnd < maxPrice)
+            }
+            .filter { product ->
+                ratingFilter == CustomerProductRatingFilter.ALL ||
+                    product.rating.rate >= ratingFilter.minRate
+            }
             .let { products ->
                 when (sort) {
                     CustomerProductSort.FEATURED -> products.sortedWith(
@@ -169,5 +190,9 @@ class CategoryViewModel @Inject constructor(
                 }
             }
             .toList()
+    }
+
+    private companion object {
+        const val VND_RATE = 26_333.0
     }
 }

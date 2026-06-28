@@ -40,6 +40,8 @@ fun CategoryRoute(
             onCategorySelected = viewModel::onCategorySelected,
             onSortSelected = viewModel::onSortSelected,
             onStockFilterSelected = viewModel::onStockFilterSelected,
+            onPriceFilterSelected = viewModel::onPriceFilterSelected,
+            onRatingFilterSelected = viewModel::onRatingFilterSelected,
             onProductClick = viewModel::onProductClick,
             onAddToCartClick = viewModel::addProductToCart,
         )

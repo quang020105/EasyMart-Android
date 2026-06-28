@@ -25,6 +25,8 @@ import com.example.easymart.presentation.ui.category.components.CategoryErrorBan
 import com.example.easymart.presentation.ui.category.components.CategorySelectorRow
 import com.example.easymart.presentation.ui.category.components.CategorySortFilterBar
 import com.example.easymart.presentation.ui.category.components.CategoryProductRow
+import com.example.easymart.presentation.ui.category.components.CustomerProductPriceFilter
+import com.example.easymart.presentation.ui.category.components.CustomerProductRatingFilter
 import com.example.easymart.presentation.ui.category.components.CustomerProductSort
 import com.example.easymart.presentation.ui.category.components.CustomerProductStockFilter
 import com.example.easymart.presentation.ui.mock.mockProducts
@@ -35,6 +37,8 @@ fun CategoryScreen(
     onCategorySelected: (String?) -> Unit,
     onSortSelected: (CustomerProductSort) -> Unit,
     onStockFilterSelected: (CustomerProductStockFilter) -> Unit,
+    onPriceFilterSelected: (CustomerProductPriceFilter) -> Unit,
+    onRatingFilterSelected: (CustomerProductRatingFilter) -> Unit,
     onProductClick: (Product) -> Unit,
     onAddToCartClick: (Product) -> Unit,
     modifier: Modifier = Modifier
@@ -78,8 +82,12 @@ fun CategoryScreen(
                 CategorySortFilterBar(
                     selectedSort = uiState.sort,
                     selectedStockFilter = uiState.stockFilter,
+                    selectedPriceFilter = uiState.priceFilter,
+                    selectedRatingFilter = uiState.ratingFilter,
                     onSortSelected = onSortSelected,
                     onStockFilterSelected = onStockFilterSelected,
+                    onPriceFilterSelected = onPriceFilterSelected,
+                    onRatingFilterSelected = onRatingFilterSelected,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -135,6 +143,8 @@ fun CategoryScreenPreview() {
             onCategorySelected = {},
             onSortSelected = {},
             onStockFilterSelected = {},
+            onPriceFilterSelected = {},
+            onRatingFilterSelected = {},
             onProductClick = {},
             onAddToCartClick = {}
         )
