@@ -2,10 +2,14 @@ package com.example.easymart.data.repositoryimpl
 
 import android.util.Log
 import com.example.easymart.data.local.datasource.ProductLocalDataSource
+import com.example.easymart.data.local.entity.ProductEntity
+import com.example.easymart.data.mapper.decodeList
+import com.example.easymart.data.mapper.encodeList
 import com.example.easymart.data.mapper.toDomain
 import com.example.easymart.data.mapper.toEntity
 import com.example.easymart.data.mapper.toRemoteDto
 import com.example.easymart.data.mapper.toEntity as remoteToEntity
+import com.example.easymart.data.remote.datasource_impl.FirestoreProductRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.RetrofitProductRemoteDataSource
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.repository.ProductRepository
@@ -14,17 +18,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import com.example.easymart.data.local.entity.ProductEntity
-import com.example.easymart.data.mapper.decodeList
-import com.example.easymart.data.mapper.encodeList
-import com.example.easymart.data.remote.datasource_impl.FirestoreProductRemoteDataSource
-import com.google.gson.Gson
 
 class ProductRepositoryImpl @Inject constructor(
     private val localDS: ProductLocalDataSource,
     private val remoteDS: RetrofitProductRemoteDataSource,
     private val firestoreDS: FirestoreProductRemoteDataSource
-): ProductRepository {
+) : ProductRepository {
     override fun getAllProduct(): Flow<Resource<List<Product>>> {
         val source: Flow<List<ProductEntity>> = localDS.observeActiveProducts()
         val mapped: Flow<Resource<List<Product>>> = source.map { items ->
@@ -56,28 +55,46 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
+    // thay thế tất cả các sản phẩm trong local bằng dữ liệu từ retrofit và firestore
     override suspend fun refreshProducts(): Resource<Unit> {
-        return try {
-            val products = remoteDS.getAllProducts()
-            localDS.upsertAll(products.map { it.toEntity() })
-            Resource.Success(Unit)
-        } catch (e: Exception) {
-            Resource.Error("Lỗi " + e.message)
+        val apiResult = runCatching {
+            remoteDS.getAllProducts().map { it.toEntity() }
         }
+        val firestoreResult = runCatching {
+            firestoreDS.getProductsOnce().map { it.remoteToEntity() }
+        }
+
+        val products = buildList {
+            apiResult.getOrNull()?.let(::addAll)
+            firestoreResult.getOrNull()?.let(::addAll)
+        }
+            .associateBy { it.id }
+            .values
+            .toList()
+
+        if (products.isNotEmpty()) {
+            localDS.upsertAll(products)
+            return Resource.Success(Unit)
+        }
+
+        return Resource.Error("Không tìm thấy sản phẩm")
     }
 
+    // thay thế sản phẩm trong local bằng dữ liệu mới nhất từ retrofit hoặc firestore
     override suspend fun refreshProductById(productId: Int): Resource<Unit> {
-        return try {
-            val product = remoteDS.getProductById(productId)
-            if(product != null){
-                localDS.upsert(product.toEntity())
-                Resource.Success(Unit)
-            } else {
-                Resource.Error("Không tìm thấy sản phẩm")
-            }
-        } catch (e: Exception) {
-            Resource.Error("Lỗi " + e.message)
+        val firestoreResult = runCatching { firestoreDS.getProductById(productId) }
+        firestoreResult.getOrNull()?.let { product ->
+            localDS.upsert(product.toEntity())
+            return Resource.Success(Unit)
         }
+
+        val apiResult = runCatching { remoteDS.getProductById(productId) }
+        apiResult.getOrNull()?.let { product ->
+            localDS.upsert(product.toEntity())
+            return Resource.Success(Unit)
+        }
+
+        return Resource.Error("Không tìm thấy sản phẩm")
     }
 
     override suspend fun upsertProduct(product: Product): Resource<Unit> {

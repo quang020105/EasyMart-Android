@@ -1,5 +1,6 @@
 package com.example.easymart.data.remote.datasource_impl
 
+import android.util.Log
 import com.example.easymart.data.mapper.toDomain
 import com.example.easymart.data.remote.api.ProductApi
 import com.example.easymart.data.remote.datasource.ProductRemoteDataSource
@@ -21,6 +22,7 @@ class RetrofitProductRemoteDataSource @Inject constructor(
     override suspend fun getProductById(productId: Int): Product? {
         val response = api.getProductById(productId)
         if (response.isSuccessful) {
+            Log.d("RetrofitProductRemoteDataSource", "getProductById: ${response.body()}")
             return response.body()?.toDomain()
         } else {
             throw Exception("Failed to fetch product: ${response.code()} ${response.message()}")
