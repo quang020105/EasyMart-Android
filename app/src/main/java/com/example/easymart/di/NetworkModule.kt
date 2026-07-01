@@ -30,7 +30,7 @@ object NetworkModule {
     private const val LOCATION_BASE_URL = "https://provinces.open-api.vn/"
     //private const val PAYMENT_BASE_URL = "http://127.0.0.1:3000/"
     private const val GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/"
-    private const val PAYMENT_BASE_URL = "http://192.168.77.102:3000/"
+    private const val PAYMENT_BASE_URL = "http://192.168.77.104:3000/"
 
     @Provides
     @Singleton

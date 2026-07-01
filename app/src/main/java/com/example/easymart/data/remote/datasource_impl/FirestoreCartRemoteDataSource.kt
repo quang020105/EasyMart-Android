@@ -1,5 +1,6 @@
-package com.example.easymart.data.remote.datasource
+package com.example.easymart.data.remote.datasource_impl
 
+import com.example.easymart.data.remote.datasource.CartRemoteDataSource
 import com.example.easymart.data.remote.dto.CartItemRemoteDto
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -75,4 +76,3 @@ class FirestoreCartRemoteDataSource @Inject constructor(
         batch.commit().await()
     }
 }
-

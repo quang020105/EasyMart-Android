@@ -1,5 +1,6 @@
-package com.example.easymart.data.remote.datasource
+package com.example.easymart.data.remote.datasource_impl
 
+import com.example.easymart.data.remote.datasource.AddressRemoteDataSource
 import com.example.easymart.data.remote.dto.AddressRemoteDto
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore

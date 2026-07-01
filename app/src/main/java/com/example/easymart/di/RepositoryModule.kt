@@ -14,9 +14,9 @@ import com.example.easymart.data.remote.api.PaymentApi
 import com.example.easymart.data.remote.api.ProductApi
 import com.example.easymart.data.remote.datasource.AddressRemoteDataSource
 import com.example.easymart.data.remote.datasource.CartRemoteDataSource
-import com.example.easymart.data.remote.datasource.FirestoreAddressRemoteDataSource
-import com.example.easymart.data.remote.datasource.FirestoreCartRemoteDataSource
-import com.example.easymart.data.remote.datasource.FirestoreOrderRemoteDataSource
+import com.example.easymart.data.remote.datasource_impl.FirestoreAddressRemoteDataSource
+import com.example.easymart.data.remote.datasource_impl.FirestoreCartRemoteDataSource
+import com.example.easymart.data.remote.datasource_impl.FirestoreOrderRemoteDataSource
 import com.example.easymart.data.remote.datasource.OrderRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.RetrofitProductRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.FirestoreProductRemoteDataSource
