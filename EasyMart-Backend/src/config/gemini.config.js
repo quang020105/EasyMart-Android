@@ -1,4 +1,5 @@
 const env = require("./env");
+const AppError = require("../utils/AppError");
 
 const geminiConfig = {
   apiKey: process.env.GEMINI_API_KEY,
@@ -8,7 +9,9 @@ const geminiConfig = {
 
 function assertGeminiConfig() {
   if (!geminiConfig.apiKey) {
-    throw new Error("Missing Gemini environment variable: GEMINI_API_KEY");
+    throw new AppError("Gemini is not configured", 503, {
+      reason: "Missing Gemini environment variable: GEMINI_API_KEY",
+    });
   }
 }
 

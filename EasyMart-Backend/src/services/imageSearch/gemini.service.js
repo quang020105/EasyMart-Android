@@ -1,6 +1,10 @@
 const geminiConfig = require("../../config/gemini.config");
+const env = require("../../config/env");
 const AppError = require("../../utils/AppError");
+const logger = require("../../utils/logger");
+const { createTimeoutError, isAbortError } = require("../../utils/timeout");
 const PromptBuilder = require("./prompt.builder");
+const { validateImageBuffer } = require("./validation.service");
 
 function detectImageMimeType(imageBuffer) {
   if (
@@ -35,50 +39,82 @@ function detectImageMimeType(imageBuffer) {
 
 class GeminiService {
   static async analyzeImage(imageBuffer) {
-    if (!Buffer.isBuffer(imageBuffer) || imageBuffer.length === 0) {
-      throw new AppError("A valid image buffer is required", 400);
-    }
+    validateImageBuffer(imageBuffer);
 
     const mimeType = detectImageMimeType(imageBuffer);
-    const response = await fetch(geminiConfig.getGenerateContentUrl(), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: "user",
-            parts: [
-              {
-                text: PromptBuilder.buildProductRecognitionPrompt(),
-              },
-              {
-                inlineData: {
-                  mimeType,
-                  data: imageBuffer.toString("base64"),
-                },
-              },
-            ],
-          },
-        ],
-        generationConfig: {
-          temperature: 0,
-          responseMimeType: "application/json",
-        },
-      }),
+    const controller = new AbortController();
+    const timeoutId =
+      env.imageSearch.geminiTimeoutMs > 0
+        ? setTimeout(() => controller.abort(), env.imageSearch.geminiTimeoutMs)
+        : null;
+
+    logger.debug("Calling Gemini Vision", {
+      mimeType,
+      bytes: imageBuffer.length,
+      timeoutMs: env.imageSearch.geminiTimeoutMs,
     });
 
-    const rawResponse = await response.json().catch(() => null);
-
-    if (!response.ok) {
-      throw new AppError("Gemini Vision request failed", 502, {
-        status: response.status,
-        error: rawResponse?.error?.message || response.statusText,
+    try {
+      const response = await fetch(geminiConfig.getGenerateContentUrl(), {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: "user",
+              parts: [
+                {
+                  text: PromptBuilder.buildProductRecognitionPrompt(),
+                },
+                {
+                  inlineData: {
+                    mimeType,
+                    data: imageBuffer.toString("base64"),
+                  },
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            temperature: 0,
+            responseMimeType: "application/json",
+          },
+        }),
       });
-    }
 
-    return rawResponse;
+      const rawResponse = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new AppError("Gemini Vision request failed", 502, {
+          status: response.status,
+          error: rawResponse?.error?.message || response.statusText,
+        });
+      }
+
+      return rawResponse;
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      if (isAbortError(error)) {
+        throw createTimeoutError(
+          "Gemini Vision request",
+          env.imageSearch.geminiTimeoutMs
+        );
+      }
+
+      throw new AppError("Gemini Vision request failed", 502, {
+        reason: error.message,
+      });
+    } finally {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    }
   }
 }
 

@@ -5,6 +5,7 @@ const env = require("./config/env");
 const paymentRoutes = require("./routes/payment.routes");
 const imageSearchRoutes = require("./routes/imageSearch.routes");
 const AppError = require("./utils/AppError");
+const logger = require("./utils/logger");
 
 const app = express();
 
@@ -37,21 +38,30 @@ app.use((req, res, next) => {
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
+  const isProduction = env.nodeEnv === "production";
+  const isOperational = err instanceof AppError || err.isOperational === true;
   const payload = {
-    message: err.message || "Internal server error",
+    message:
+      isProduction && statusCode >= 500 && !isOperational
+        ? "Internal server error"
+        : err.message || "Internal server error",
   };
 
-  if (err.details) {
+  if (err.details && (!isProduction || statusCode < 500)) {
     payload.details = err.details;
   }
 
-  if (env.nodeEnv !== "production" && statusCode >= 500) {
+  if (!isProduction && statusCode >= 500) {
     payload.stack = err.stack;
   }
 
-  if (statusCode >= 500) {
-    console.error(err);
-  }
+  logger[statusCode >= 500 ? "error" : "warn"]("Request failed", {
+    method: req.method,
+    path: req.originalUrl,
+    statusCode,
+    message: err.message,
+    stack: isProduction ? undefined : err.stack,
+  });
 
   res.status(statusCode).json(payload);
 });

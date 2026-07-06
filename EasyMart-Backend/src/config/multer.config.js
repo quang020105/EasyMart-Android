@@ -1,12 +1,9 @@
 const multer = require("multer");
 const AppError = require("../utils/AppError");
-
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
-const ALLOWED_IMAGE_MIME_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
+const {
+  ALLOWED_IMAGE_MIME_TYPES,
+  MAX_IMAGE_SIZE_BYTES,
+} = require("../services/imageSearch/validation.service");
 
 const upload = multer({
   storage: multer.memoryStorage(),

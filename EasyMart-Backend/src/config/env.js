@@ -73,6 +73,10 @@ const env = {
     defaultIndex: process.env.ALGOLIA_DEFAULT_INDEX || "products",
     defaultTtlSeconds: toNumber(process.env.ALGOLIA_KEY_TTL_SECONDS, 300),
   },
+  imageSearch: {
+    geminiTimeoutMs: toNumber(process.env.IMAGE_SEARCH_GEMINI_TIMEOUT_MS, 15000),
+    algoliaTimeoutMs: toNumber(process.env.IMAGE_SEARCH_ALGOLIA_TIMEOUT_MS, 5000),
+  },
 };
 
 module.exports = env;
