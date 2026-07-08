@@ -43,6 +43,9 @@ class AdminAddEditProductViewModel @Inject constructor(
     fun onTitleChange(value: String) =
         updateField { copy(title = value, titleError = null, aiFilledTitle = false) }
 
+    fun onBrandChange(value: String) =
+        updateField { copy(brand = value, brandError = null) }
+
     fun onPriceChange(value: String) = updateField { copy(price = value, priceError = null) }
     fun onDescriptionChange(value: String) = updateField {
         copy(
@@ -90,6 +93,7 @@ class AdminAddEditProductViewModel @Inject constructor(
                             isVisible = product.isVisible,
                             storagePath = product.storagePath,
                             title = product.name,
+                            brand = product.brand,
                             price = product.price.toString(),
                             description = product.description.orEmpty(),
                             category = product.category,
@@ -146,6 +150,7 @@ class AdminAddEditProductViewModel @Inject constructor(
         val product = Product(
             id = id,
             name = current.title.trim(),
+            brand = current.brand.trim(),
             description = current.description.trim(),
             price = current.price.trim().toDouble(),
             imageUrl = if (isMainRemote) mainUri else "",
@@ -378,6 +383,7 @@ class AdminAddEditProductViewModel @Inject constructor(
     private fun validate(state: AdminAddEditProductUiState): Pair<Boolean, AdminAddEditProductUiState> {
         var next = state.copy(
             titleError = null,
+            brandError = null,
             priceError = null,
             descriptionError = null,
             categoryError = null,
@@ -393,6 +399,11 @@ class AdminAddEditProductViewModel @Inject constructor(
             isValid = false
         } else if (state.title.trim().length > 100) {
             next = next.copy(titleError = "Tiêu đề không được vượt quá 100 ký tự")
+            isValid = false
+        }
+
+        if (state.brand.trim().length > 60) {
+            next = next.copy(brandError = "Thương hiệu không được vượt quá 60 ký tự")
             isValid = false
         }
 

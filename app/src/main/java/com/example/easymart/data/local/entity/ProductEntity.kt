@@ -12,6 +12,7 @@ data class ProductEntity(
     val price: Double,
     val imageUrl: String,
     val imageUrlsJson: String = "[]",
+    val brand: String = "",
     val category: String,
     val updatedAt: Long,
     val ratingRate: Double,

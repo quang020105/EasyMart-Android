@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "node --check src/server.js && node --check src/app.js && node --check src/config/algolia.config.js && node --check src/config/gemini.config.js && node --check src/dto/response.mapper.js && node --check src/utils/logger.js && node --check src/utils/timeout.js && node --check src/services/imageSearch/algolia.service.js && node --check src/services/imageSearch/gemini.service.js && node --check src/services/imageSearch/productFilter.service.js && node --check src/services/imageSearch/ranking.service.js && node --check src/services/imageSearch/searchPlan.builder.js && node --check src/services/imageSearch/validation.service.js && node --check src/services/imageSearch/imageSearch.pipeline.js"
+    "test": "node --check src/server.js && node --check src/app.js && node --check src/controllers/imageSearch.controller.js && node --check src/config/algolia.config.js && node --check src/config/gemini.config.js && node --check src/dto/response.mapper.js && node --check src/utils/logger.js && node --check src/utils/timeout.js && node --check src/services/imageSearch/algolia.service.js && node --check src/services/imageSearch/gemini.service.js && node --check src/services/imageSearch/productFilter.service.js && node --check src/services/imageSearch/ranking.service.js && node --check src/services/imageSearch/searchPlan.builder.js && node --check src/services/imageSearch/validation.service.js && node --check src/services/imageSearch/imageSearch.pipeline.js"
   },
   "keywords": [],
   "author": "",

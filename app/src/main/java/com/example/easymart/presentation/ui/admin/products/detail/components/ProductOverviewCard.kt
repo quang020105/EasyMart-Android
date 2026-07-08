@@ -156,6 +156,16 @@ fun ProductOverviewCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = product.brand.ifBlank { "Chưa có thương hiệu" },
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
                     Spacer(modifier = Modifier.height(14.dp))
 
                     Text(

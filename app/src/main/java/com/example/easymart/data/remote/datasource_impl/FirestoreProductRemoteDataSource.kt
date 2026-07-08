@@ -29,6 +29,7 @@ class FirestoreProductRemoteDataSource @Inject constructor(
             imageUrls = (doc.get("imageUrls") as? List<*>)
                 ?.mapNotNull { it as? String }
                 ?: emptyList(),
+            brand = doc.getString("brand") ?: "",
             category = doc.getString("category") ?: "",
             ratingRate = doc.getDouble("ratingRate") ?: 0.0,
             ratingCount = doc.getLong("ratingCount")?.toInt() ?: 0,

@@ -9,6 +9,7 @@ data class Product(
     val imageRes: Int = 0,
     val images: List<ProductImage> = emptyList(),
     val imageUrls: List<String> = emptyList(),
+    val brand: String = "",
     val category: String = "",
     val stockQuantity: Int = 0,
     val soldQuantity: Int = 0,

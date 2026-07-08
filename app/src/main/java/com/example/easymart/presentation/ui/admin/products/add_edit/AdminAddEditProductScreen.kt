@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.rounded.AttachMoney
 import androidx.compose.material.icons.rounded.Tag
@@ -85,6 +86,7 @@ import com.example.easymart.presentation.ui.admin.products.add_edit.components.C
 fun AdminAddEditProductScreen(
     uiState: AdminAddEditProductUiState,
     onTitleChange: (String) -> Unit,
+    onBrandChange: (String) -> Unit,
     onPriceChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
     onCategoryChange: (String) -> Unit,
@@ -325,6 +327,29 @@ fun AdminAddEditProductScreen(
                                 borderColor = if (uiState.titleError != null) MaterialTheme.colorScheme.error else Color.Unspecified,
                                 focusBorderColor = if (uiState.titleError != null) MaterialTheme.colorScheme.error else Color.Unspecified
                             )
+
+                            Text(
+                                text = "Thương hiệu",
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Medium
+                            )
+                            InputBox(
+                                value = uiState.brand,
+                                onValueChange = onBrandChange,
+                                hint = "Nhập thương hiệu",
+                                leadingIcon = Icons.Filled.LocalOffer,
+                                maxLength = 60,
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                borderColor = if (uiState.brandError != null) MaterialTheme.colorScheme.error else Color.Unspecified,
+                                focusBorderColor = if (uiState.brandError != null) MaterialTheme.colorScheme.error else Color.Unspecified
+                            )
+                            if (uiState.brandError != null) {
+                                Text(
+                                    text = uiState.brandError,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
 
                             Text(
                                 text = "Giá bán *",
@@ -704,6 +729,7 @@ fun AdminAddEditProductScreenPreview() {
         AdminAddEditProductScreen(
             uiState = AdminAddEditProductUiState(
                 title = "Áo thun nam cổ tròn",
+                brand = "EasyWear",
                 price = "199000",
                 description = "Áo thun nam cổ tròn chất liệu cotton mềm mại, thoáng mát, phù hợp mặc hàng ngày. Thiết kế đơn giản dễ phối đồ.",
                 category = "Thời trang nam",
@@ -721,6 +747,7 @@ fun AdminAddEditProductScreenPreview() {
             ),
 
             onTitleChange = {},
+            onBrandChange = {},
             onPriceChange = {},
             onDescriptionChange = {},
             onCategoryChange = {},

@@ -14,6 +14,7 @@ fun ProductEntity.toRemoteDto(): ProductFirestoreDto {
         price = price,
         imageUrl = imageUrl,
         imageUrls = decodeList(imageUrlsJson),
+        brand = brand,
         category = category,
         ratingRate = ratingRate,
         ratingCount = ratingCount,
@@ -34,6 +35,7 @@ fun ProductFirestoreDto.toEntity(): ProductEntity {
         price = price,
         imageUrl = imageUrl,
         imageUrlsJson = Gson().toJson(imageUrls),
+        brand = brand,
         category = category,
         updatedAt = updatedAt,
         ratingRate = ratingRate,
@@ -57,6 +59,7 @@ fun ProductFirestoreDto.toDomain(): Product {
         price = price,
         imageUrl = imageUrl,
         imageUrls = imageUrls,
+        brand = brand,
         category = category,
         stockQuantity = stockQuantity,
         soldQuantity = 0, // API không cung cấp thông tin này

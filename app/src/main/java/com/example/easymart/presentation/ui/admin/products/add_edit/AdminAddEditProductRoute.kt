@@ -46,6 +46,7 @@ fun AdminAddEditProductRoute(
     AdminAddEditProductScreen(
         uiState = uiState,
         onTitleChange = viewModel::onTitleChange,
+        onBrandChange = viewModel::onBrandChange,
         onPriceChange = viewModel::onPriceChange,
         onDescriptionChange = viewModel::onDescriptionChange,
         onCategoryChange = viewModel::onCategoryChange,

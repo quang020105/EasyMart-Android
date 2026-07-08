@@ -96,6 +96,13 @@ fun AdminProductCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
+                        text = product.brand.ifBlank { "Chưa có thương hiệu" },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
                         text = formatPrice(product.price),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary

@@ -83,6 +83,22 @@ fun ProductDetailInfoCard(
                 ) {
                     ProductInfoTile(
                         modifier = Modifier.weight(1f),
+                        icon = Icons.Filled.LocalOffer,
+                        iconColor = Color(0xFF2563EB),
+                        iconBackground = Color(0xFFEAF2FF),
+                        label = "Thương hiệu",
+                        value = product.brand.ifBlank { "Chưa có" }
+                    )
+
+                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.weight(1f))
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    ProductInfoTile(
+                        modifier = Modifier.weight(1f),
                         icon = Icons.Filled.Inventory2,
                         iconColor = Color(0xFFD97706),
                         iconBackground = Color(0xFFFFF7E6),

@@ -2,10 +2,18 @@ const path = require("path");
 const fs = require("fs");
 const dotenv = require("dotenv");
 
-dotenv.config({
-  path: process.env.DOTENV_CONFIG_PATH || path.resolve(__dirname, "../../.env"),
-  quiet: true,
+const envPath =
+  process.env.DOTENV_CONFIG_PATH ||
+  path.resolve(__dirname, "../../.env");
+
+console.log("ENV PATH =", envPath);
+
+const result = dotenv.config({
+  path: envPath,
 });
+
+console.log(result);
+console.log("GEMINI =", process.env.GEMINI_API_KEY);
 
 function loadSelectedEnv(filePath, keys) {
   if (!fs.existsSync(filePath)) {
