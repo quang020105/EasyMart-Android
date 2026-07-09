@@ -41,6 +41,7 @@ import com.example.easymart.presentation.ui.deliveryaddress.AddAddressRoute
 import com.example.easymart.presentation.ui.deliveryaddress.AddressViewModel
 import com.example.easymart.presentation.ui.deliveryaddress.DeliveryAddressRoute
 import com.example.easymart.presentation.ui.home.HomeRoute
+import com.example.easymart.presentation.ui.image_search.ImageSearchRoute
 import com.example.easymart.presentation.ui.auth.login.LoginRoute
 import com.example.easymart.presentation.ui.auth.login.LoginViewModel
 import com.example.easymart.presentation.ui.order.OrderRoute
@@ -666,6 +667,17 @@ fun AppNavGraph(
             ) {
                 CategoryRoute(
                     onNavigateToProduct = { product ->
+                        navController.navigate(Screen.ProductDetail.createRoute(product.id))
+                    }
+                )
+            }
+
+            composableWithAnim(
+                route = Screen.ImageSearch.route,
+                anim = NavAnim.HORIZONTAL
+            ) {
+                ImageSearchRoute(
+                    onProductClick = { product ->
                         navController.navigate(Screen.ProductDetail.createRoute(product.id))
                     }
                 )

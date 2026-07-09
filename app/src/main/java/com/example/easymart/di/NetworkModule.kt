@@ -4,6 +4,7 @@ import com.example.easymart.data.network.ConnectivityNetworkObserver
 import com.example.easymart.domain.network.NetworkObserver
 import com.example.easymart.data.remote.api.AlgoliaApi
 import com.example.easymart.data.remote.api.GeminiApi
+import com.example.easymart.data.remote.api.ImageSearchApi
 import com.example.easymart.data.remote.api.LocationApi
 import com.example.easymart.data.remote.api.PaymentApi
 import com.example.easymart.data.remote.api.ProductApi
@@ -26,11 +27,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     private const val PRODUCT_BASE_URL = "https://fakestoreapi.com/"
-    private const val ALGOLIA_BASE_URL = "http://10.0.2.2:8080/"
+    private const val ALGOLIA_BASE_URL = "http://192.168.1.40:3000/"
     private const val LOCATION_BASE_URL = "https://provinces.open-api.vn/"
     //private const val PAYMENT_BASE_URL = "http://127.0.0.1:3000/"
     private const val GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/"
-    private const val PAYMENT_BASE_URL = "http://192.168.77.104:3000/"
+    private const val PAYMENT_BASE_URL = "http://192.168.1.40:3000/"
 
     @Provides
     @Singleton
@@ -127,6 +128,11 @@ object NetworkModule {
     @Singleton
     fun provideAlgoliaApi(@Named("algolia") retrofit: Retrofit): AlgoliaApi =
         retrofit.create(AlgoliaApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideImageSearchApi(@Named("algolia") retrofit: Retrofit): ImageSearchApi =
+        retrofit.create(ImageSearchApi::class.java)
 
     @Provides
     @Singleton

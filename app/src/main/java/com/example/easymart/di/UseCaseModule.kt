@@ -5,6 +5,7 @@ import com.example.easymart.data.local.dao.OrderDao
 import com.example.easymart.domain.repository.AddressRepository
 import com.example.easymart.domain.repository.AuthRepository
 import com.example.easymart.domain.repository.CartRepository
+import com.example.easymart.domain.repository.ImageSearchRepository
 import com.example.easymart.domain.repository.LocationRepository
 import com.example.easymart.domain.repository.OrderRepository
 import com.example.easymart.domain.repository.OcrRepository
@@ -30,6 +31,7 @@ import com.example.easymart.domain.usecase.cart.MergeGuestCartIntoUserUseCase
 import com.example.easymart.domain.usecase.cart.ObserveCartUseCase
 import com.example.easymart.domain.usecase.cart.SyncCartUseCase
 import com.example.easymart.domain.usecase.cart.UpdateCartQuantityUseCase
+import com.example.easymart.domain.usecase.image_search.SearchByImageUseCase
 import com.example.easymart.domain.usecase.location.GetDistrictsUseCase
 import com.example.easymart.domain.usecase.location.GetProvincesUseCase
 import com.example.easymart.domain.usecase.location.GetWardsUseCase
@@ -122,6 +124,10 @@ object UseCaseModule {
     @Provides
     fun provideGetSuggestionsUseCase(searchRepo: SearchRepository): GetSuggestionUseCase =
         GetSuggestionUseCase(searchRepo)
+
+    @Provides
+    fun provideSearchByImageUseCase(imageSearchRepository: ImageSearchRepository): SearchByImageUseCase =
+        SearchByImageUseCase(imageSearchRepository)
 
     @Provides
     fun provideGetProductUseCase(productRepo: ProductRepository): GetProductUseCase =

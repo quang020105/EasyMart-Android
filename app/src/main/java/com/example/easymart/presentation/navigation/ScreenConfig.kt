@@ -15,6 +15,7 @@ private val screenConfigs: List<Pair<String, ScreenConfig>> = listOf(
     // home graph
     "home" to ScreenConfig(showTopBar = true, showBottomBar = true),
     "search" to ScreenConfig(showTopBar = true, showBottomBar = true),
+    "image_search" to ScreenConfig(title = "Tìm kiếm bằng ảnh", showTopBar = true, showBottomBar = false),
     "category" to ScreenConfig(showTopBar = true, showBottomBar = true),
     "profile" to ScreenConfig(showTopBar = true, showBottomBar = true),
 

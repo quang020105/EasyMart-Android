@@ -1,5 +1,6 @@
 package com.example.easymart.di
 
+import android.content.Context
 import com.example.easymart.data.local.dao.AddressDao
 import com.example.easymart.data.local.dao.CartDao
 import com.example.easymart.data.local.dao.OrderDao
@@ -9,21 +10,25 @@ import com.example.easymart.data.local.datasource.CartLocalDataSource
 import com.example.easymart.data.local.datasource.ProductLocalDataSource
 import com.example.easymart.data.local.ocr.MlKitOcrDataSource
 import com.example.easymart.data.remote.api.AlgoliaApi
+import com.example.easymart.data.remote.api.ImageSearchApi
 import com.example.easymart.data.remote.api.LocationApi
 import com.example.easymart.data.remote.api.PaymentApi
 import com.example.easymart.data.remote.api.ProductApi
 import com.example.easymart.data.remote.datasource.AddressRemoteDataSource
 import com.example.easymart.data.remote.datasource.CartRemoteDataSource
+import com.example.easymart.data.remote.datasource.ImageSearchRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.FirestoreAddressRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.FirestoreCartRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.FirestoreOrderRemoteDataSource
 import com.example.easymart.data.remote.datasource.OrderRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.RetrofitProductRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.FirestoreProductRemoteDataSource
+import com.example.easymart.data.remote.datasource_impl.RetrofitImageSearchRemoteDataSource
 import com.example.easymart.data.remote.ocr.GeminiOcrDataSource
 import com.example.easymart.data.repositoryimpl.AddressRepositoryImpl
 import com.example.easymart.data.repositoryimpl.CartRepositoryImpl
 import com.example.easymart.data.repositoryimpl.FirebaseAuthRepositoryImpl
+import com.example.easymart.data.repositoryimpl.ImageSearchRepositoryImpl
 import com.example.easymart.data.repositoryimpl.LocationRepositoryImpl
 import com.example.easymart.data.repositoryimpl.OrderRepositoryImpl
 import com.example.easymart.data.repositoryimpl.PaymentRepositoryImpl
@@ -36,6 +41,7 @@ import com.example.easymart.domain.payment.process.OnlineGatewayProcessor
 import com.example.easymart.domain.repository.AddressRepository
 import com.example.easymart.domain.repository.AuthRepository
 import com.example.easymart.domain.repository.CartRepository
+import com.example.easymart.domain.repository.ImageSearchRepository
 import com.example.easymart.domain.repository.LocationRepository
 import com.example.easymart.domain.repository.OrderRepository
 import com.example.easymart.domain.repository.PaymentRepository
@@ -48,6 +54,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
@@ -122,6 +129,19 @@ object RepositoryModule {
         backendApi: AlgoliaApi,
         @Named("searchProductGson") gson: Gson
     ): SearchRepository = SearchRepositoryImpl(backendApi, gson)
+
+    @Provides
+    @Singleton
+    fun provideImageSearchRemoteDataSource(
+        api: ImageSearchApi
+    ): ImageSearchRemoteDataSource = RetrofitImageSearchRemoteDataSource(api)
+
+    @Provides
+    @Singleton
+    fun provideImageSearchRepository(
+        @ApplicationContext context: Context,
+        remoteDataSource: ImageSearchRemoteDataSource
+    ): ImageSearchRepository = ImageSearchRepositoryImpl(context, remoteDataSource)
 
     @Provides
     @Singleton

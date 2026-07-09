@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.rounded.ImageSearch
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,6 +22,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -149,6 +151,18 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        floatingActionButton = {
+            if (currentRoute == Screen.Home.route || currentRoute == Screen.Search.route) {
+                SmallFloatingActionButton(
+                    onClick = { navController.navigate(Screen.ImageSearch.route) }
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.ImageSearch,
+                        contentDescription = "Tìm kiếm bằng ảnh"
+                    )
+                }
+            }
+        },
         topBar = {
             if (showTopBar) {
                 when (currentRoute) {

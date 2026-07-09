@@ -58,6 +58,7 @@ sealed class Screen(val route: String) {
     //graph search
     data object SearchGraph : Screen("search_graph")
     data object Search : Screen("search")
+    data object ImageSearch : Screen("image_search")
 
     // PayOS deep link
     data object PayOsReturn : Screen("payos_return?orderCode={orderCode}&localOrderId={localOrderId}&status={status}") {
