@@ -29,14 +29,14 @@ fun ImageSearchRoute(
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
+        val padding = innerPadding
         ImageSearchScreen(
             uiState = uiState,
             onImageSelected = viewModel::onImageSelected,
             onSearchClick = viewModel::search,
             onRetryClick = viewModel::retry,
             onClearClick = viewModel::clear,
-            onProductClick = onProductClick,
-            modifier = Modifier.padding(innerPadding)
+            onProductClick = onProductClick
         )
     }
 }
