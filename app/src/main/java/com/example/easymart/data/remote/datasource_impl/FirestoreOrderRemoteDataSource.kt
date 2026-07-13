@@ -118,7 +118,8 @@ class FirestoreOrderRemoteDataSource @Inject constructor(
             shippingPhone = getString("shippingPhone").orEmpty(),
             shippingAddressString = getString("shippingAddressString").orEmpty(),
             createdAt = getLong("createdAt") ?: 0L,
-            updatedAt = getLong("updatedAt") ?: 0L
+            updatedAt = getLong("updatedAt") ?: 0L,
+            stockDeducted = getBoolean("stockDeducted") ?: false
         )
     }
 }

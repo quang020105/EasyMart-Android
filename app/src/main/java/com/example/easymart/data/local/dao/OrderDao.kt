@@ -66,6 +66,22 @@ interface OrderDao {
     @Query(
         """
         UPDATE orders
+        SET stockDeducted = 1,
+            isSynced = 0,
+            syncStatus = :syncStatus,
+            updatedAt = :updatedAt
+        WHERE id = :orderId
+        """
+    )
+    suspend fun markStockDeducted(
+        orderId: Int,
+        syncStatus: SyncStatus,
+        updatedAt: Long
+    )
+
+    @Query(
+        """
+        UPDATE orders
         SET remoteId = :remoteId,
             orderStatus = :orderStatus,
             paymentStatus = :paymentStatus,

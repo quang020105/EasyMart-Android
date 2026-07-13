@@ -18,6 +18,7 @@ interface OrderRepository {
     fun observeRemoteOrders(userId: String): Flow<Unit>
     fun observeAllOrdersForAdmin(): Flow<List<Order>>
     suspend fun getOrderByRemoteId(remoteId: String): Order?
+    suspend fun markStockDeducted(orderId: Int)
     suspend fun updateOrderStatusForAdmin(
         remoteId: String,
         orderStatus: OrderStatus,

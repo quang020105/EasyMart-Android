@@ -12,6 +12,7 @@ data class ProductFirestoreDto(
     val ratingRate: Double = 0.0,
     val ratingCount: Int = 0,
     val stockQuantity: Int = 0,
+    val soldQuantity: Int = 0,
     val isVisible: Boolean = true,
     val createdAt: Long = 0L,
     val updatedAt: Long = 0L,

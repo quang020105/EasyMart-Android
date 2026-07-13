@@ -18,6 +18,7 @@ data class ProductEntity(
     val ratingRate: Double,
     val ratingCount: Int,
     val stockQuantity: Int,
+    val soldQuantity: Int = 0,
     val isVisible: Boolean,
     val createdAt: Long,
     val isDeleted: Boolean,

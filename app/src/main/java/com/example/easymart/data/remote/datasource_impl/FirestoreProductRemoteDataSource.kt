@@ -34,6 +34,7 @@ class FirestoreProductRemoteDataSource @Inject constructor(
             ratingRate = doc.getDouble("ratingRate") ?: 0.0,
             ratingCount = doc.getLong("ratingCount")?.toInt() ?: 0,
             stockQuantity = doc.getLong("stockQuantity")?.toInt() ?: 0,
+            soldQuantity = doc.getLong("soldQuantity")?.toInt() ?: 0,
             isVisible = doc.getBoolean("isVisible") ?: true,
             createdAt = doc.getLong("createdAt") ?: 0L,
             updatedAt = doc.getLong("updatedAt") ?: 0L,
@@ -47,6 +48,35 @@ class FirestoreProductRemoteDataSource @Inject constructor(
             .document(product.id.toString())
             .set(product, SetOptions.merge())
             .await()
+    }
+
+    suspend fun deductStock(items: Map<Int, Int>) {
+        if (items.isEmpty()) return
+
+        val now = System.currentTimeMillis()
+        firestore.runTransaction { transaction ->
+            items.forEach { (productId, quantity) ->
+                require(quantity > 0) { "Invalid quantity for product $productId" }
+
+                val ref = productRef().document(productId.toString())
+                val snapshot = transaction.get(ref)
+                check(snapshot.exists()) { "Product $productId does not exist" }
+
+                val currentStock = snapshot.getLong("stockQuantity")?.toInt() ?: 0
+                val currentSold = snapshot.getLong("soldQuantity")?.toInt() ?: 0
+                check(currentStock >= quantity) { "Product $productId does not have enough stock" }
+
+                transaction.update(
+                    ref,
+                    mapOf(
+                        "stockQuantity" to currentStock - quantity,
+                        "soldQuantity" to currentSold + quantity,
+                        "updatedAt" to now
+                    )
+                )
+            }
+            null
+        }.await()
     }
 
     suspend fun getProductsOnce(): List<ProductFirestoreDto> {

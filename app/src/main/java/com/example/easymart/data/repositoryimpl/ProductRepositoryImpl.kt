@@ -11,6 +11,7 @@ import com.example.easymart.data.mapper.toRemoteDto
 import com.example.easymart.data.mapper.toEntity as remoteToEntity
 import com.example.easymart.data.remote.datasource_impl.FirestoreProductRemoteDataSource
 import com.example.easymart.data.remote.datasource_impl.RetrofitProductRemoteDataSource
+import com.example.easymart.domain.model.Order
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.repository.ProductRepository
 import com.example.easymart.presentation.common.Resource
@@ -206,6 +207,37 @@ class ProductRepositoryImpl @Inject constructor(
             Resource.Success(Unit)
         } catch (e: Exception) {
             Resource.Error("Lỗi " + e.message)
+        }
+    }
+
+    override suspend fun deductStockForOrder(order: Order): Resource<Unit> {
+        val stockChanges = order.items
+            .groupBy { it.product.id }
+            .mapValues { (_, items) -> items.sumOf { it.quantity } }
+            .filterKeys { it > 0 }
+            .filterValues { it > 0 }
+
+        if (stockChanges.isEmpty()) {
+            return Resource.Success(Unit)
+        }
+
+        return try {
+            firestoreDS.deductStock(stockChanges)
+
+            stockChanges.keys.forEach { productId ->
+                runCatching {
+                    firestoreDS.getProductById(productId)?.let { product ->
+                        localDS.upsert(product.toEntity())
+                    }
+                }.onFailure { error ->
+                    Log.e("ProductRepositoryImpl", "Failed to refresh deducted product $productId", error)
+                }
+            }
+
+            Resource.Success(Unit)
+        } catch (e: Exception) {
+            Log.e("ProductRepositoryImpl", "deductStockForOrder error", e)
+            Resource.Error("Không thể cập nhật tồn kho: ${e.message ?: "Không xác định"}")
         }
     }
 

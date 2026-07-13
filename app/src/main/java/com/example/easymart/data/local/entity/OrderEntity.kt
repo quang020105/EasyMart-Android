@@ -25,5 +25,6 @@ data class OrderEntity(
     val isSynced: Boolean = false,
     val syncStatus: SyncStatus = SyncStatus.PENDING,
     val createdAt: Long,
-    val updatedAt: Long = createdAt
+    val updatedAt: Long = createdAt,
+    val stockDeducted: Boolean = false
 )

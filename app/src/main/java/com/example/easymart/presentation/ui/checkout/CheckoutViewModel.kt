@@ -12,6 +12,7 @@ import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentResult
 import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
+import com.example.easymart.domain.usecase.order.DeductStockAfterOrderSuccessUseCase
 import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
 import com.example.easymart.domain.usecase.order.SyncOrderUseCase
 import com.example.easymart.domain.usecase.payment.ProcessPaymentUseCase
@@ -37,7 +38,8 @@ class CheckoutViewModel @Inject constructor(
     private val pollPayOsPaymentStatusUseCase: PollPayOsPaymentStatusUseCase,
     private val updateLocalOrderPaymentStatusUseCase: UpdateLocalOrderPaymentStatusUseCase,
     private val syncOrderUseCase: SyncOrderUseCase,
-    private val getProductUseCase: GetProductUseCase
+    private val getProductUseCase: GetProductUseCase,
+    private val deductStockAfterOrderSuccessUseCase: DeductStockAfterOrderSuccessUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CheckoutUiState())
     val uiState: StateFlow<CheckoutUiState> = _uiState
@@ -147,7 +149,13 @@ class CheckoutViewModel @Inject constructor(
                         }
 
                         is PaymentResult.Success -> {
-                            val order = order.copy(id = result.orderId)
+                            val stockUpdated = deductStockAfterSuccessfulOrder(result.orderId)
+                            if (!stockUpdated) {
+                                _uiState.update { it.copy(isProcessing = false) }
+                                return@collect
+                            }
+
+                            val order = order.copy(id = result.orderId, stockDeducted = true)
                             _uiState.update {
                                 it.copy(isProcessing = false, order = order)
                             }
@@ -215,6 +223,7 @@ class CheckoutViewModel @Inject constructor(
             updateLocalOrderPaymentStatusUseCase(localOrderId, status)
         }
         if (status == PaymentStatus.PAID) {
+            deductStockAfterSuccessfulOrder(localOrderId)
             syncOrderInBackground(localOrderId)
         }
         return status
@@ -261,6 +270,19 @@ class CheckoutViewModel @Inject constructor(
             }.onFailure { error ->
                 Log.e("CheckoutViewModel", "syncOrder failed: $orderId", error)
             }
+        }
+    }
+
+    private suspend fun deductStockAfterSuccessfulOrder(orderId: Int): Boolean {
+        return when (val result = deductStockAfterOrderSuccessUseCase(orderId)) {
+            is Resource.Success -> true
+            is Resource.Error -> {
+                val message = result.message ?: "Không thể cập nhật tồn kho"
+                Log.e("CheckoutViewModel", "deductStockAfterSuccessfulOrder failed: $message")
+                _uiEvent.emit(CheckoutUiEvent.ShowErrorMessage(message))
+                false
+            }
+            is Resource.Loading -> false
         }
     }
 }

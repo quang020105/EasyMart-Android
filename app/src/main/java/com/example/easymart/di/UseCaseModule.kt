@@ -36,6 +36,7 @@ import com.example.easymart.domain.usecase.location.GetDistrictsUseCase
 import com.example.easymart.domain.usecase.location.GetProvincesUseCase
 import com.example.easymart.domain.usecase.location.GetWardsUseCase
 import com.example.easymart.domain.usecase.order.CancelOrderUseCase
+import com.example.easymart.domain.usecase.order.DeductStockAfterOrderSuccessUseCase
 import com.example.easymart.domain.usecase.order.GetAdminOrderDetailUseCase
 import com.example.easymart.domain.usecase.order.GetObserveAllOrdersUseCase
 import com.example.easymart.domain.usecase.order.GetOrderDetailUseCase
@@ -242,6 +243,12 @@ object UseCaseModule {
     fun provideSyncPendingOrdersUseCase(
         orderRepo: OrderRepository
     ) = SyncPendingOrdersUseCase(orderRepo)
+
+    @Provides
+    fun provideDeductStockAfterOrderSuccessUseCase(
+        orderRepo: OrderRepository,
+        productRepo: ProductRepository
+    ) = DeductStockAfterOrderSuccessUseCase(orderRepo, productRepo)
 
     @Provides
     fun provideObserveRemoteOrdersUseCase(

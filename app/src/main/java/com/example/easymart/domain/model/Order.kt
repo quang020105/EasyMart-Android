@@ -16,6 +16,7 @@ data class Order(
     val updatedAt: Long = createdAt,
     val isSynced: Boolean = false,
     val syncStatus: SyncStatus = SyncStatus.PENDING,
+    val stockDeducted: Boolean = false,
 )
 
 enum class OrderStatus {

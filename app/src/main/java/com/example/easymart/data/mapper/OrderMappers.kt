@@ -31,7 +31,8 @@ fun Order.toEntity(): OrderEntity {
         isSynced = isSynced,
         syncStatus = syncStatus,
         createdAt = createdAt,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        stockDeducted = stockDeducted
     )
 }
 
@@ -52,7 +53,8 @@ fun OrderEntity.toDomain(
         updatedAt = updatedAt,
         remoteId = remoteId,
         isSynced = isSynced,
-        syncStatus = syncStatus
+        syncStatus = syncStatus,
+        stockDeducted = stockDeducted
     )
 }
 
@@ -101,7 +103,8 @@ fun OrderWithItems.toDomain(): Order {
         updatedAt = order.updatedAt,
         remoteId = order.remoteId,
         isSynced = order.isSynced,
-        syncStatus = order.syncStatus
+        syncStatus = order.syncStatus,
+        stockDeducted = order.stockDeducted
     )
 }
 
@@ -121,6 +124,7 @@ fun OrderWithItems.toRemoteDto(): OrderRemoteDto {
         shippingAddressString = order.shippingAddress.addressString,
         createdAt = order.createdAt,
         updatedAt = order.updatedAt,
+        stockDeducted = order.stockDeducted,
         items = items.map { it.toRemoteDto() }
     )
 }
@@ -145,7 +149,8 @@ fun OrderRemoteDto.toEntity(existingLocalId: Int = 0): OrderEntity {
         isSynced = true,
         syncStatus = SyncStatus.SYNCED,
         createdAt = createdAt,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        stockDeducted = stockDeducted
     )
 }
 

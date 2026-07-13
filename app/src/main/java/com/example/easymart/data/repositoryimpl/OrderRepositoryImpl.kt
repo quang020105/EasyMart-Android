@@ -131,6 +131,14 @@ class OrderRepositoryImpl @Inject constructor(
         return remoteDS.getOrderByRemoteId(remoteId)?.toDomainOrder()
     }
 
+    override suspend fun markStockDeducted(orderId: Int) {
+        orderDao.markStockDeducted(
+            orderId = orderId,
+            syncStatus = SyncStatus.PENDING,
+            updatedAt = System.currentTimeMillis()
+        )
+    }
+
     override suspend fun updateOrderStatusForAdmin(
         remoteId: String,
         orderStatus: OrderStatus,

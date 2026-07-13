@@ -14,7 +14,8 @@ data class OrderRemoteDto(
     val shippingPhone: String = "",
     val shippingAddressString: String = "",
     val createdAt: Long = 0L,
-    val updatedAt: Long = 0L
+    val updatedAt: Long = 0L,
+    val stockDeducted: Boolean = false
 )
 
 data class OrderRemoteItemDto(
