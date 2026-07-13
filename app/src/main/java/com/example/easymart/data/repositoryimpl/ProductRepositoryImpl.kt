@@ -24,6 +24,11 @@ class ProductRepositoryImpl @Inject constructor(
     private val remoteDS: RetrofitProductRemoteDataSource,
     private val firestoreDS: FirestoreProductRemoteDataSource
 ) : ProductRepository {
+    private companion object {
+        const val FAKESTORE_DEFAULT_STOCK = 100
+        const val FAKESTORE_BRAND = ""
+    }
+
     override fun getAllProduct(): Flow<Resource<List<Product>>> {
         val source: Flow<List<ProductEntity>> = localDS.observeActiveProducts()
         val mapped: Flow<Resource<List<Product>>> = source.map { items ->
@@ -110,7 +115,47 @@ class ProductRepositoryImpl @Inject constructor(
             syncProduct(entity)
             Resource.Success(Unit)
         } catch (e: Exception) {
+            Log.e("ProductRepositoryImpl", "upsertProduct error", e)
             Resource.Error("Lỗi " + e.message)
+        }
+    }
+
+    override suspend fun importFakeStoreProductsToFirestore(): Resource<Int> {
+        return try {
+            val now = System.currentTimeMillis()
+            val remoteExistingIds = firestoreDS.getProductsOnce()
+                .map { it.id }
+                .toSet()
+
+            val importedEntities = remoteDS.getAllProducts()
+                .filter { product -> product.id !in remoteExistingIds }
+                .map { product ->
+                    product.copy(
+                        brand = FAKESTORE_BRAND,
+                        stockQuantity = FAKESTORE_DEFAULT_STOCK,
+                        isVisible = true,
+                        createdAt = now,
+                        updatedAt = now,
+                        isDeleted = false,
+                        isSynced = false,
+                        storagePath = "products/${product.id}",
+                        localImageUri = null,
+                        localImageUris = emptyList()
+                    ).toEntity().copy(
+                        isSynced = false,
+                        localImageUri = null,
+                        localImageUrisJson = "[]"
+                    )
+                }
+
+            importedEntities.forEach { entity ->
+                localDS.upsert(entity)
+                syncProduct(entity)
+            }
+
+            Resource.Success(importedEntities.size)
+        } catch (e: Exception) {
+            Resource.Error("Lá»—i " + e.message)
         }
     }
 

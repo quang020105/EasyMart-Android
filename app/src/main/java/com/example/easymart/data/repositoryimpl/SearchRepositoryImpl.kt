@@ -3,10 +3,9 @@ package com.example.easymart.data.repositoryimpl
 import android.util.Log
 import com.algolia.client.api.SearchClient
 import com.algolia.client.model.search.SearchParamsObject
-import com.example.easymart.data.mapper.toDomain
+import com.example.easymart.data.mapper.mapProductSearchHitJson
 import com.example.easymart.data.remote.api.AlgoliaApi
 import com.example.easymart.data.remote.api.AlgoliaKeyRequest
-import com.example.easymart.data.remote.dto.ProductApiDto
 import com.example.easymart.data.remote.provider.AlgoliaProvider
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.repository.SearchRepository
@@ -28,9 +27,9 @@ class SearchRepositoryImpl @Inject constructor(
             searchResponse.hits.mapNotNull { hit ->
                 try {
                     val jsonString = gson.toJson(hit.additionalProperties)
-                    val productDto = gson.fromJson(jsonString, ProductApiDto::class.java)
-                    productDto.toDomain()
+                    mapProductSearchHitJson(jsonString)
                 } catch (e: Exception) {
+                    Log.d("SearchRepo", "Search item parse failed: ${e.message}")
                     null
                 }
             }
@@ -52,8 +51,7 @@ class SearchRepositoryImpl @Inject constructor(
             searchResponse.hits.mapNotNull { hit ->
                 try {
                     val jsonString = gson.toJson(hit.additionalProperties)
-                    val productDto = gson.fromJson(jsonString, ProductApiDto::class.java)
-                    productDto.title
+                    mapProductSearchHitJson(jsonString)?.name
                 } catch (e: Exception) {
                     Log.d("SearchRepo", "Suggestion item parse failed: ${e.message}")
                     null

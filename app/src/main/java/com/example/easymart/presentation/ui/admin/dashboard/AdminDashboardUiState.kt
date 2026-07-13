@@ -9,5 +9,7 @@ data class AdminDashboardUiState(
     val productCount: Int = 0,
     val categoryCount: Int = 0,
     val revenueToday: Double = 0.0,
-    val error: String? = null
+    val error: String? = null,
+    val isImportingProducts: Boolean = false,
+    val importMessage: String? = null
 )

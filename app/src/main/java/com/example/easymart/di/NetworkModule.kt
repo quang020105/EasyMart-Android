@@ -20,6 +20,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -27,7 +28,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     private const val PRODUCT_BASE_URL = "https://fakestoreapi.com/"
-    private const val ALGOLIA_BASE_URL = "http://192.168.1.40:3000/"
+    private const val ALGOLIA_BASE_URL = "http://192.168.1.106:3000/"
     private const val LOCATION_BASE_URL = "https://provinces.open-api.vn/"
     //private const val PAYMENT_BASE_URL = "http://127.0.0.1:3000/"
     private const val GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/"
@@ -56,6 +57,18 @@ object NetworkModule {
         }
         return OkHttpClient.Builder()
             .addInterceptor(logger)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @Named("imageSearchOkHttp")
+    fun provideImageSearchOkHttpClient(ok: OkHttpClient): OkHttpClient {
+        return ok.newBuilder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .callTimeout(75, TimeUnit.SECONDS)
             .build()
     }
 
@@ -105,6 +118,17 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @Named("imageSearch")
+    fun provideImageSearchRetrofit(@Named("imageSearchOkHttp") ok: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(ALGOLIA_BASE_URL)
+            .client(ok)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
     @Named("payment")
     fun providePaymentRetrofit(ok: OkHttpClient): Retrofit {
         return Retrofit.Builder()
@@ -131,7 +155,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideImageSearchApi(@Named("algolia") retrofit: Retrofit): ImageSearchApi =
+    fun provideImageSearchApi(@Named("imageSearch") retrofit: Retrofit): ImageSearchApi =
         retrofit.create(ImageSearchApi::class.java)
 
     @Provides

@@ -54,6 +54,7 @@ import com.example.easymart.domain.usecase.payment.PollPayOsPaymentStatusUseCase
 import com.example.easymart.domain.usecase.payment.UpdateLocalOrderPaymentStatusUseCase
 import com.example.easymart.domain.usecase.product.GetAllProductUseCase
 import com.example.easymart.domain.usecase.product.GetProductUseCase
+import com.example.easymart.domain.usecase.product.ImportFakeStoreProductsUseCase
 import com.example.easymart.domain.usecase.product.UpsertProductUseCase
 import com.example.easymart.domain.usecase.product.SyncProductsUseCase
 import com.example.easymart.domain.usecase.product.UpdateProductVisibilityLocalOnlyUseCase
@@ -86,6 +87,10 @@ object UseCaseModule {
     @Provides
     fun provideSyncProductsUseCase(productRepo: ProductRepository): SyncProductsUseCase =
         SyncProductsUseCase(productRepo)
+
+    @Provides
+    fun provideImportFakeStoreProductsUseCase(productRepo: ProductRepository): ImportFakeStoreProductsUseCase =
+        ImportFakeStoreProductsUseCase(productRepo)
 
 
     //cart

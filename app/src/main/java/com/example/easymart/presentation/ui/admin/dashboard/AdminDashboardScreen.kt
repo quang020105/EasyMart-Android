@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Inventory2
@@ -50,6 +51,7 @@ import kotlin.math.roundToInt
 fun AdminDashboardScreen(
     uiState: AdminDashboardUiState,
     onRefresh: () -> Unit,
+    onImportFakeStoreProducts: () -> Unit,
     onNavigateOrders: () -> Unit,
     onNavigateProducts: () -> Unit,
     onNavigateCategories: () -> Unit
@@ -142,6 +144,27 @@ fun AdminDashboardScreen(
                         iconTint = Color(0xFFEA580C),
                         iconContainerColor = Color(0xFFFFEDD5),
                         onClick = onNavigateCategories
+                    )
+                    QuickActionCard(
+                        title = "Import FakeStore",
+                        subtitle = if (uiState.isImportingProducts) {
+                            "Đang đồng bộ lên Firebase..."
+                        } else {
+                            "Đưa sản phẩm mẫu lên Firebase"
+                        },
+                        icon = Icons.Filled.CloudDownload,
+                        iconTint = Color(0xFF0891B2),
+                        iconContainerColor = Color(0xFFE0F7FA),
+                        onClick = onImportFakeStoreProducts
+                    )
+                }
+            }
+
+            item {
+                if (uiState.isImportingProducts || uiState.importMessage != null) {
+                    ImportStatusCard(
+                        isLoading = uiState.isImportingProducts,
+                        message = uiState.importMessage ?: "Đang import sản phẩm FakeStore..."
                     )
                 }
             }
@@ -263,6 +286,36 @@ private fun ErrorCard(message: String, onRetry: () -> Unit) {
     }
 }
 
+@Composable
+private fun ImportStatusCard(
+    isLoading: Boolean,
+    message: String
+) {
+    val dimens = LocalAppDimens.current
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF6FF)),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dimens.spaceMd),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm)
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(modifier = Modifier.size(18.dp))
+            }
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xFF1E3A8A)
+            )
+        }
+    }
+}
+
 private fun demoSparkline(value: Int): List<Float> {
     val base = value.coerceAtLeast(1).toFloat()
     return listOf(
@@ -296,9 +349,11 @@ fun AdminDashboardPreview() {
                 error = null
             ),
             onRefresh = {},
+            onImportFakeStoreProducts = {},
             onNavigateOrders = {},
             onNavigateProducts = {},
             onNavigateCategories = {}
         )
     }
 }
+

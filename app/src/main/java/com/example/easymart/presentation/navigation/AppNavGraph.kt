@@ -583,18 +583,6 @@ fun AppNavGraph(
                 )
             }
 
-
-            composableWithAnim(
-                route = Screen.Search.route,
-                anim = NavAnim.HORIZONTAL
-            ) {
-                SearchRoute(
-                    onNavigateBack = { navController.navigateUp() },
-                    onNavigateToProduct = { product ->
-                        navController.navigate(Screen.ProductDetail.createRoute(product.id))
-                    }
-                )
-            }
         }
 
 
@@ -671,6 +659,21 @@ fun AppNavGraph(
                     }
                 )
             }
+        }
+
+        //nav search
+        navigation(startDestination = Screen.Search.route, route = Screen.SearchGraph.route) {
+            composableWithAnim(
+                route = Screen.Search.route,
+                anim = NavAnim.HORIZONTAL
+            ) {
+                SearchRoute(
+                    onNavigateBack = { navController.navigateUp() },
+                    onNavigateToProduct = { product ->
+                        navController.navigate(Screen.ProductDetail.createRoute(product.id))
+                    }
+                )
+            }
 
             composableWithAnim(
                 route = Screen.ImageSearch.route,
@@ -681,16 +684,6 @@ fun AppNavGraph(
                         navController.navigate(Screen.ProductDetail.createRoute(product.id))
                     }
                 )
-            }
-        }
-
-        //nav search
-        navigation(startDestination = Screen.Search.route, route = Screen.SearchGraph.route) {
-            composableWithAnim(
-                route = Screen.Search.route,
-                anim = NavAnim.HORIZONTAL
-            ) {
-                // SearchRoute()
             }
 
         }

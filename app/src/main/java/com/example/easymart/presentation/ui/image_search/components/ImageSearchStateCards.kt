@@ -40,8 +40,12 @@ fun ImageSearchLoadingState(
     StateSurface(modifier = modifier) {
         Surface(
             shape = RoundedCornerShape(dimens.radiusXl),
-            color = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            color = LocalAppColors.current.aiAccentSoft,
+            contentColor = LocalAppColors.current.aiAccent,
+            border = BorderStroke(
+                dimens.dividerThickness,
+                LocalAppColors.current.aiAccent.copy(alpha = 0.32f)
+            )
         ) {
             Box(
                 modifier = Modifier
@@ -83,12 +87,23 @@ fun ImageSearchEmptyState(
     val appColors = LocalAppColors.current
 
     StateSurface(modifier = modifier) {
-        Icon(
-            imageVector = Icons.Rounded.ImageSearch,
-            contentDescription = null,
-            modifier = Modifier.size(dimens.iconLarge),
-            tint = appColors.iconMuted
-        )
+        Surface(
+            shape = RoundedCornerShape(dimens.radiusXl),
+            color = appColors.aiAccentSoft,
+            contentColor = appColors.aiAccent,
+            border = BorderStroke(
+                dimens.dividerThickness,
+                appColors.aiAccent.copy(alpha = 0.32f)
+            )
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.ImageSearch,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(dimens.spaceMd)
+                    .size(dimens.iconLarge)
+            )
+        }
         Text(
             text = if (hasSelectedImage) "Chưa có kết quả" else "Chưa có ảnh",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
@@ -124,11 +139,23 @@ fun ImageSearchErrorState(
             horizontalArrangement = Arrangement.spacedBy(dimens.spaceMd),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Rounded.WarningAmber,
-                contentDescription = null,
-                modifier = Modifier.size(dimens.iconMedium)
-            )
+            Surface(
+                shape = RoundedCornerShape(dimens.radiusMedium),
+                color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.12f),
+                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                border = BorderStroke(
+                    dimens.dividerThickness,
+                    MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.24f)
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.WarningAmber,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(dimens.spaceSm)
+                        .size(dimens.iconMedium)
+                )
+            }
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(dimens.spaceXs)
@@ -173,7 +200,7 @@ private fun StateSurface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(dimens.radiusLarge),
         color = appColors.surfaceContainer,
-        border = BorderStroke(dimens.dividerThickness, appColors.outlineVariant)
+        border = BorderStroke(dimens.dividerThickness, appColors.aiAccent.copy(alpha = 0.18f))
     ) {
         Column(
             modifier = Modifier.padding(dimens.spaceXl),

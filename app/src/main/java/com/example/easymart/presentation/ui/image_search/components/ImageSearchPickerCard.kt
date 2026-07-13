@@ -59,7 +59,7 @@ fun ImageSearchPickerCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(dimens.radiusLarge),
         color = appColors.surfaceContainer,
-        border = BorderStroke(dimens.dividerThickness, appColors.outlineVariant)
+        border = BorderStroke(dimens.dividerThickness, appColors.aiAccent.copy(alpha = 0.22f))
     ) {
         Column(
             modifier = Modifier.padding(dimens.spaceMd),
@@ -74,7 +74,11 @@ fun ImageSearchPickerCard(
                     enabled = !loading,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(dimens.radiusMedium),
-                    contentPadding = PaddingValues(vertical = dimens.spaceSm)
+                    contentPadding = PaddingValues(vertical = dimens.spaceSm),
+                    border = BorderStroke(dimens.dividerThickness, appColors.aiAccent.copy(alpha = 0.36f)),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = appColors.aiAccent
+                    )
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.PhotoCamera,
@@ -92,7 +96,11 @@ fun ImageSearchPickerCard(
                     enabled = !loading,
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(dimens.radiusMedium),
-                    contentPadding = PaddingValues(vertical = dimens.spaceSm)
+                    contentPadding = PaddingValues(vertical = dimens.spaceSm),
+                    border = BorderStroke(dimens.dividerThickness, appColors.aiAccent.copy(alpha = 0.36f)),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = appColors.aiAccent
+                    )
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.PhotoLibrary,
@@ -137,7 +145,7 @@ fun ImageSearchPickerCard(
                     )
                 }
                 Text(
-                    text = if (selectedImage == null) "Chọn ảnh để Search" else "Search",
+                    text = if (selectedImage == null) "Chọn ảnh để tìm kiếm" else "Tìm kiếm",
                     modifier = Modifier.padding(start = dimens.spaceXs),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                 )
@@ -160,9 +168,9 @@ private fun ImagePreviewPanel(
             .fillMaxWidth()
             .height(dimens.productImageHeight)
             .clip(RoundedCornerShape(dimens.radiusLarge))
-            .background(appColors.surfaceContainerHigh)
+            .background(appColors.aiAccentLight)
             .border(
-                BorderStroke(dimens.dividerThickness, appColors.outlineVariant),
+                BorderStroke(dimens.dividerThickness, appColors.aiAccent.copy(alpha = 0.28f)),
                 RoundedCornerShape(dimens.radiusLarge)
             ),
         contentAlignment = Alignment.Center
@@ -176,16 +184,27 @@ private fun ImagePreviewPanel(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
                 ) {
-                    Icon(
-                        imageVector = Icons.Rounded.ImageSearch,
-                        contentDescription = null,
-                        tint = appColors.iconMuted,
-                        modifier = Modifier.size(dimens.iconLarge)
-                    )
+                    Surface(
+                        shape = RoundedCornerShape(dimens.radiusXl),
+                        color = appColors.aiAccentSoft,
+                        contentColor = appColors.aiAccent,
+                        border = BorderStroke(
+                            dimens.dividerThickness,
+                            appColors.aiAccent.copy(alpha = 0.32f)
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.ImageSearch,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(dimens.spaceMd)
+                                .size(dimens.iconLarge)
+                        )
+                    }
                     Text(
                         text = "Chưa chọn ảnh",
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                        color = appColors.textSecondary
+                        color = appColors.aiAccent
                     )
                 }
             } else {

@@ -15,6 +15,8 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.IOException
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 class ImageSearchRepositoryImpl @Inject constructor(
@@ -27,10 +29,21 @@ class ImageSearchRepositoryImpl @Inject constructor(
             remoteDataSource.searchByImage(request).toDomain()
         }.fold(
             onSuccess = { Resource.Success(it) },
-            onFailure = { error ->
-                Resource.Error("Lỗi tìm kiếm bằng hình ảnh: ${error.message ?: "Không xác định"}")
-            }
+            onFailure = { error -> Resource.Error(error.toImageSearchMessage()) }
         )
+    }
+
+    private fun Throwable.toImageSearchMessage(): String {
+        return when (this) {
+            is SocketTimeoutException ->
+                "Tìm kiếm bằng hình ảnh mất nhiều thời gian hơn dự kiến. Vui lòng thử lại hoặc chọn ảnh rõ hơn."
+            is IOException ->
+                "Không thể kết nối đến máy chủ Image Search. Vui lòng kiểm tra mạng hoặc backend rồi thử lại."
+            is IllegalArgumentException ->
+                message ?: "Ảnh không hợp lệ. Vui lòng chọn ảnh khác."
+            else ->
+                "Lỗi tìm kiếm bằng hình ảnh: ${message ?: "Không xác định"}"
+        }
     }
 
     private fun Uri.toImagePart(): MultipartBody.Part {
