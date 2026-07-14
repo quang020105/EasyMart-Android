@@ -139,6 +139,115 @@ object DatabaseModule {
         }
     }
 
+    private val MIGRATION_35_36 = object : Migration(35, 36) {
+        override fun migrate(db: SupportSQLiteDatabase) = Unit
+    }
+
+    private val MIGRATION_36_37 = object : Migration(36, 37) {
+        override fun migrate(db: SupportSQLiteDatabase) = Unit
+    }
+
+    private val MIGRATION_37_38 = object : Migration(37, 38) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                UPDATE cart_items
+                SET name = (
+                        SELECT latest.name
+                        FROM cart_items AS latest
+                        WHERE latest.cartId = cart_items.cartId
+                            AND latest.productId = cart_items.productId
+                        ORDER BY latest.updatedAt DESC, latest.id DESC
+                        LIMIT 1
+                    ),
+                    price = (
+                        SELECT latest.price
+                        FROM cart_items AS latest
+                        WHERE latest.cartId = cart_items.cartId
+                            AND latest.productId = cart_items.productId
+                        ORDER BY latest.updatedAt DESC, latest.id DESC
+                        LIMIT 1
+                    ),
+                    imageUrl = (
+                        SELECT latest.imageUrl
+                        FROM cart_items AS latest
+                        WHERE latest.cartId = cart_items.cartId
+                            AND latest.productId = cart_items.productId
+                        ORDER BY latest.updatedAt DESC, latest.id DESC
+                        LIMIT 1
+                    ),
+                    quantity = COALESCE(
+                        (
+                            SELECT MAX(active.quantity)
+                            FROM cart_items AS active
+                            WHERE active.cartId = cart_items.cartId
+                                AND active.productId = cart_items.productId
+                                AND active.isDeleted = 0
+                        ),
+                        quantity
+                    ),
+                    isDeleted = CASE
+                        WHEN EXISTS (
+                            SELECT 1
+                            FROM cart_items AS active
+                            WHERE active.cartId = cart_items.cartId
+                                AND active.productId = cart_items.productId
+                                AND active.isDeleted = 0
+                        ) THEN 0
+                        ELSE 1
+                    END,
+                    isSynced = CASE
+                        WHEN EXISTS (
+                            SELECT 1
+                            FROM cart_items AS pending
+                            WHERE pending.cartId = cart_items.cartId
+                                AND pending.productId = cart_items.productId
+                                AND pending.isSynced = 0
+                        ) THEN 0
+                        ELSE 1
+                    END,
+                    updatedAt = (
+                        SELECT MAX(peer.updatedAt)
+                        FROM cart_items AS peer
+                        WHERE peer.cartId = cart_items.cartId
+                            AND peer.productId = cart_items.productId
+                    ),
+                    addAt = (
+                        SELECT MIN(peer.addAt)
+                        FROM cart_items AS peer
+                        WHERE peer.cartId = cart_items.cartId
+                            AND peer.productId = cart_items.productId
+                    )
+                WHERE id IN (
+                    SELECT MIN(id)
+                    FROM cart_items
+                    GROUP BY cartId, productId
+                    HAVING COUNT(*) > 1
+                )
+                """.trimIndent()
+            )
+            db.execSQL(
+                """
+                DELETE FROM cart_items
+                WHERE id NOT IN (
+                    SELECT keepId
+                    FROM (
+                        SELECT MIN(id) AS keepId
+                        FROM cart_items
+                        GROUP BY cartId, productId
+                    )
+                )
+                """.trimIndent()
+            )
+            db.execSQL(
+                """
+                CREATE UNIQUE INDEX IF NOT EXISTS index_cart_items_cartId_productId
+                ON cart_items(cartId, productId)
+                """.trimIndent()
+            )
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext appContext: Context): EasyMartDatabase {
@@ -163,7 +272,10 @@ object DatabaseModule {
                 MIGRATION_31_32,
                 MIGRATION_32_33,
                 MIGRATION_33_34,
-                MIGRATION_34_35
+                MIGRATION_34_35,
+                MIGRATION_35_36,
+                MIGRATION_36_37,
+                MIGRATION_37_38
             )
             .fallbackToDestructiveMigration(false).build()
     }

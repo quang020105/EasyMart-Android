@@ -14,6 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -22,6 +24,8 @@ class CartRepositoryImpl @Inject constructor(
     private val localDS: CartLocalDataSource,
     private val remoteDS: CartRemoteDataSource
 ) : CartRepository {
+
+    private val syncMutex = Mutex()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun observeCartItems(userId: String?): Flow<List<CartItem>> {
@@ -117,6 +121,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun syncCart(userId: String) {
         withContext(Dispatchers.IO) {
+            syncMutex.withLock {
             val cart = localDS.getOrCreateCart(userId)
             val unSyncedItems = cartDao.getUnsyncedCartItems(cartId = cart.id)
             unSyncedItems.forEach { local ->
@@ -134,6 +139,7 @@ class CartRepositoryImpl @Inject constructor(
             }
             val remoteItems = remoteDS.getCartItemsOnce(userId)
             syncRemoteToLocal(cart.id, remoteItems)
+            }
         }
     }
 
@@ -162,15 +168,20 @@ class CartRepositoryImpl @Inject constructor(
     // Hàm này sẽ đồng bộ dữ liệu từ remote về local
     private suspend fun syncRemoteToLocal(cartId: String, remoteItems: List<CartItemRemoteDto>) {
         withContext(Dispatchers.IO) {
+            // lọc ra các item remote mới nhất theo productId (nếu có nhiều bản ghi cùng productId)
+            val normalizedRemoteItems = remoteItems
+                .groupBy { it.productId }
+                .mapNotNull { (_, items) -> items.maxByOrNull { it.updatedAt } }
+
             val localItems = cartDao.getAllCartItemsIncludingDeleted(cartId)
             val localByProductId = localItems.associateBy { it.productId }
-            val remoteByProductId = remoteItems.associateBy { it.productId }
+            val remoteByProductId = normalizedRemoteItems.associateBy { it.productId }
 
             // Cập nhật/insert theo remote
-            remoteItems.forEach { remote ->
+            normalizedRemoteItems.forEach { remote ->
                 val local = localByProductId[remote.productId]
                 if (local == null) {
-                    cartDao.insertCartItem(remote.toEntity(cartId).copy(isSynced = true))
+                    cartDao.upsertCartItemByProduct(remote.toEntity(cartId).copy(isSynced = true))
                 } else {
                     if (local.isDeleted) {
                         // Local đã xoá, ưu tiên xoá (không hồi sinh từ remote)

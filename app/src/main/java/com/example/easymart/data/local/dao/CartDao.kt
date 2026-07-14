@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.example.easymart.data.local.entity.CartEntity
 import com.example.easymart.data.local.entity.CartItemEntity
@@ -41,6 +42,52 @@ interface CartDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCartItem(cartItem: CartItemEntity)
+
+    @Query(
+        """
+        UPDATE cart_items
+        SET name = :name,
+            price = :price,
+            imageUrl = :imageUrl,
+            quantity = :quantity,
+            isSynced = :isSynced,
+            isDeleted = :isDeleted,
+            updatedAt = :updatedAt,
+            addAt = :addAt
+        WHERE cartId = :cartId AND productId = :productId
+        """
+    )
+    suspend fun updateCartItemByProduct(
+        cartId: String,
+        productId: Int,
+        name: String,
+        price: Double,
+        imageUrl: String?,
+        quantity: Int,
+        isSynced: Boolean,
+        isDeleted: Boolean,
+        updatedAt: Long,
+        addAt: Long
+    ): Int
+
+    @Transaction
+    suspend fun upsertCartItemByProduct(cartItem: CartItemEntity) {
+        val updatedRows = updateCartItemByProduct(
+            cartId = cartItem.cartId,
+            productId = cartItem.productId,
+            name = cartItem.name,
+            price = cartItem.price,
+            imageUrl = cartItem.imageUrl,
+            quantity = cartItem.quantity,
+            isSynced = cartItem.isSynced,
+            isDeleted = cartItem.isDeleted,
+            updatedAt = cartItem.updatedAt,
+            addAt = cartItem.addAt
+        )
+        if (updatedRows == 0) {
+            insertCartItem(cartItem.copy(id = 0))
+        }
+    }
 
     @Update
     suspend fun updateCartItem(cartItem: CartItemEntity)

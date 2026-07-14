@@ -6,7 +6,6 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 
-
 @Entity(
     tableName = "cart_items",
     foreignKeys = [
@@ -17,7 +16,11 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("cartId"), Index("productId")]
+    indices = [
+        Index("cartId"),
+        Index("productId"),
+        Index(value = ["cartId", "productId"], unique = true)
+    ]
 )
 
 data class CartItemEntity(
