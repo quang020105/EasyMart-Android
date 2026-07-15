@@ -15,6 +15,8 @@ data class OrderEntity(
     val userId: String,
     val orderNumber: String,
     val totalAmount: Long,
+    val subtotal: Long = totalAmount,
+    val shippingFee: Long = 0L,
     val orderStatus: OrderStatus = OrderStatus.CREATED,
     val paymentStatus: PaymentStatus = PaymentStatus.UNPAID,
     val paymentMethod: PaymentMethod = PaymentMethod.COD,

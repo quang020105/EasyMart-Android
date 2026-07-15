@@ -142,7 +142,9 @@ fun CheckOutRoute(
             checkoutViewModel.pay(
                 cartItems = itemsForCheckout,
                 address = selectedAddress,
-                paymentMethod = selectPaymentUiState.selectedMethod ?: PaymentMethod.COD
+                paymentMethod = selectPaymentUiState.selectedMethod ?: PaymentMethod.COD,
+                subtotal = subTotal,
+                shippingFee = shipping
             )
         }
     )

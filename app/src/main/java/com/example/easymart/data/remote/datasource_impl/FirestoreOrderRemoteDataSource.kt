@@ -90,7 +90,10 @@ class FirestoreOrderRemoteDataSource @Inject constructor(
     private fun DocumentSnapshot.toOrderRemoteDto(): OrderRemoteDto {
         val dto = toObject(OrderRemoteDto::class.java)
         if (dto != null) {
-            return dto.copy(remoteId = dto.remoteId ?: id)
+            return dto.copy(
+                remoteId = dto.remoteId ?: id,
+                subtotal = dto.subtotal.takeIf { it > 0L } ?: dto.totalAmount
+            )
         }
 
         return OrderRemoteDto(
@@ -111,6 +114,8 @@ class FirestoreOrderRemoteDataSource @Inject constructor(
                 }
                 ?: emptyList(),
             totalAmount = getLong("totalAmount") ?: 0L,
+            subtotal = getLong("subtotal") ?: getLong("totalAmount") ?: 0L,
+            shippingFee = getLong("shippingFee") ?: 0L,
             orderStatus = getString("orderStatus").orEmpty(),
             paymentStatus = getString("paymentStatus").orEmpty(),
             paymentMethod = getString("paymentMethod").orEmpty(),

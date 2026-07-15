@@ -8,6 +8,8 @@ data class Order(
     val orderNumber: String,
     val items: List<OrderItem> = emptyList(),
     val totalAmount: Long,
+    val subtotal: Long = totalAmount,
+    val shippingFee: Long = 0L,
     val status: OrderStatus = OrderStatus.CREATED,
     val paymentStatus: PaymentStatus = PaymentStatus.UNPAID,
     val paymentMethod: PaymentMethod = PaymentMethod.COD,

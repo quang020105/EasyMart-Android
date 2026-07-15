@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.roundToLong
 import javax.inject.Inject
 
 @HiltViewModel
@@ -66,7 +67,9 @@ class CheckoutViewModel @Inject constructor(
     fun pay(
         cartItems: List<CartItem>,
         address: Address?,
-        paymentMethod: PaymentMethod?
+        paymentMethod: PaymentMethod?,
+        subtotal: Double,
+        shippingFee: Double
     ) {
 
         val userId = uiState.value.currentUserId
@@ -98,11 +101,17 @@ class CheckoutViewModel @Inject constructor(
             phone = address.phone,
             addressString = address.addressString,
         )
+        val subtotalAmount = subtotal.roundToLong()
+        val shippingFeeAmount = shippingFee.roundToLong()
+        val totalAmount = (subtotal + shippingFee).roundToLong()
+
         val order = Order(
             userId = userId, //getCurrentUserIdUseCase() chưa xử lý
             orderNumber = "",//chưa xử lý
             items = cartItems.map { it.cartToOrderItem() },
-            totalAmount = cartItems.sumOf { it.totalPrice }.toLong(),
+            totalAmount = totalAmount,
+            subtotal = subtotalAmount,
+            shippingFee = shippingFeeAmount,
             status = OrderStatus.CREATED,
             paymentStatus = PaymentStatus.UNPAID,
             paymentMethod = paymentMethod,

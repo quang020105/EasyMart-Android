@@ -7,6 +7,8 @@ data class OrderRemoteDto(
     val orderNumber: String = "",
     val items: List<OrderRemoteItemDto> = emptyList(),
     val totalAmount: Long = 0L,
+    val subtotal: Long = totalAmount,
+    val shippingFee: Long = 0L,
     val orderStatus: String = "",
     val paymentStatus: String = "",
     val paymentMethod: String = "",

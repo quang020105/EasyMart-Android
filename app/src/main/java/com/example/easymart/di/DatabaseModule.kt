@@ -248,6 +248,14 @@ object DatabaseModule {
         }
     }
 
+    private val MIGRATION_38_39 = object : Migration(38, 39) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE orders ADD COLUMN subtotal INTEGER NOT NULL DEFAULT 0")
+            db.execSQL("ALTER TABLE orders ADD COLUMN shippingFee INTEGER NOT NULL DEFAULT 0")
+            db.execSQL("UPDATE orders SET subtotal = totalAmount WHERE subtotal = 0")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext appContext: Context): EasyMartDatabase {
@@ -275,7 +283,8 @@ object DatabaseModule {
                 MIGRATION_34_35,
                 MIGRATION_35_36,
                 MIGRATION_36_37,
-                MIGRATION_37_38
+                MIGRATION_37_38,
+                MIGRATION_38_39
             )
             .fallbackToDestructiveMigration(false).build()
     }

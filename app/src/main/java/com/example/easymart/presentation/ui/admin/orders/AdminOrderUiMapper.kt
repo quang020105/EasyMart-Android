@@ -26,8 +26,10 @@ fun Order.toAdminOrderUiModel(): AdminOrdersUiModel {
 }
 
 fun Order.toAdminOrderDetailUiModel(): AdminOrderDetailUiModel {
-    val subtotal = items.sumOf { (it.product.price * it.quantity).toLong() }
-    val shippingFee = (totalAmount - subtotal).coerceAtLeast(0L)
+    val fallbackSubtotal = items.sumOf { (it.product.price * it.quantity).toLong() }
+    val subtotal = this.subtotal.takeIf { it > 0L } ?: fallbackSubtotal
+    val shippingFee = this.shippingFee.takeIf { it > 0L }
+        ?: (totalAmount - subtotal).coerceAtLeast(0L)
 
     return AdminOrderDetailUiModel(
         orderCode = orderNumber.ifBlank { remoteId ?: "ORD-$id" },
