@@ -2,7 +2,6 @@ package com.example.easymart.di
 
 import android.content.Context
 import com.example.easymart.data.local.dao.AddressDao
-import com.example.easymart.data.local.dao.CartDao
 import com.example.easymart.data.local.dao.OrderDao
 import com.example.easymart.data.local.dao.ProductDao
 import com.example.easymart.data.local.dao.WalletDao
@@ -101,10 +100,9 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideCartRepository(
-        dao: CartDao,
         localDS: CartLocalDataSource,
         remoteDS: CartRemoteDataSource
-    ): CartRepository = CartRepositoryImpl(dao, localDS, remoteDS)
+    ): CartRepository = CartRepositoryImpl(localDS, remoteDS)
 
     @Provides
     @Singleton

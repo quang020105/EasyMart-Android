@@ -29,6 +29,7 @@ import com.example.easymart.domain.usecase.cart.AddToCartUseCase
 import com.example.easymart.domain.usecase.cart.ClearAllCartsUseCase
 import com.example.easymart.domain.usecase.cart.MergeGuestCartIntoUserUseCase
 import com.example.easymart.domain.usecase.cart.ObserveCartUseCase
+import com.example.easymart.domain.usecase.cart.RemovePurchasedCartItemsUseCase
 import com.example.easymart.domain.usecase.cart.SyncCartUseCase
 import com.example.easymart.domain.usecase.cart.UpdateCartQuantityUseCase
 import com.example.easymart.domain.usecase.image_search.SearchByImageUseCase
@@ -119,6 +120,10 @@ object UseCaseModule {
     @Provides
     fun provideSyncCartUseCase(cartRepo: CartRepository): SyncCartUseCase =
         SyncCartUseCase(cartRepo)
+
+    @Provides
+    fun provideRemovePurchasedCartItemsUseCase(cartRepo: CartRepository): RemovePurchasedCartItemsUseCase =
+        RemovePurchasedCartItemsUseCase(cartRepo)
 
 
     //search

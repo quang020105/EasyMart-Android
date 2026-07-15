@@ -55,6 +55,8 @@ class FirestoreProductRemoteDataSource @Inject constructor(
 
         val now = System.currentTimeMillis()
         firestore.runTransaction { transaction ->
+            val updates = mutableListOf<() -> Unit>()
+
             items.forEach { (productId, quantity) ->
                 require(quantity > 0) { "Invalid quantity for product $productId" }
 
@@ -66,15 +68,19 @@ class FirestoreProductRemoteDataSource @Inject constructor(
                 val currentSold = snapshot.getLong("soldQuantity")?.toInt() ?: 0
                 check(currentStock >= quantity) { "Product $productId does not have enough stock" }
 
-                transaction.update(
-                    ref,
-                    mapOf(
-                        "stockQuantity" to currentStock - quantity,
-                        "soldQuantity" to currentSold + quantity,
-                        "updatedAt" to now
+                updates += {
+                    transaction.update(
+                        ref,
+                        mapOf(
+                            "stockQuantity" to currentStock - quantity,
+                            "soldQuantity" to currentSold + quantity,
+                            "updatedAt" to now
+                        )
                     )
-                )
+                }
             }
+
+            updates.forEach { update -> update() }
             null
         }.await()
     }

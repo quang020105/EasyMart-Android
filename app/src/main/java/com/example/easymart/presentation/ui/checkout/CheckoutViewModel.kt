@@ -12,6 +12,7 @@ import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentResult
 import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
+import com.example.easymart.domain.usecase.cart.RemovePurchasedCartItemsUseCase
 import com.example.easymart.domain.usecase.order.DeductStockAfterOrderSuccessUseCase
 import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
 import com.example.easymart.domain.usecase.order.SyncOrderUseCase
@@ -39,7 +40,8 @@ class CheckoutViewModel @Inject constructor(
     private val updateLocalOrderPaymentStatusUseCase: UpdateLocalOrderPaymentStatusUseCase,
     private val syncOrderUseCase: SyncOrderUseCase,
     private val getProductUseCase: GetProductUseCase,
-    private val deductStockAfterOrderSuccessUseCase: DeductStockAfterOrderSuccessUseCase
+    private val deductStockAfterOrderSuccessUseCase: DeductStockAfterOrderSuccessUseCase,
+    private val removePurchasedCartItemsUseCase: RemovePurchasedCartItemsUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CheckoutUiState())
     val uiState: StateFlow<CheckoutUiState> = _uiState
@@ -126,6 +128,7 @@ class CheckoutViewModel @Inject constructor(
                     _uiState.update { it.copy(isProcessing = true) }
                 }
                 .collect { result ->
+                    Log.d("CheckoutViewModel", "Payment result: $result")
                     when (result) {
                         is PaymentResult.Pending -> {
                             _uiState.update { it.copy(isProcessing = true) }
@@ -159,6 +162,10 @@ class CheckoutViewModel @Inject constructor(
                             _uiState.update {
                                 it.copy(isProcessing = false, order = order)
                             }
+
+                            //xóa sản phẩm trong giỏ hàng sau khi đặt hàng thành công
+                            removePurchasedCartItemsUseCase(cartItems)
+
                             if (paymentMethod == PaymentMethod.ONLINE_GATEWAY) {
                                 _uiEvent.emit(
                                     CheckoutUiEvent.NavigateToOnlineProcessing(

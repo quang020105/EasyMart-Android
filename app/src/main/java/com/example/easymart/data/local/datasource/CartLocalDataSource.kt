@@ -32,4 +32,41 @@ class CartLocalDataSource @Inject constructor(
     fun observeCartItems(cartId: String): Flow<List<CartItemEntity>> {
         return cartDao.getAllCartItems(cartId)
     }
+
+    suspend fun getGuestCart(): CartEntity? = cartDao.getGuestCart()
+
+    suspend fun getCartById(cartId: String): CartEntity? = cartDao.getCartById(cartId)
+
+    suspend fun deleteCart(cart: CartEntity) = cartDao.deleteCart(cart)
+
+    suspend fun getExistingByProductId(cartId: String, productId: Int): CartItemEntity? =
+        cartDao.getExistingByProductId(cartId, productId)
+
+    suspend fun getAllCartItemsOnce(cartId: String): List<CartItemEntity> =
+        cartDao.getAllCartItemsOnce(cartId)
+
+    suspend fun getAllCartItemsIncludingDeleted(cartId: String): List<CartItemEntity> =
+        cartDao.getAllCartItemsIncludingDeleted(cartId)
+
+    suspend fun getUnsyncedCartItems(cartId: String): List<CartItemEntity> =
+        cartDao.getUnsyncedCartItems(cartId)
+
+    suspend fun getCartIdByCartItemId(cartItemId: Int): String? =
+        cartDao.getCartIdByCartItemId(cartItemId)
+
+    suspend fun insertCartItem(cartItem: CartItemEntity) = cartDao.insertCartItem(cartItem)
+
+    suspend fun updateCartItem(cartItem: CartItemEntity) = cartDao.updateCartItem(cartItem)
+
+    suspend fun upsertCartItemByProduct(cartItem: CartItemEntity) =
+        cartDao.upsertCartItemByProduct(cartItem)
+
+    suspend fun deleteCartItem(cartItem: CartItemEntity) = cartDao.deleteCartItem(cartItem)
+
+    suspend fun clearAllCartItems(cartId: String) = cartDao.clearAllCartItems(cartId)
+
+    suspend fun markCartItemDeleted(id: Int, updatedAt: Long) =
+        cartDao.markCartItemDeleted(id, updatedAt)
+
+    suspend fun markCartItemSynced(id: Int) = cartDao.markCartItemSynced(id)
 }

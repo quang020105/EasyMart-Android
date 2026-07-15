@@ -10,4 +10,6 @@ interface CartRepository {
     suspend fun syncCart(userId: String)
     //suspend fun clearAllCartItems()
     suspend fun updateQuantity(cartItem: CartItem, delta: Int)
+    suspend fun removeCartItem(cartItem: CartItem)
+    suspend fun removePurchasedCartItems(cartItems: List<CartItem>)
 }

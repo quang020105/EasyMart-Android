@@ -1,7 +1,6 @@
 package com.example.easymart.data.repositoryimpl
 
 import android.util.Log
-import com.example.easymart.data.local.dao.CartDao
 import com.example.easymart.data.local.datasource.CartLocalDataSource
 import com.example.easymart.data.mapper.toDomain
 import com.example.easymart.data.mapper.toEntity
@@ -20,7 +19,6 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CartRepositoryImpl @Inject constructor(
-    private val cartDao: CartDao,
     private val localDS: CartLocalDataSource,
     private val remoteDS: CartRemoteDataSource
 ) : CartRepository {
@@ -30,7 +28,7 @@ class CartRepositoryImpl @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun observeCartItems(userId: String?): Flow<List<CartItem>> {
         val cart = localDS.getOrCreateCart(userId)
-        return cartDao.getAllCartItems(cart.id).map { entities ->
+        return localDS.observeCartItems(cart.id).map { entities ->
             entities.map { it.toDomain() }
         }
 
@@ -54,7 +52,7 @@ class CartRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             val cart = localDS.getOrCreateCart(userId)
             val now = System.currentTimeMillis()
-            val existing = cartDao.getExistingByProductId(cart.id, cartItem.product.id)
+            val existing = localDS.getExistingByProductId(cart.id, cartItem.product.id)
             if (existing != null) {
                 val newQuantity = existing.quantity + cartItem.quantity
                 val updated = existing.copy(
@@ -63,19 +61,19 @@ class CartRepositoryImpl @Inject constructor(
                     isDeleted = false,
                     updatedAt = now
                 )
-                cartDao.updateCartItem(updated)
+                localDS.updateCartItem(updated)
 //                if (userId != null) {
 //                    remoteDS.upsertCartItem(userId, updated.toRemoteDto())
 //                }
                 Log.d("CartRepositoryImpl", "updateCartItem: ${cartItem.toEntity(cart.id)}")
             } else {
-                cartDao.insertCartItem(cartItem.toEntity(cart.id).copy(
+                localDS.insertCartItem(cartItem.toEntity(cart.id).copy(
                     isSynced = false,
                     isDeleted = false,
                     updatedAt = now
                 ))
 //                if (userId != null) {
-//                    val inserted = cartDao.getExistingByProductId(cart.id, cartItem.product.id)
+//                    val inserted = localDS.getExistingByProductId(cart.id, cartItem.product.id)
 //                    if (inserted != null) {
 //                        remoteDS.upsertCartItem(userId, inserted.toRemoteDto())
 //                    }
@@ -87,11 +85,11 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun mergeGuestCartIntoUser(userId: String) {
         withContext(Dispatchers.IO) {
-            val guestCart = cartDao.getGuestCart() ?: return@withContext // nếu không có giỏ hàng thì return
+            val guestCart = localDS.getGuestCart() ?: return@withContext // nếu không có giỏ hàng thì return
             val userCart = localDS.getOrCreateCart(userId) //lấy hoặc tạo giỏ hàng cho user
 
-            val guestItems = cartDao.getAllCartItemsOnce(guestCart.id)
-            val userItems = cartDao.getAllCartItemsOnce(userCart.id)
+            val guestItems = localDS.getAllCartItemsOnce(guestCart.id)
+            val userItems = localDS.getAllCartItemsOnce(userCart.id)
 
             //trả về danh sách sản phẩm được gộp dựa vào productId
             val mergedItems = (guestItems + userItems)
@@ -108,12 +106,12 @@ class CartRepositoryImpl @Inject constructor(
                 }
 
             //thay thế danh sách sản phẩm trong giỏ hàng của user bằng danh sách đã gộp
-            cartDao.clearAllCartItems(userCart.id)
-            mergedItems.forEach { item -> cartDao.insertCartItem(item) }
+            localDS.clearAllCartItems(userCart.id)
+            mergedItems.forEach { item -> localDS.insertCartItem(item) }
 
             //xóa giỏ hàng của guest sau khi đã gộp
-            cartDao.clearAllCartItems(guestCart.id)
-            cartDao.deleteCart(guestCart)
+            localDS.clearAllCartItems(guestCart.id)
+            localDS.deleteCart(guestCart)
 
             remoteDS.replaceAllCartItems(userId, mergedItems.map { it.toRemoteDto() })
         }
@@ -123,15 +121,15 @@ class CartRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             syncMutex.withLock {
             val cart = localDS.getOrCreateCart(userId)
-            val unSyncedItems = cartDao.getUnsyncedCartItems(cartId = cart.id)
+            val unSyncedItems = localDS.getUnsyncedCartItems(cartId = cart.id)
             unSyncedItems.forEach { local ->
                 runCatching {
                     if (local.isDeleted || local.quantity <= 0) {
                         remoteDS.deleteCartItem(userId, local.productId)
-                        cartDao.deleteCartItem(local)
+                        localDS.deleteCartItem(local)
                     } else {
                         remoteDS.upsertCartItem(userId, local.toRemoteDto())
-                        cartDao.markCartItemSynced(local.id)
+                        localDS.markCartItemSynced(local.id)
                     }
                 }.onFailure {
                     Log.e("CartRepositoryImpl", "Đồng bộ thất bại ${local.id}", it)
@@ -145,22 +143,40 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun updateQuantity(cartItem: CartItem, delta: Int) {
         withContext(Dispatchers.IO) {
-            val cartId = cartDao.getCartIdByCartItemId(cartItem.id) ?: return@withContext
-            cartDao.getCartById(cartId) ?: return@withContext
-            val existing = cartDao.getExistingByProductId(cartId, cartItem.product.id) ?: return@withContext
+            val cartId = localDS.getCartIdByCartItemId(cartItem.id) ?: return@withContext
+            localDS.getCartById(cartId) ?: return@withContext
+            val existing = localDS.getExistingByProductId(cartId, cartItem.product.id) ?: return@withContext
 
             val newQuantity = existing.quantity + delta
             if (newQuantity <= 0) {
-                cartDao.markCartItemDeleted(existing.id, System.currentTimeMillis())
+                localDS.markCartItemDeleted(existing.id, System.currentTimeMillis())
                 return@withContext
             }
 
-            cartDao.updateCartItem(cartItem.toEntity(cartId).copy(
+            localDS.updateCartItem(cartItem.toEntity(cartId).copy(
                 quantity = newQuantity,
                 isSynced = false,
                 isDeleted = false,
                 updatedAt = System.currentTimeMillis()
             ))
+        }
+    }
+
+    override suspend fun removeCartItem(cartItem: CartItem) {
+        withContext(Dispatchers.IO){
+            val cartId = localDS.getCartIdByCartItemId(cartItem.id) ?: return@withContext
+            val existing = localDS.getExistingByProductId(cartId, cartItem.product.id) ?: return@withContext
+            localDS.markCartItemDeleted(existing.id, System.currentTimeMillis())
+        }
+    }
+
+    override suspend fun removePurchasedCartItems(cartItems: List<CartItem>) {
+        withContext(Dispatchers.IO) {
+            cartItems.forEach { cartItem ->
+                val cartId = localDS.getCartIdByCartItemId(cartItem.id) ?: return@forEach
+                val existing = localDS.getExistingByProductId(cartId, cartItem.product.id) ?: return@forEach
+                localDS.markCartItemDeleted(existing.id, System.currentTimeMillis())
+            }
         }
     }
 
@@ -173,7 +189,7 @@ class CartRepositoryImpl @Inject constructor(
                 .groupBy { it.productId }
                 .mapNotNull { (_, items) -> items.maxByOrNull { it.updatedAt } }
 
-            val localItems = cartDao.getAllCartItemsIncludingDeleted(cartId)
+            val localItems = localDS.getAllCartItemsIncludingDeleted(cartId)
             val localByProductId = localItems.associateBy { it.productId }
             val remoteByProductId = normalizedRemoteItems.associateBy { it.productId }
 
@@ -181,7 +197,7 @@ class CartRepositoryImpl @Inject constructor(
             normalizedRemoteItems.forEach { remote ->
                 val local = localByProductId[remote.productId]
                 if (local == null) {
-                    cartDao.upsertCartItemByProduct(remote.toEntity(cartId).copy(isSynced = true))
+                    localDS.upsertCartItemByProduct(remote.toEntity(cartId).copy(isSynced = true))
                 } else {
                     if (local.isDeleted) {
                         // Local đã xoá, ưu tiên xoá (không hồi sinh từ remote)
@@ -196,7 +212,7 @@ class CartRepositoryImpl @Inject constructor(
                         }
                         remoteIsNewer -> {
                             // Remote mới hơn, ưu tiên remote
-                            cartDao.updateCartItem(local.copy(
+                            localDS.updateCartItem(local.copy(
                                 name = remote.name,
                                 price = remote.price,
                                 imageUrl = remote.imageUrl,
@@ -215,7 +231,7 @@ class CartRepositoryImpl @Inject constructor(
             localItems.forEach { local ->
                 val remote = remoteByProductId[local.productId]
                 if (remote == null && local.isSynced) {
-                    cartDao.deleteCartItem(local)
+                    localDS.deleteCartItem(local)
                 }
             }
         }
