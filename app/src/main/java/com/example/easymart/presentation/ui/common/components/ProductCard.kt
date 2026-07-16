@@ -88,7 +88,7 @@ fun ProductCardPreview() {
             product = Product(
                 id = 1,
                 name = "Sample Product",
-                price = 9.99,
+                priceVnd = 249_000L,
                 imageRes = com.example.easymart.R.drawable.pic_shoe_1,
                 description = "This is a sample product description.",
                 imageUrl = ""

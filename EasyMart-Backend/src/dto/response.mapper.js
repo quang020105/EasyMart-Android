@@ -23,11 +23,15 @@ function mapProductDto(product) {
   const name = normalizeString(product.name || product.title);
   const imageUrl = normalizeString(product.imageUrl || product.image);
 
+  const priceVnd = normalizeNumber(product.priceVnd ?? product.price, 0);
+
   return {
     id: product.id,
     name,
     title: name,
-    price: normalizeNumber(product.price, 0),
+    price: priceVnd,
+    priceVnd,
+    currency: "VND",
     description: normalizeString(product.description),
     category: normalizeString(product.category),
     imageUrl,

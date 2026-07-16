@@ -13,10 +13,10 @@ data class CartUiState(
         get() = items.filter { it.isChecked }
 
     val subtotal
-        get() = selectedItems.sumOf { it.totalPrice }
+        get() = selectedItems.sumOf { it.totalPriceVnd }
 
     val shipping
-        get() = selectedItems.sumOf { it.quantity * (15000.0 / 26333) }
+        get() = selectedItems.sumOf { it.quantity * 15_000L }
 
     val total
         get() = subtotal + shipping

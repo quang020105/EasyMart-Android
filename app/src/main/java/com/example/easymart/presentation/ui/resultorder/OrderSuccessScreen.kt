@@ -142,7 +142,7 @@ fun OrderSuccessScreen(
 
                 InfoRow(
                     label = "Tổng thanh toán",
-                    value = totalAmount.toDouble().toVNDString(),
+                    value = totalAmount.toVNDString(),
                     dimens = dimens,
                     valueColor = MaterialTheme.colorScheme.primary,
                     bold = true

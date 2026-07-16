@@ -30,6 +30,7 @@ data class CartItemEntity(
     val productId: Int,
     val name: String,
     val price: Double,
+    val priceVnd: Long = 0L,
     val imageUrl: String?,
     val quantity: Int,
     val isSynced: Boolean = true, // đánh dấu đã đồng bộ với server hay chưa

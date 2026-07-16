@@ -4,7 +4,7 @@ data class Product(
     val id: Int,
     val name: String,
     val description: String?,
-    val price: Double,
+    val priceVnd: Long,
     val imageUrl: String,
     val imageRes: Int = 0,
     val images: List<ProductImage> = emptyList(),

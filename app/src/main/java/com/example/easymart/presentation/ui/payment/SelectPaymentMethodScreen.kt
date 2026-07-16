@@ -28,7 +28,7 @@ import com.example.easymart.utils.toVNDString
 
 @Composable
 fun SelectPaymentMethodScreen(
-    totalAmount: Double,
+    totalAmount: Long,
     uiState: PaymentUiState,
     onMethodSelected: (PaymentMethod) -> Unit,
     onConfirmClick: () -> Unit
@@ -107,7 +107,7 @@ fun SelectPaymentMethodScreen(
 fun SelectPaymentMethodScreenPreview(){
     EasyMartTheme {
         SelectPaymentMethodScreen(
-            120000.0,
+            120_000L,
             PaymentUiState(selectedMethod = PaymentMethod.COD),
             onMethodSelected = {},
             onConfirmClick = {}

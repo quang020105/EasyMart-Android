@@ -86,7 +86,7 @@ fun PaymentProduct(
                     maxLines = 2
                 )
                 Text(
-                    text = cartItem.product.price.toVNDString(),
+                    text = cartItem.product.priceVnd.toVNDString(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(vertical = dimens.spaceSm)

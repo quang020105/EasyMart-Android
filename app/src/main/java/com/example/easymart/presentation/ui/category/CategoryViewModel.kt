@@ -95,7 +95,7 @@ class CategoryViewModel @Inject constructor(
                         id = product.id,
                         product = product,
                         quantity = quantity,
-                        price = product.price
+                        unitPriceVnd = product.priceVnd
                     )
                 )
             }.onSuccess {
@@ -166,7 +166,7 @@ class CategoryViewModel @Inject constructor(
                 }
             }
             .filter { product ->
-                val priceVnd = product.price * VND_RATE
+                val priceVnd = product.priceVnd
                 val minPrice = priceFilter.minVnd
                 val maxPrice = priceFilter.maxVnd
                 (minPrice == null || priceVnd >= minPrice) &&
@@ -184,15 +184,11 @@ class CategoryViewModel @Inject constructor(
                             .thenBy { it.name }
                     )
                     CustomerProductSort.NAME_ASC -> products.sortedBy { it.name }
-                    CustomerProductSort.PRICE_ASC -> products.sortedBy { it.price }
-                    CustomerProductSort.PRICE_DESC -> products.sortedByDescending { it.price }
+                    CustomerProductSort.PRICE_ASC -> products.sortedBy { it.priceVnd }
+                    CustomerProductSort.PRICE_DESC -> products.sortedByDescending { it.priceVnd }
                     CustomerProductSort.SOLD_DESC -> products.sortedByDescending { it.soldQuantity }
                 }
             }
             .toList()
-    }
-
-    private companion object {
-        const val VND_RATE = 26_333.0
     }
 }

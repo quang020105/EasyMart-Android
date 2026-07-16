@@ -24,5 +24,6 @@ data class OrderItemEntity(
     val productName: String,
     val productImage: String,
     val price: Double,
+    val priceVnd: Long = 0L,
     val quantity: Int
 )

@@ -30,12 +30,21 @@ function toCandidateProduct(hit) {
   const title = String(hit.title || hit.name || "").trim();
   const image = String(hit.image || hit.imageUrl || "").trim();
 
+  const legacyPrice = Number(hit.price) || 0;
+  const priceVnd = Number(hit.priceVnd) || (
+    Number.isFinite(id) && id >= 1 && id <= 20
+      ? Math.round(legacyPrice * 26333)
+      : Math.round(legacyPrice)
+  );
+
   return {
     id: Number.isFinite(id) ? id : rawId,
     title,
     name: String(hit.name || title).trim(),
     brand: String(hit.brand || "").trim(),
-    price: Number(hit.price) || 0,
+    price: priceVnd,
+    priceVnd,
+    currency: "VND",
     description: String(hit.description || "").trim(),
     category: String(hit.category || "").trim(),
     image,

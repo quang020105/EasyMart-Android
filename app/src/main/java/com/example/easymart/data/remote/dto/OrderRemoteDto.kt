@@ -9,6 +9,8 @@ data class OrderRemoteDto(
     val totalAmount: Long = 0L,
     val subtotal: Long = totalAmount,
     val shippingFee: Long = 0L,
+    val currency: String = "VND",
+    val moneySchemaVersion: Int = 2,
     val orderStatus: String = "",
     val paymentStatus: String = "",
     val paymentMethod: String = "",
@@ -25,5 +27,6 @@ data class OrderRemoteItemDto(
     val productName: String = "",
     val productImage: String = "",
     val price: Double = 0.0,
+    val priceVnd: Long = 0L,
     val quantity: Int = 0
 )

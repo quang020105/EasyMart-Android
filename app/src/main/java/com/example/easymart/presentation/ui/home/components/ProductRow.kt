@@ -44,7 +44,7 @@ fun ProductRow(
             )
             Spacer(modifier = Modifier.padding(top = dimens.spaceSm))
             Text(
-                text = product.price.toVNDString(),
+                text = product.priceVnd.toVNDString(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -68,7 +68,7 @@ fun ProductRowPreview() {
                 id = 1,
                 name = "Sample Product",
                 description = "This is a sample product description.",
-                price = 304.5,
+                priceVnd = 304_500L,
                 imageRes = R.drawable.pic_shoe_1,
                 imageUrl = ""
             ),

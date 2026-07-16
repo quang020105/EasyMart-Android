@@ -48,6 +48,7 @@ interface CartDao {
         UPDATE cart_items
         SET name = :name,
             price = :price,
+            priceVnd = :priceVnd,
             imageUrl = :imageUrl,
             quantity = :quantity,
             isSynced = :isSynced,
@@ -62,6 +63,7 @@ interface CartDao {
         productId: Int,
         name: String,
         price: Double,
+        priceVnd: Long,
         imageUrl: String?,
         quantity: Int,
         isSynced: Boolean,
@@ -77,6 +79,7 @@ interface CartDao {
             productId = cartItem.productId,
             name = cartItem.name,
             price = cartItem.price,
+            priceVnd = cartItem.priceVnd,
             imageUrl = cartItem.imageUrl,
             quantity = cartItem.quantity,
             isSynced = cartItem.isSynced,

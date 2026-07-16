@@ -63,9 +63,9 @@ fun CheckoutScreen(
     address: Address? = null,
     paymentMethod: PaymentMethod? = null,
     cartItems: List<CartItem> = emptyList(),
-    subTotal: Double = 0.0,
-    shipping: Double = 0.0,
-    total: Double = 0.0,
+    subTotal: Long = 0L,
+    shipping: Long = 0L,
+    total: Long = 0L,
     isLoading: Boolean = false,
     isAddressLoading: Boolean = false,
     isQuickOrder: Boolean = false,
@@ -495,9 +495,9 @@ fun CheckoutScreenPreview() {
             ),
             paymentMethod = PaymentMethod.COD,
             cartItems = mockCartItems,
-            subTotal = 290.0,
-            shipping = 10.0,
-            total = 300.0,
+            subTotal = 290_000L,
+            shipping = 10_000L,
+            total = 300_000L,
             isAddressLoading = false
         )
     }

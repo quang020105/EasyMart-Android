@@ -109,6 +109,7 @@ class FirestoreOrderRemoteDataSource @Inject constructor(
                         productName = item["productName"] as? String ?: "",
                         productImage = item["productImage"] as? String ?: "",
                         price = (item["price"] as? Number)?.toDouble() ?: 0.0,
+                        priceVnd = (item["priceVnd"] as? Number)?.toLong() ?: 0L,
                         quantity = (item["quantity"] as? Number)?.toInt() ?: 0
                     )
                 }
@@ -116,6 +117,8 @@ class FirestoreOrderRemoteDataSource @Inject constructor(
             totalAmount = getLong("totalAmount") ?: 0L,
             subtotal = getLong("subtotal") ?: getLong("totalAmount") ?: 0L,
             shippingFee = getLong("shippingFee") ?: 0L,
+            currency = getString("currency") ?: "VND",
+            moneySchemaVersion = (get("moneySchemaVersion") as? Number)?.toInt() ?: 1,
             orderStatus = getString("orderStatus").orEmpty(),
             paymentStatus = getString("paymentStatus").orEmpty(),
             paymentMethod = getString("paymentMethod").orEmpty(),

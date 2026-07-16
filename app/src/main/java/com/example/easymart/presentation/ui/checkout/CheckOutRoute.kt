@@ -122,8 +122,8 @@ fun CheckOutRoute(
         cartUiState.selectedItems
     }
 
-    val subTotal = itemsForCheckout.sumOf { it.totalPrice }
-    val shipping = itemsForCheckout.sumOf { it.quantity * (15000.0 / 26333) }
+    val subTotal = itemsForCheckout.sumOf { it.totalPriceVnd }
+    val shipping = itemsForCheckout.sumOf { it.quantity * 15_000L }
     val total = subTotal + shipping
 
     CheckoutScreen(

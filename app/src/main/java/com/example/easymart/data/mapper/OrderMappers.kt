@@ -16,6 +16,8 @@ import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.model.SyncStatus
+import com.example.easymart.utils.DEFAULT_SHIPPING_FEE_PER_ITEM_VND
+import com.example.easymart.utils.legacyPriceToVnd
 
 fun Order.toEntity(): OrderEntity {
     return OrderEntity(
@@ -70,7 +72,7 @@ fun OrderItemEntity.toDomain(): OrderItem {
             id = this.productId,
             name = this.productName,
             description = "",
-            price = this.price,
+            priceVnd = priceVnd.takeIf { it > 0L } ?: legacyPriceToVnd(productId, price),
             imageUrl = this.productImage,
         ),
         quantity = quantity
@@ -83,7 +85,8 @@ fun OrderItem.toEntity(): OrderItemEntity {
         productId = product.id,
         productName = product.name,
         productImage = product.imageUrl,
-        price = product.price,
+        price = product.priceVnd.toDouble(),
+        priceVnd = product.priceVnd,
         quantity = quantity
     )
 }
@@ -124,6 +127,8 @@ fun OrderWithItems.toRemoteDto(): OrderRemoteDto {
         totalAmount = order.totalAmount,
         subtotal = order.subtotal,
         shippingFee = order.shippingFee,
+        currency = "VND",
+        moneySchemaVersion = 2,
         orderStatus = order.orderStatus.name,
         paymentStatus = order.paymentStatus.name,
         paymentMethod = order.paymentMethod.name,
@@ -170,13 +175,39 @@ fun OrderRemoteDto.toDomainOrder(): Order {
     )
 }
 
+fun OrderRemoteDto.toVndNormalized(): OrderRemoteDto {
+    if (items.isEmpty()) return this
+
+    val normalizedItems = items.map { item ->
+        val unitPriceVnd = item.priceVnd.takeIf { it > 0L }
+            ?: legacyPriceToVnd(item.productId, item.price)
+        item.copy(price = unitPriceVnd.toDouble(), priceVnd = unitPriceVnd)
+    }
+
+    if (currency == "VND" && moneySchemaVersion >= 2 && normalizedItems == items) {
+        return this
+    }
+
+    val subtotalVnd = normalizedItems.sumOf { it.priceVnd * it.quantity }
+    val shippingFeeVnd = normalizedItems.sumOf { it.quantity } * DEFAULT_SHIPPING_FEE_PER_ITEM_VND
+    return copy(
+        items = normalizedItems,
+        subtotal = subtotalVnd,
+        shippingFee = shippingFeeVnd,
+        totalAmount = subtotalVnd + shippingFeeVnd,
+        currency = "VND",
+        moneySchemaVersion = 2
+    )
+}
+
 fun OrderRemoteItemDto.toEntity(orderId: Int = 0): OrderItemEntity {
     return OrderItemEntity(
         orderId = orderId,
         productId = productId,
         productName = productName,
         productImage = productImage,
-        price = price,
+        price = priceVnd.toDouble(),
+        priceVnd = priceVnd,
         quantity = quantity
     )
 }
@@ -186,7 +217,8 @@ private fun OrderItemEntity.toRemoteDto(): OrderRemoteItemDto {
         productId = productId,
         productName = productName,
         productImage = productImage,
-        price = price,
+        price = priceVnd.toDouble(),
+        priceVnd = priceVnd,
         quantity = quantity
     )
 }
@@ -204,7 +236,7 @@ fun OrderItem.toDto(): OrderItemDto {
     return OrderItemDto(
         productId = product.id,
         quantity = quantity,
-        price = product.price
+        priceVnd = product.priceVnd
     )
 }
 

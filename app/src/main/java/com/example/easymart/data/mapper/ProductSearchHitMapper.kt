@@ -3,6 +3,7 @@ package com.example.easymart.data.mapper
 import android.annotation.SuppressLint
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.model.ProductRating
+import com.example.easymart.utils.legacyPriceToVnd
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -31,7 +32,8 @@ fun mapProductSearchHitJson(json: String): Product? {
         id = id,
         name = name,
         description = root.readString("description"),
-        price = root.readDouble("price") ?: 0.0,
+        priceVnd = root.readLong("priceVnd")
+            ?: legacyPriceToVnd(id, root.readDouble("price") ?: 0.0),
         imageUrl = imageUrl,
         imageUrls = imageUrls,
         brand = root.readString("brand").orEmpty(),

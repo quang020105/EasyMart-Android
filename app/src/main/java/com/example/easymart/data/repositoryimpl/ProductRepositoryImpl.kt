@@ -175,15 +175,26 @@ class ProductRepositoryImpl @Inject constructor(
             val remoteById = remote.associateBy { it.id }
 
             remote.forEach { remoteItem ->
+                val normalizedRemote = remoteItem.remoteToEntity()
+                // nếu sản phẩm nào trên remote chưa có giá VND hoặc
+                // chưa có schema version >= 2 thì push lại lên firestore để cập nhật(sau khi dev đổi đơn vị tiền)
+                if (
+                    remoteItem.priceVnd <= 0L ||
+                    remoteItem.currency != "VND" ||
+                    remoteItem.moneySchemaVersion < 2
+                ) {
+                    firestoreDS.upsertProduct(normalizedRemote.toRemoteDto())
+                }
+
                 val local = localById[remoteItem.id]
                 if (local == null) {
                     Log.d("ProductRepositoryImpl", "syncProducts: Thêm mới từ remote ${remoteItem.id}")
-                    localDS.upsert(remoteItem.remoteToEntity())
+                    localDS.upsert(normalizedRemote)
                 } else {
                     if (!local.isSynced && local.updatedAt >= remoteItem.updatedAt) {
                         return@forEach
                     }
-                    localDS.upsert(remoteItem.remoteToEntity())
+                    localDS.upsert(normalizedRemote)
                     Log.d("ProductRepositoryImpl", "syncProducts: Cập nhật từ remote ${remoteItem}")
                 }
             }

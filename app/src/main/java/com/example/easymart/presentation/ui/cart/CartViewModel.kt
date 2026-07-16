@@ -37,8 +37,6 @@ class CartViewModel @Inject constructor(
     private val syncCartUseCase: SyncCartUseCase
 ) : ViewModel() {
     //phí ship mặc định
-    private val shippingPerItem = 15000 * 1.0 / 26333
-
     private val _uiState = MutableStateFlow(CartUiState())
     val uiState: StateFlow<CartUiState> = _uiState.asStateFlow()
 
@@ -146,7 +144,7 @@ class CartViewModel @Inject constructor(
                     id = product.id,
                     product = product,
                     quantity = quantity,
-                    price = product.price,
+                    unitPriceVnd = product.priceVnd,
                 )
                 addToCartUS(userId, newCartItem)
             }.onSuccess {

@@ -70,7 +70,7 @@ fun CategoryProductCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = product.price.toVNDString(),
+                    text = product.priceVnd.toVNDString(),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.primary,

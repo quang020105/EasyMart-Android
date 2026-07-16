@@ -50,7 +50,7 @@ internal fun ProductPurchaseCard(
     val dimens = LocalAppDimens.current
     val appColors = LocalAppColors.current
     val canIncrease = inStock && quantity < product.stockQuantity
-    val totalPrice = product.price * quantity
+    val totalPriceVnd = product.priceVnd * quantity
 
     SurfaceCard(modifier = modifier.fillMaxWidth()) {
         Column(
@@ -69,7 +69,7 @@ internal fun ProductPurchaseCard(
                         color = appColors.textSecondary
                     )
                     Text(
-                        text = "Tạm tính ${totalPrice.toVNDString()}",
+                        text = "Tạm tính ${totalPriceVnd.toVNDString()}",
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = appColors.textPrimary
                     )

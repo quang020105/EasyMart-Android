@@ -60,7 +60,7 @@ fun FeatureProductCardPreview() {
                     id = 1,
                     name = "Sample Product",
                     imageUrl = "",
-                    price = 9.99,
+                    priceVnd = 249_000L,
                     description = "This is a sample product description.",
                     imageRes = R.drawable.pic_shoe_1
                 ),

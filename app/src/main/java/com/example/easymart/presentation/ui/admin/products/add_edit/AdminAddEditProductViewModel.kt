@@ -95,7 +95,7 @@ class AdminAddEditProductViewModel @Inject constructor(
                             storagePath = product.storagePath,
                             title = product.name,
                             brand = product.brand,
-                            price = product.price.toString(),
+                            price = product.priceVnd.toString(),
                             description = product.description.orEmpty(),
                             category = product.category,
                             quantity = product.stockQuantity.toString(),
@@ -153,7 +153,7 @@ class AdminAddEditProductViewModel @Inject constructor(
             name = current.title.trim(),
             brand = current.brand.trim(),
             description = current.description.trim(),
-            price = current.price.trim().toDouble(),
+            priceVnd = current.price.filter(Char::isDigit).toLong(),
             imageUrl = if (isMainRemote) mainUri else "",
             localImageUri = if (isMainRemote) null else mainUri,
             imageUrls = remoteSecondary,
@@ -409,7 +409,7 @@ class AdminAddEditProductViewModel @Inject constructor(
             isValid = false
         }
 
-        val price = state.price.trim().toDoubleOrNull()
+        val price = state.price.filter(Char::isDigit).toLongOrNull()
         if (price == null || price <= 0) {
             next = next.copy(priceError = "Giá phải là số > 0")
             isValid = false

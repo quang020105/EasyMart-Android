@@ -201,11 +201,11 @@ fun filterProducts(uiState: AdminProductsUiState): List<Product> {
     return when (uiState.sortType) {
         AdminProductSort.UPDATED_DESC -> sourceFiltered.sortedByDescending { it.updatedAt }
         AdminProductSort.NAME_ASC -> sourceFiltered.sortedBy { it.name.lowercase() }
-        AdminProductSort.PRICE_ASC -> sourceFiltered.sortedBy { it.price }
+        AdminProductSort.PRICE_ASC -> sourceFiltered.sortedBy { it.priceVnd }
     }
 }
 
-fun formatPrice(price: Double): String {
+fun formatPrice(price: Long): String {
     return "${"%,d".format(price.toLong())} đ"
 }
 

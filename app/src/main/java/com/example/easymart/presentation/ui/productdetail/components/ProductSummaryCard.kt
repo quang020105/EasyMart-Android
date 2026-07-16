@@ -55,7 +55,7 @@ internal fun ProductSummaryCard(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = product.price.toVNDString(),
+                    text = product.priceVnd.toVNDString(),
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.primary
                 )

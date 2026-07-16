@@ -87,7 +87,7 @@ fun ProductCart(
                 )
                 Spacer(modifier = Modifier.height(dimens.spaceXs))
                 Text(
-                    text = cartItem.price.toVNDString(),
+                    text = cartItem.unitPriceVnd.toVNDString(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )

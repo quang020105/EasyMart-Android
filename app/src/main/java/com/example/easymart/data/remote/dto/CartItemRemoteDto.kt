@@ -4,6 +4,8 @@ data class CartItemRemoteDto(
     val productId: Int = 0,
     val name: String = "",
     val price: Double = 0.0,
+    val priceVnd: Long = 0L,
+    val currency: String = "VND",
     val imageUrl: String? = null,
     val quantity: Int = 0,
     val addAt: Long = System.currentTimeMillis(),

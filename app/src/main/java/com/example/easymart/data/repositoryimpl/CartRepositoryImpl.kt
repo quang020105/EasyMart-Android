@@ -9,6 +9,7 @@ import com.example.easymart.data.remote.datasource.CartRemoteDataSource
 import com.example.easymart.data.remote.dto.CartItemRemoteDto
 import com.example.easymart.domain.model.CartItem
 import com.example.easymart.domain.repository.CartRepository
+import com.example.easymart.utils.legacyPriceToVnd
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -215,6 +216,8 @@ class CartRepositoryImpl @Inject constructor(
                             localDS.updateCartItem(local.copy(
                                 name = remote.name,
                                 price = remote.price,
+                                priceVnd = remote.priceVnd.takeIf { it > 0L }
+                                    ?: legacyPriceToVnd(remote.productId, remote.price),
                                 imageUrl = remote.imageUrl,
                                 quantity = remote.quantity,
                                 updatedAt = remote.updatedAt,

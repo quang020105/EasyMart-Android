@@ -59,6 +59,20 @@ function buildPaymentItems(items, amount) {
   ];
 }
 
+function assertPaymentItemsTotal(items, amount) {
+  const itemsTotal = items.reduce(
+    (total, item) => total + Number(item.quantity || 0) * Number(item.price || 0),
+    0
+  );
+
+  if (!Number.isSafeInteger(itemsTotal) || itemsTotal !== amount) {
+    throw new AppError("payment items total must equal amount", 400, {
+      itemsTotal,
+      amount,
+    });
+  }
+}
+
 async function createPayment(payload = {}) {
   const {
     amount = 10000,
@@ -82,6 +96,7 @@ async function createPayment(payload = {}) {
   const returnUrl = `easymart://payos/return?localOrderId=${encodedLocalOrderId}&orderCode=${encodedOrderCode}`;
   const cancelUrl = `easymart://payos/cancel?localOrderId=${encodedLocalOrderId}&orderCode=${encodedOrderCode}`;
   const paymentItems = buildPaymentItems(items, normalizedAmount);
+  assertPaymentItemsTotal(paymentItems, normalizedAmount);
   const paymentLink = await getPayOSClient().paymentRequests.create({
     orderCode,
     amount: normalizedAmount,

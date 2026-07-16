@@ -4,6 +4,7 @@ import com.example.easymart.data.local.entity.CartItemEntity
 import com.example.easymart.data.remote.dto.CartItemRemoteDto
 import com.example.easymart.domain.model.CartItem
 import com.example.easymart.domain.model.Product
+import com.example.easymart.utils.legacyPriceToVnd
 
 fun CartItem.toEntity(cartId: String): CartItemEntity {
     return CartItemEntity(
@@ -11,7 +12,8 @@ fun CartItem.toEntity(cartId: String): CartItemEntity {
         cartId = cartId,
         productId = product.id,
         name = product.name,
-        price = product.price,
+        price = product.priceVnd.toDouble(),
+        priceVnd = product.priceVnd,
         quantity = quantity,
         imageUrl = product.imageUrl,
     )
@@ -23,12 +25,12 @@ fun CartItemEntity.toDomain(): CartItem {
         product = Product(
             id = productId,
             name = name,
-            price = price,
+            priceVnd = priceVnd.takeIf { it > 0L } ?: legacyPriceToVnd(productId, price),
             imageUrl = imageUrl ?: "",
             description = ""
         ),
         quantity = quantity,
-        price = price,
+        unitPriceVnd = priceVnd.takeIf { it > 0L } ?: legacyPriceToVnd(productId, price),
         addAt = addAt
     )
 }
@@ -37,7 +39,9 @@ fun CartItemEntity.toRemoteDto(updatedAt: Long = System.currentTimeMillis()): Ca
     return CartItemRemoteDto(
         productId = productId,
         name = name,
-        price = price,
+        price = priceVnd.toDouble(),
+        priceVnd = priceVnd,
+        currency = "VND",
         imageUrl = imageUrl,
         quantity = quantity,
         addAt = addAt,
@@ -51,7 +55,8 @@ fun CartItemRemoteDto.toEntity(cartId: String): CartItemEntity {
         cartId = cartId,
         productId = productId,
         name = name,
-        price = price,
+        price = (priceVnd.takeIf { it > 0L } ?: legacyPriceToVnd(productId, price)).toDouble(),
+        priceVnd = priceVnd.takeIf { it > 0L } ?: legacyPriceToVnd(productId, price),
         imageUrl = imageUrl,
         quantity = quantity,
         addAt = addAt,

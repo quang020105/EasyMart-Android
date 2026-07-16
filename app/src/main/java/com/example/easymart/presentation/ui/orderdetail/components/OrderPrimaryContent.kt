@@ -87,7 +87,7 @@ fun OrderPrimaryContent(
                     }
                     //giá tiền sản phẩm
                     Text(
-                        text = item.totalPrice.toVNDString(),
+                        text = item.totalPriceVnd.toVNDString(),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     )
                 }
@@ -132,7 +132,7 @@ fun OrderPrimaryContent(
                     horizontalAlignment = Alignment.End
                 ) {
                     Text(
-                        text = order.totalAmount.toDouble().toVNDString(),
+                        text = order.totalAmount.toVNDString(),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary
                     )

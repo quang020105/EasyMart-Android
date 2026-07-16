@@ -7,7 +7,7 @@ data class OrderItem(
     val product: Product,
     val quantity: Int,
 ){
-    val totalPrice: Double
-        get() = product.price * quantity
+    val totalPriceVnd: Long
+        get() = product.priceVnd * quantity
 }
 

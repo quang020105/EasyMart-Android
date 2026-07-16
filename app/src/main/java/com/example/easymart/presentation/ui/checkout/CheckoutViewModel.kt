@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.math.roundToLong
 import javax.inject.Inject
 
 @HiltViewModel
@@ -68,8 +67,8 @@ class CheckoutViewModel @Inject constructor(
         cartItems: List<CartItem>,
         address: Address?,
         paymentMethod: PaymentMethod?,
-        subtotal: Double,
-        shippingFee: Double
+        subtotal: Long,
+        shippingFee: Long
     ) {
 
         val userId = uiState.value.currentUserId
@@ -101,17 +100,15 @@ class CheckoutViewModel @Inject constructor(
             phone = address.phone,
             addressString = address.addressString,
         )
-        val subtotalAmount = subtotal.roundToLong()
-        val shippingFeeAmount = shippingFee.roundToLong()
-        val totalAmount = (subtotal + shippingFee).roundToLong()
+        val totalAmount = subtotal + shippingFee
 
         val order = Order(
             userId = userId, //getCurrentUserIdUseCase() chưa xử lý
             orderNumber = "",//chưa xử lý
             items = cartItems.map { it.cartToOrderItem() },
             totalAmount = totalAmount,
-            subtotal = subtotalAmount,
-            shippingFee = shippingFeeAmount,
+            subtotal = subtotal,
+            shippingFee = shippingFee,
             status = OrderStatus.CREATED,
             paymentStatus = PaymentStatus.UNPAID,
             paymentMethod = paymentMethod,
@@ -123,7 +120,7 @@ class CheckoutViewModel @Inject constructor(
             Log.d(
                 "CheckoutViewModel",
                 "Item #$index | id=${item.id} | name=${item.product.name} | qty=${item.quantity} | " +
-                        "price=${item.price} | totalPrice=${item.totalPrice}"
+                        "priceVnd=${item.unitPriceVnd} | totalPriceVnd=${item.totalPriceVnd}"
             )
         }
 
@@ -259,7 +256,7 @@ class CheckoutViewModel @Inject constructor(
                             id = product.id,
                             product = product,
                             quantity = quantity.coerceAtLeast(1),
-                            price = product.price
+                            unitPriceVnd = product.priceVnd
                         )
                         _uiState.update {
                             it.copy(

@@ -6,6 +6,6 @@ data class Cart(
     val items: List<CartItem> = emptyList(),
     val createdAt: String,
 ){
-    val totalAmount: Double
-        get() = items.sumOf { it.totalPrice }
+    val totalAmountVnd: Long
+        get() = items.sumOf { it.totalPriceVnd }
 }

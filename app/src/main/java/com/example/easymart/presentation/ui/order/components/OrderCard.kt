@@ -169,7 +169,7 @@ fun OrderCard(
                     Spacer(modifier = Modifier.width(dimens.spaceSm))
 
                     Text(
-                        text = item.totalPrice.toVNDString(),
+                        text = item.totalPriceVnd.toVNDString(),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold,
@@ -210,7 +210,7 @@ fun OrderCard(
                     Spacer(modifier = Modifier.height(2.dp))
 
                     Text(
-                        text = order.totalAmount.toDouble().toVNDString(),
+                        text = order.totalAmount.toVNDString(),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.Bold

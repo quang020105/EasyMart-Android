@@ -126,8 +126,8 @@ class ProductDetailViewModel @Inject constructor(
             if (product.category == candidate.category) {
                 score += 50
             }
-            if (product.price > 0) {
-                val priceDiffRatio = (abs(product.price - candidate.price) / product.price)
+            if (product.priceVnd > 0L) {
+                val priceDiffRatio = abs(product.priceVnd - candidate.priceVnd).toDouble() / product.priceVnd
                 if (priceDiffRatio <= 0.2) {
                     score += 20
                 }
@@ -167,7 +167,7 @@ class ProductDetailViewModel @Inject constructor(
                     id = product.id,
                     product = product,
                     quantity = quantity,
-                    price = product.price,
+                    unitPriceVnd = product.priceVnd,
                 )
                 addToCartUseCase(userId, newCartItem)
             }.onSuccess {

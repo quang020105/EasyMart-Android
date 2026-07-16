@@ -7,7 +7,7 @@ val mockCartItems = List(5){ idx ->
         id = idx,
         product = mockSimpleProduct,
         quantity = (1..10).random(),
-        price = mockSimpleProduct.price
+        unitPriceVnd = mockSimpleProduct.priceVnd
     )
 }
 
@@ -15,5 +15,5 @@ val mockSimpleCartItems = CartItem(
     id = 0,
     product = mockSimpleProduct,
     quantity = (1..10).random(),
-    price = mockSimpleProduct.price
+    unitPriceVnd = mockSimpleProduct.priceVnd
 )

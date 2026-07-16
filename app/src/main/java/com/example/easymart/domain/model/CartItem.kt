@@ -4,11 +4,11 @@ data class CartItem(
     val id: Int,
     val product: Product,
     val quantity: Int,
-    val price: Double,
+    val unitPriceVnd: Long,
     val addAt: Long = System.currentTimeMillis(),
     val isChecked: Boolean = false
 ){
-    val totalPrice: Double
-        get() = price * quantity
+    val totalPriceVnd: Long
+        get() = unitPriceVnd * quantity
 }
 

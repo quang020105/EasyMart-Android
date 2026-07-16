@@ -85,7 +85,7 @@ fun ItemProductRecommendCard(
             )
 
             Text(
-                text = product.price.toVNDString(),
+                text = product.priceVnd.toVNDString(),
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.primary,
                 maxLines = 1,
@@ -250,7 +250,7 @@ fun ItemProductRecommendCardPreview() {
             product = Product(
                 id = 1,
                 name = "Giày sneaker cao cấp phối màu trắng xanh",
-                price = 9.99,
+                priceVnd = 249_000L,
                 imageRes = R.drawable.pic_shoe_1,
                 description = "This is a sample product description.",
                 imageUrl = "",

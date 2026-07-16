@@ -6,6 +6,7 @@ import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.model.ProductRating
 import com.example.easymart.domain.model.image_search.ImageSearchResult
 import com.example.easymart.domain.model.image_search.SimilarProduct
+import com.example.easymart.utils.legacyPriceToVnd
 
 fun ImageSearchResponseDto.toDomain(): ImageSearchResult {
     val responseData = data
@@ -25,7 +26,7 @@ private fun ImageSearchProductDto.toDomain(): SimilarProduct {
             id = id,
             name = normalizedName,
             description = description,
-            price = price,
+            priceVnd = priceVnd.takeIf { it > 0L } ?: legacyPriceToVnd(id, price),
             imageUrl = normalizedImageUrl,
             imageUrls = imageUrls.filter { it.isNotBlank() },
             brand = brand,

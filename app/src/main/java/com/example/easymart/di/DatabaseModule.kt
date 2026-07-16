@@ -256,6 +256,58 @@ object DatabaseModule {
         }
     }
 
+    private val MIGRATION_39_40 = object : Migration(39, 40) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE product ADD COLUMN priceVnd INTEGER NOT NULL DEFAULT 0")
+            db.execSQL("ALTER TABLE cart_items ADD COLUMN priceVnd INTEGER NOT NULL DEFAULT 0")
+            db.execSQL("ALTER TABLE order_items ADD COLUMN priceVnd INTEGER NOT NULL DEFAULT 0")
+
+            db.execSQL(
+                """
+                UPDATE product
+                SET priceVnd = CAST(ROUND(CASE WHEN id BETWEEN 1 AND 20 THEN price * 26333 ELSE price END) AS INTEGER)
+                """.trimIndent()
+            )
+            db.execSQL(
+                """
+                UPDATE cart_items
+                SET priceVnd = CAST(ROUND(CASE WHEN productId BETWEEN 1 AND 20 THEN price * 26333 ELSE price END) AS INTEGER)
+                """.trimIndent()
+            )
+            db.execSQL(
+                """
+                UPDATE order_items
+                SET priceVnd = CAST(ROUND(CASE WHEN productId BETWEEN 1 AND 20 THEN price * 26333 ELSE price END) AS INTEGER)
+                """.trimIndent()
+            )
+            db.execSQL(
+                """
+                UPDATE orders
+                SET subtotal = COALESCE((
+                        SELECT SUM(order_items.priceVnd * order_items.quantity)
+                        FROM order_items
+                        WHERE order_items.orderId = orders.id
+                    ), subtotal),
+                    shippingFee = COALESCE((
+                        SELECT SUM(order_items.quantity) * 15000
+                        FROM order_items
+                        WHERE order_items.orderId = orders.id
+                    ), shippingFee),
+                    totalAmount = COALESCE((
+                        SELECT SUM(order_items.priceVnd * order_items.quantity)
+                        FROM order_items
+                        WHERE order_items.orderId = orders.id
+                    ), 0) + COALESCE((
+                        SELECT SUM(order_items.quantity) * 15000
+                        FROM order_items
+                        WHERE order_items.orderId = orders.id
+                    ), 0)
+                WHERE EXISTS (SELECT 1 FROM order_items WHERE order_items.orderId = orders.id)
+                """.trimIndent()
+            )
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext appContext: Context): EasyMartDatabase {
@@ -284,7 +336,8 @@ object DatabaseModule {
                 MIGRATION_35_36,
                 MIGRATION_36_37,
                 MIGRATION_37_38,
-                MIGRATION_38_39
+                MIGRATION_38_39,
+                MIGRATION_39_40
             )
             .fallbackToDestructiveMigration(false).build()
     }

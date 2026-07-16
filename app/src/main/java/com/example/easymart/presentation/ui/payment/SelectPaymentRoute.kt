@@ -17,8 +17,8 @@ fun SelectPaymentRoute (
     val cartUiState by cartViewModel.uiState.collectAsState()
     val checkoutUiState by checkoutViewModel.uiState.collectAsState()
 
-    val quickShipping = checkoutUiState.quickOrderItems.sumOf { it.quantity * (15000.0 / 26333) }
-    val quickTotal = checkoutUiState.quickOrderItems.sumOf { it.totalPrice } + quickShipping
+    val quickShipping = checkoutUiState.quickOrderItems.sumOf { it.quantity * 15_000L }
+    val quickTotal = checkoutUiState.quickOrderItems.sumOf { it.totalPriceVnd } + quickShipping
     val totalAmount = if (checkoutUiState.isQuickOrderActive) {
         quickTotal
     } else {

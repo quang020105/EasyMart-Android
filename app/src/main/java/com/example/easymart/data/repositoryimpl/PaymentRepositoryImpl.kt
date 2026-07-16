@@ -16,7 +16,6 @@ import com.example.easymart.domain.payment.process.CODProcessor
 import com.example.easymart.domain.payment.process.EWalletProcessor
 import com.example.easymart.domain.payment.process.OnlineGatewayProcessor
 import com.example.easymart.domain.repository.PaymentRepository
-import com.example.easymart.utils.toVNDLong
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -52,15 +51,22 @@ class PaymentRepositoryImpl @Inject constructor(
 
                 val payOsResp = paymentApi.createPayOsPayment(
                     PayOsCreatePaymentRequest(
-                        amount = order.totalAmount.toVNDLong(),
+                        amount = order.totalAmount,
                         description = "Thanh toán cho EasyMart",
                         localOrderId = order.id.toLong(),
-                        items = order.items.map { orderItem ->
-                            PayOsItemDto(
-                                name = orderItem.product.name,
-                                quantity = orderItem.quantity,
-                                price = orderItem.product.price.toVNDLong()
-                            )
+                        items = buildList {
+                            order.items.forEach { orderItem ->
+                                add(
+                                    PayOsItemDto(
+                                        name = orderItem.product.name,
+                                        quantity = orderItem.quantity,
+                                        price = orderItem.product.priceVnd
+                                    )
+                                )
+                            }
+                            if (order.shippingFee > 0L) {
+                                add(PayOsItemDto(name = "Shipping fee", quantity = 1, price = order.shippingFee))
+                            }
                         }
                     )
                 )

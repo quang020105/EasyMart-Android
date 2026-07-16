@@ -26,7 +26,7 @@ fun Order.toAdminOrderUiModel(): AdminOrdersUiModel {
 }
 
 fun Order.toAdminOrderDetailUiModel(): AdminOrderDetailUiModel {
-    val fallbackSubtotal = items.sumOf { (it.product.price * it.quantity).toLong() }
+    val fallbackSubtotal = items.sumOf { it.product.priceVnd * it.quantity }
     val subtotal = this.subtotal.takeIf { it > 0L } ?: fallbackSubtotal
     val shippingFee = this.shippingFee.takeIf { it > 0L }
         ?: (totalAmount - subtotal).coerceAtLeast(0L)
@@ -45,7 +45,7 @@ fun Order.toAdminOrderDetailUiModel(): AdminOrderDetailUiModel {
         addressDetail = shippingAddress.addressString,
         shippingNote = null,
         items = items.map { item ->
-            val price = item.product.price
+            val price = item.product.priceVnd
             OrderDetailItemUiModel(
                 productName = item.product.name,
                 imageUrl = item.product.imageUrl,

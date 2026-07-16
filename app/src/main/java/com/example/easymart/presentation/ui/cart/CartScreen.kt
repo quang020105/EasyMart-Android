@@ -210,7 +210,7 @@ fun CartScreen(
                         style = MaterialTheme.typography.bodySmall,
                     )
                     Text(
-                        text = 0.0.toVNDString(),
+                        text = 0L.toVNDString(),
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }

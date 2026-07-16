@@ -12,6 +12,7 @@ import com.example.easymart.domain.model.SyncStatus
 import com.example.easymart.domain.repository.OrderRepository
 import com.example.easymart.data.mapper.toEntity
 import com.example.easymart.data.mapper.toRemoteDto
+import com.example.easymart.data.mapper.toVndNormalized
 import com.example.easymart.data.remote.datasource.OrderRemoteDataSource
 import com.example.easymart.data.remote.dto.OrderRemoteDto
 import kotlinx.coroutines.flow.Flow
@@ -122,7 +123,7 @@ class OrderRepositoryImpl @Inject constructor(
     override fun observeAllOrdersForAdmin(): Flow<List<Order>> {
         return remoteDS.observeAllOrders().map { remoteOrders ->
             remoteOrders
-                .map { it.toDomainOrder() }
+                .map { it.toVndNormalized().toDomainOrder() }
                 .sortedByDescending { it.createdAt }
         }
     }
@@ -154,9 +155,15 @@ class OrderRepositoryImpl @Inject constructor(
 
     //  hợp nhất các đơn hàng từ remote vào local
     private suspend fun mergeRemoteOrders(userId: String, remoteOrders: List<OrderRemoteDto>) {
-        remoteOrders.forEach { remote ->
+        remoteOrders.forEach { originalRemote ->
+            val remote = originalRemote.toVndNormalized()
             val remoteId = remote.remoteId
             if (remoteId.isNullOrBlank()) return@forEach
+
+            // dữ liệu tiền có thể thay đổi trên remote (khi dev sửa lại đơn vị tiền) ,kiểm tra để cập nhật lại
+            if (remote != originalRemote) {
+                remoteDS.upsertOrder(userId, remote)
+            }
 
             val local = orderDao.getByRemoteId(remoteId)
 

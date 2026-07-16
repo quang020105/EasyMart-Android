@@ -169,7 +169,7 @@ fun ProductOverviewCard(
                     Spacer(modifier = Modifier.height(14.dp))
 
                     Text(
-                        text = formatProductPrice(product.price),
+                        text = formatProductPrice(product.priceVnd),
                         style = MaterialTheme.typography.headlineMedium.copy(
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF2563EB)

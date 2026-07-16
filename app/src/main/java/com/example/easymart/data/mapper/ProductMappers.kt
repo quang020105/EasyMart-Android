@@ -4,6 +4,8 @@ import com.example.easymart.data.local.entity.ProductEntity
 import com.example.easymart.data.remote.dto.ProductApiDto
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.model.ProductRating
+import com.example.easymart.utils.legacyPriceToVnd
+import com.example.easymart.utils.usdToVnd
 
 fun ProductApiDto.toDomain(): Product {
     return Product(
@@ -12,7 +14,7 @@ fun ProductApiDto.toDomain(): Product {
         description = description,
         category = category,
         brand = "",
-        price = price,
+        priceVnd = price.usdToVnd(),
         imageUrl = image,
         rating = ProductRating(rate = rating.rate, count = rating.count)
     )
@@ -24,6 +26,7 @@ fun ProductApiDto.toEntity(): ProductEntity {
         name = title,
         description = description,
         price = price,
+        priceVnd = price.usdToVnd(),
         imageUrl = image,
         brand = "",
         category = category,
@@ -48,7 +51,7 @@ fun ProductEntity.toDomain(): Product {
         id = id,
         name = name,
         description = description,
-        price = price,
+        priceVnd = priceVnd.takeIf { it > 0L } ?: legacyPriceToVnd(id, price),
         imageUrl = imageUrl,
         brand = brand,
         category = category,
@@ -72,7 +75,8 @@ fun Product.toEntity(): ProductEntity {
         id = id,
         name = name,
         description = description,
-        price = price,
+        price = priceVnd.toDouble(),
+        priceVnd = priceVnd,
         imageUrl = imageUrl,
         brand = brand,
         category = category,

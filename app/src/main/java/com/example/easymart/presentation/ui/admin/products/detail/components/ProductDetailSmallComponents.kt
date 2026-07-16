@@ -162,7 +162,7 @@ fun ProductInfoTile(
     }
 }
 
-fun formatProductPrice(price: Double): String {
+fun formatProductPrice(price: Long): String {
     return "%,.0f đ".format(price)
 }
 

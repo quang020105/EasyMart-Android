@@ -24,7 +24,10 @@ class FirestoreProductRemoteDataSource @Inject constructor(
             id = doc.getLong("id")?.toInt() ?: doc.id.toIntOrNull() ?: 0,
             name = doc.getString("name") ?: "",
             description = doc.getString("description"),
-            price = doc.getDouble("price") ?: 0.0,
+            price = (doc.get("price") as? Number)?.toDouble() ?: 0.0,
+            priceVnd = (doc.get("priceVnd") as? Number)?.toLong() ?: 0L,
+            currency = doc.getString("currency") ?: "VND",
+            moneySchemaVersion = (doc.get("moneySchemaVersion") as? Number)?.toInt() ?: 1,
             imageUrl = doc.getString("imageUrl") ?: "",
             imageUrls = (doc.get("imageUrls") as? List<*>)
                 ?.mapNotNull { it as? String }

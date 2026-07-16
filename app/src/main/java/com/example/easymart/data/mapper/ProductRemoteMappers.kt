@@ -4,6 +4,7 @@ import com.example.easymart.data.local.entity.ProductEntity
 import com.example.easymart.data.remote.dto.ProductFirestoreDto
 import com.example.easymart.domain.model.Product
 import com.example.easymart.domain.model.ProductRating
+import com.example.easymart.utils.legacyPriceToVnd
 import com.google.gson.Gson
 
 fun ProductEntity.toRemoteDto(): ProductFirestoreDto {
@@ -11,7 +12,10 @@ fun ProductEntity.toRemoteDto(): ProductFirestoreDto {
         id = id,
         name = name,
         description = description,
-        price = price,
+        price = priceVnd.toDouble(),
+        priceVnd = priceVnd.takeIf { it > 0L } ?: legacyPriceToVnd(id, price),
+        currency = "VND",
+        moneySchemaVersion = 2,
         imageUrl = imageUrl,
         imageUrls = decodeList(imageUrlsJson),
         brand = brand,
@@ -33,7 +37,8 @@ fun ProductFirestoreDto.toEntity(): ProductEntity {
         id = id,
         name = name,
         description = description,
-        price = price,
+        price = (priceVnd.takeIf { it > 0L } ?: legacyPriceToVnd(id, price)).toDouble(),
+        priceVnd = priceVnd.takeIf { it > 0L } ?: legacyPriceToVnd(id, price),
         imageUrl = imageUrl,
         imageUrlsJson = Gson().toJson(imageUrls),
         brand = brand,
@@ -58,7 +63,7 @@ fun ProductFirestoreDto.toDomain(): Product {
         id = id,
         name = name,
         description = description,
-        price = price,
+        priceVnd = priceVnd.takeIf { it > 0L } ?: legacyPriceToVnd(id, price),
         imageUrl = imageUrl,
         imageUrls = imageUrls,
         brand = brand,

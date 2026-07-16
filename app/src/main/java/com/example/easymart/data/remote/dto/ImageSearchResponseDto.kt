@@ -16,6 +16,8 @@ data class ImageSearchProductDto(
     val name: String = "",
     val title: String = "",
     val price: Double = 0.0,
+    val priceVnd: Long = 0L,
+    val currency: String = "VND",
     val description: String? = null,
     val brand: String = "",
     val category: String = "",

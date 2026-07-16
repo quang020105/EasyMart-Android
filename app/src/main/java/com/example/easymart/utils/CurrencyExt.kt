@@ -1,18 +1,22 @@
 package com.example.easymart.utils
 
-import com.example.easymart.domain.model.OrderStatus
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.text.NumberFormat
+import java.util.Locale
 
-fun Double.toVNDString(): String {
-    val vnd = this * 26333
-    return "%,.0f ₫".format(vnd).replace(',', '.')
-}
+const val VND_PER_USD = 26_333L
+const val DEFAULT_SHIPPING_FEE_PER_ITEM_VND = 15_000L
 
-fun Double.toVNDLong(): Long {
-    return (this * 26.333).toLong() // giảm số lượng số 0 ở cuối để thanh toán khả thi
-}
+fun Long.toVNDString(): String =
+    "${NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN")).format(this)} VND"
 
-fun Long.toVNDLong(): Long {
-    return (this * 26.333).toLong() // giảm số lượng số 0 ở cuối để thanh toán khả thi
-}
+// Converts FakeStore's USD price at the import boundary only
+fun Double.usdToVnd(): Long =
+    BigDecimal.valueOf(this)
+        .multiply(BigDecimal.valueOf(VND_PER_USD))
+        .setScale(0, RoundingMode.HALF_UP)
+        .longValueExact()
 
-
+fun legacyPriceToVnd(productId: Int, legacyPrice: Double): Long =
+    if (productId in 1..20) legacyPrice.usdToVnd() else legacyPrice.toLong()

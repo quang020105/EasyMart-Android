@@ -103,7 +103,7 @@ fun AdminProductCard(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = formatPrice(product.price),
+                        text = formatPrice(product.priceVnd),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary
                     )

@@ -339,7 +339,7 @@ private fun FeaturedProductCard(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = product.price.toVNDString(),
+                    text = product.priceVnd.toVNDString(),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.primary
                 )
