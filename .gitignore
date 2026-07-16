@@ -13,3 +13,12 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Environment files chứa key
+# bỏ qua thư mục gốc
+.env
+# bỏ qua tất cả các thư mục con
+**/.env
+#
+.env.*
+**/.env.*
