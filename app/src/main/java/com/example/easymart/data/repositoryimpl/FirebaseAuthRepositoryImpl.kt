@@ -6,6 +6,7 @@ import com.example.easymart.domain.model.User
 import com.example.easymart.domain.repository.AuthRepository
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.channels.awaitClose
@@ -19,9 +20,9 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore
 ) : AuthRepository {
-    private suspend fun FirebaseAuth.readAdminClaim(): Boolean {
+    private suspend fun FirebaseAuth.readAdminClaim(forceRefresh: Boolean = false): Boolean {
         val user = auth.currentUser ?: return false
-        val tokenResult = user.getIdToken(true).await()
+        val tokenResult = user.getIdToken(forceRefresh).await()
         return tokenResult.claims["admin"] as? Boolean ?: false
     }
 
@@ -78,7 +79,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
                 ?: throw Exception("Người dùng không tồn tại")
 
             // đọc quyền của người dùng đang đăng nhập từ firebase
-            val isAdmin = auth.readAdminClaim()
+            val isAdmin = auth.readAdminClaim(forceRefresh = true)
             userDto.toDomain(isAdmin)
         }
     }
@@ -149,44 +150,58 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
 
 
         var profileListener: ListenerRegistration? = null
+        var activeUserId: String? = null
+        var latestUserDto: FirebaseUserDto? = null
+        var adminClaim: Boolean? = null
+
+        fun emitCurrentUser(firebaseUser: FirebaseUser) {
+            val dto = latestUserDto
+            val roleIndicatesAdmin = dto?.role?.equals("admin", ignoreCase = true) == true
+            val isAdmin = adminClaim ?: roleIndicatesAdmin
+            val user = dto?.toDomain(isAdmin)
+                ?: firebaseUser.toDomain().copy(
+                    role = if (isAdmin) "admin" else "customer",
+                    isAdmin = isAdmin
+                )
+            trySend(user)
+        }
 
         val listener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             profileListener?.remove()
             profileListener = null
+            latestUserDto = null
+            adminClaim = null
 
             val firebaseUser = firebaseAuth.currentUser
             if (firebaseUser == null) {
+                activeUserId = null
                 trySend(null)
                 return@AuthStateListener
             }
 
-            launch {
-                val isAdmin = firebaseAuth.readAdminClaim()
+            activeUserId = firebaseUser.uid
+            emitCurrentUser(firebaseUser)
 
-                profileListener = firestore.collection("usersEM")
-                    .document(firebaseUser.uid)
-                    .addSnapshotListener { snapshot, error ->
-                        if (error != null) {
-                            trySend(null)
-                            return@addSnapshotListener
-                        }
-
-                        val userDto = snapshot?.toObject(FirebaseUserDto::class.java)
-                        if (userDto == null) {
-                            trySend(
-                                User(
-                                    id = firebaseUser.uid,
-                                    name = firebaseUser.displayName ?: "",
-                                    email = firebaseUser.email ?: "",
-                                    createdAt = 0L,
-                                    role = if (isAdmin) "admin" else "customer",
-                                    isAdmin = isAdmin
-                                )
-                            )
-                        } else {
-                            trySend(userDto.toDomain(isAdmin))
-                        }
+            profileListener = firestore.collection("usersEM")
+                .document(firebaseUser.uid)
+                .addSnapshotListener { snapshot, error ->
+                    if (activeUserId != firebaseUser.uid || error != null) {
+                        return@addSnapshotListener
                     }
+
+                    latestUserDto = snapshot?.toObject(FirebaseUserDto::class.java)
+                    emitCurrentUser(firebaseUser)
+                }
+
+            launch {
+                val resolvedAdminClaim = runCatching {
+                    firebaseAuth.readAdminClaim()
+                }.getOrNull()
+
+                if (activeUserId == firebaseUser.uid && resolvedAdminClaim != null) {
+                    adminClaim = resolvedAdminClaim
+                    emitCurrentUser(firebaseUser)
+                }
             }
         }
 

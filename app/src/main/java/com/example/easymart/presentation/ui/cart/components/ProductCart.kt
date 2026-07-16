@@ -1,6 +1,7 @@
 package com.example.easymart.presentation.ui.cart.components
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -35,6 +36,7 @@ fun ProductCart(
     checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit = {},
     cartItem: CartItem,
+    onProductClick: () -> Unit = {},
     onPlusClick: () -> Unit = {},
     onMinusClick: () -> Unit = {},
 ) {
@@ -69,7 +71,7 @@ fun ProductCart(
                 modifier = Modifier
                     .size(dimens.cartImgSize),
                 product = cartItem.product,
-                onClick = {},
+                onClick = { onProductClick() },
                 colorBackground = MaterialTheme.colorScheme.background
             )
             Spacer(modifier = Modifier.width(dimens.spaceSm))
@@ -77,6 +79,7 @@ fun ProductCart(
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = dimens.spaceSm)
+                    .clickable(onClick = onProductClick)
             ) {
                 Text(
                     text = cartItem.product.name,
@@ -112,6 +115,7 @@ fun ProductCartPreview() {
             checked = false,
             onCheckedChange = {},
             cartItem = mockSimpleCartItems,
+            onProductClick = {},
             onPlusClick = {},
             onMinusClick = {}
         )

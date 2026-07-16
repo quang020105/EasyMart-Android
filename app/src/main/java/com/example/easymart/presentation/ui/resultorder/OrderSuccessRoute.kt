@@ -11,7 +11,7 @@ import com.example.easymart.presentation.ui.checkout.CheckoutViewModel
 @Composable
 fun OrderSuccessRoute(
     checkoutViewModel: CheckoutViewModel,
-    onViewOrderClick: () -> Unit,
+    onViewOrderClick: (Int) -> Unit,
     onContinueShoppingClick: () -> Unit, //quay về trang chủ
 ){
     val uiState = checkoutViewModel.uiState.collectAsState()
@@ -34,7 +34,7 @@ fun OrderSuccessRoute(
         orderId = order?.id ?: -1,
         totalAmount = order?.totalAmount ?: 0L,
         paymentMethod = order?.paymentMethod ?: PaymentMethod.COD,
-        onViewOrderClick = onViewOrderClick,
+        onViewOrderClick = { order?.id?.takeIf { it > 0 }?.let(onViewOrderClick) },
         onContinueShoppingClick = onContinueShoppingClick
     )
 }

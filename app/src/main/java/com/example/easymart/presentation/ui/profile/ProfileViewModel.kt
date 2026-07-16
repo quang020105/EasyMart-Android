@@ -18,7 +18,13 @@ class ProfileViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ProfileUiState())
+    private val cachedUser = getCurrentUserUseCase()
+    private val _uiState = MutableStateFlow(
+        ProfileUiState(
+            isLoading = cachedUser == null,
+            user = cachedUser
+        )
+    )
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     private val _events = Channel<ProfileUiEvent>(Channel.BUFFERED)
@@ -30,7 +36,7 @@ class ProfileViewModel @Inject constructor(
 
     private fun loadUser() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = it.user == null, error = null) }
 
             try {
                 observeCurrentUserUseCase().collect { user ->

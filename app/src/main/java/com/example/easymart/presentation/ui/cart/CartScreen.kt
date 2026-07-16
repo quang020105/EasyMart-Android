@@ -141,6 +141,7 @@ fun CartScreen(
                         ProductCart(
                             cartItem = cartItem,
                             checked = cartItem.isChecked,
+                            onProductClick = { onCartItemClick(cartItem.product) },
                             onMinusClick = { onMinusClick(cartItem) },
                             onPlusClick = { onPlusClick(cartItem) },
                             onCheckedChange = { checked ->

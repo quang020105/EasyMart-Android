@@ -93,6 +93,7 @@ fun AppNavGraph(
                     pendingRoute = event.targetRoute
                     showLoginSheet = true
                 }
+
                 is UiEvent.ShowMessage -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
@@ -133,7 +134,7 @@ fun AppNavGraph(
                     type = NavType.StringType
                     defaultValue = ""
                 })
-            ) {backStackEntry ->
+            ) { backStackEntry ->
                 val next = backStackEntry.arguments?.getString("next") ?: ""
                 val loginViewModel = hiltViewModel<LoginViewModel>()
                 LoginRoute(
@@ -142,7 +143,13 @@ fun AppNavGraph(
                         navController.navigate("${Screen.SignUp.route}?next=${Uri.encode(next)}")
                     },
                     onNavigateToForgotPassword = {
-                        navController.navigate("${Screen.ForgotPassword.route}?next=${Uri.encode(next)}")
+                        navController.navigate(
+                            "${Screen.ForgotPassword.route}?next=${
+                                Uri.encode(
+                                    next
+                                )
+                            }"
+                        )
                     },
                     onLoginClick = { email, phone, password ->
                         loginViewModel.login(email, password)
@@ -182,7 +189,15 @@ fun AppNavGraph(
                         //Log.d("SignUpRoute", "Đã đăng kí: $email, $phone, $password, $name")
                         signUpViewModel.signUp()
                     },
-                    onNavigateToLogin = { navController.navigate("${Screen.Login.route}?next=${Uri.encode(next)}") },
+                    onNavigateToLogin = {
+                        navController.navigate(
+                            "${Screen.Login.route}?next=${
+                                Uri.encode(
+                                    next
+                                )
+                            }"
+                        )
+                    },
                     onSignUpSuccess = { user ->
                         authViewModel.onUserLoggedIn(user)
                         if (next.isNotEmpty()) {
@@ -249,6 +264,9 @@ fun AppNavGraph(
                             authState.value,
                             Screen.Checkout.route
                         )
+                    },
+                    onCartItemClick = { product ->
+                        navController.navigate(Screen.ProductDetail.createRoute(product.id))
                     }
                 )
             }
@@ -308,7 +326,10 @@ fun AppNavGraph(
                         )
                     },
                     onNavigateToSuccess = {
-                        navController.navigate(Screen.OrderSuccess.route)
+                        navController.navigate(Screen.OrderSuccess.route) {
+                            popUpTo(Screen.HomeGraph.route)
+                            launchSingleTop = true
+                        }
                     },
                     onNavigateToOnlineProcessing = { orderCode, localOrderId ->
                         navController.navigate(
@@ -357,7 +378,10 @@ fun AppNavGraph(
                         )
                     },
                     onNavigateToSuccess = {
-                        navController.navigate(Screen.OrderSuccess.route)
+                        navController.navigate(Screen.OrderSuccess.route) {
+                            popUpTo(Screen.HomeGraph.route)
+                            launchSingleTop = true
+                        }
                     },
                     onNavigateToOnlineProcessing = { orderCode, localOrderId ->
                         navController.navigate(
@@ -412,7 +436,11 @@ fun AppNavGraph(
 
                 OrderSuccessRoute(
                     checkoutViewModel = viewModel,
-                    onViewOrderClick = {},
+                    onViewOrderClick = { orderId ->
+                        navController.navigate(Screen.OrderDetail.createRoute(orderId)) {
+                            launchSingleTop = true
+                        }
+                    },
                     onContinueShoppingClick = {
                         navController.navigate(Screen.Home.route) {
                             popUpTo(Screen.HomeGraph.route) { inclusive = true }
@@ -464,7 +492,8 @@ fun AppNavGraph(
                 )
             ) { backStackEntry ->
                 val orderCode = backStackEntry.arguments?.getString("orderCode")?.toLongOrNull()
-                val localOrderId = backStackEntry.arguments?.getString("localOrderId")?.toIntOrNull()
+                val localOrderId =
+                    backStackEntry.arguments?.getString("localOrderId")?.toIntOrNull()
 
                 //Log.d("AppNavGraph", "Navigating to OnlinePaymentProcessingRoute with orderCode=$orderCode, localOrderId=$localOrderId")
                 OnlinePaymentProcessingRoute(
@@ -473,6 +502,7 @@ fun AppNavGraph(
                     onSuccess = {
                         navController.navigate(Screen.OrderSuccess.route) {
                             popUpTo(Screen.HomeGraph.route)
+                            launchSingleTop = true
                         }
                         Log.d("AppNavGraph", "Navigated to OrderSuccessRoute")
                     },
@@ -622,7 +652,10 @@ fun AppNavGraph(
                             }
 
                             "admin" -> {
-                                Log.d("AppNavGraph", "User role: ${(authState.value as? AuthState.LoggedIn)?.role}")
+                                Log.d(
+                                    "AppNavGraph",
+                                    "User role: ${(authState.value as? AuthState.LoggedIn)?.role}"
+                                )
                                 navController.requireAdminThenNavigate(
                                     authState.value,
                                     Screen.AdminGraph.route
@@ -690,7 +723,10 @@ fun AppNavGraph(
 
 
         // admin graph
-        navigation(startDestination = Screen.AdminDashboard.route, route = Screen.AdminGraph.route) {
+        navigation(
+            startDestination = Screen.AdminDashboard.route,
+            route = Screen.AdminGraph.route
+        ) {
             composableWithAnim(
                 route = Screen.AdminDashboard.route,
                 anim = NavAnim.HORIZONTAL
@@ -718,7 +754,8 @@ fun AppNavGraph(
                 anim = NavAnim.HORIZONTAL,
                 arguments = listOf(navArgument("remoteId") { type = NavType.StringType })
             ) { backStackEntry ->
-                val remoteId = backStackEntry.arguments?.getString("remoteId") ?: return@composableWithAnim
+                val remoteId =
+                    backStackEntry.arguments?.getString("remoteId") ?: return@composableWithAnim
                 AdminOrderDetailRoute(remoteId = remoteId)
             }
 
@@ -743,7 +780,8 @@ fun AppNavGraph(
                 anim = NavAnim.HORIZONTAL,
                 arguments = listOf(navArgument("productId") { type = NavType.IntType })
             ) { backStackEntry ->
-                val productId = backStackEntry.arguments?.getInt("productId") ?: return@composableWithAnim
+                val productId =
+                    backStackEntry.arguments?.getInt("productId") ?: return@composableWithAnim
                 AdminProductDetailRoute(
                     productId = productId,
                     onEditProduct = { id ->
@@ -767,7 +805,8 @@ fun AppNavGraph(
                 anim = NavAnim.HORIZONTAL,
                 arguments = listOf(navArgument("productId") { type = NavType.IntType })
             ) { backStackEntry ->
-                val productId = backStackEntry.arguments?.getInt("productId") ?: return@composableWithAnim
+                val productId =
+                    backStackEntry.arguments?.getInt("productId") ?: return@composableWithAnim
                 AdminAddEditProductRoute(
                     productId = productId,
                     onNavigateBack = { navController.navigateUp() }
@@ -830,7 +869,10 @@ fun AppNavGraph(
             val localOrderId = backStackEntry.arguments?.getString("localOrderId")?.toIntOrNull()
 
             LaunchedEffect(orderCode, localOrderId) {
-                Log.d("AppNavGraph", "Received PayOs return: orderCode=$orderCode, localOrderId=$localOrderId")
+                Log.d(
+                    "AppNavGraph",
+                    "Received PayOs return: orderCode=$orderCode, localOrderId=$localOrderId"
+                )
                 navController.navigate(
                     Screen.OnlinePaymentProcessing.createRoute(orderCode, localOrderId)
                 ) {
@@ -870,7 +912,7 @@ fun AppNavGraph(
 
 
     // bottom sheet yêu cầu đăng nhập
-    if(showLoginSheet && pendingRoute != null){
+    if (showLoginSheet && pendingRoute != null) {
         ModalBottomSheet(
             onDismissRequest = { showLoginSheet = false },
             sheetState = sheetState
