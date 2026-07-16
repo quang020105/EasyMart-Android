@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import com.example.easymart.domain.model.PaymentMethod
+import com.example.easymart.domain.shipping.ShippingFeePolicy
 import com.example.easymart.presentation.ui.cart.CartViewModel
 import com.example.easymart.presentation.ui.deliveryaddress.AddressViewModel
 import com.example.easymart.presentation.ui.payment.SelectPaymentViewModel
@@ -123,7 +124,10 @@ fun CheckOutRoute(
     }
 
     val subTotal = itemsForCheckout.sumOf { it.totalPriceVnd }
-    val shipping = itemsForCheckout.sumOf { it.quantity * 15_000L }
+    val shipping = ShippingFeePolicy.calculate(
+        subtotalVnd = subTotal,
+        totalItemQuantity = itemsForCheckout.sumOf { it.quantity }
+    )
     val total = subTotal + shipping
 
     CheckoutScreen(
@@ -142,9 +146,7 @@ fun CheckOutRoute(
             checkoutViewModel.pay(
                 cartItems = itemsForCheckout,
                 address = selectedAddress,
-                paymentMethod = selectPaymentUiState.selectedMethod ?: PaymentMethod.COD,
-                subtotal = subTotal,
-                shippingFee = shipping
+                paymentMethod = selectPaymentUiState.selectedMethod ?: PaymentMethod.COD
             )
         }
     )

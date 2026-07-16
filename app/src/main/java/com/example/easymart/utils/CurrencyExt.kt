@@ -9,7 +9,7 @@ const val VND_PER_USD = 26_333L
 const val DEFAULT_SHIPPING_FEE_PER_ITEM_VND = 15_000L
 
 fun Long.toVNDString(): String =
-    "${NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN")).format(this)} VND"
+    "${NumberFormat.getNumberInstance(Locale.forLanguageTag("vi-VN")).format(this)} đ"
 
 // Converts FakeStore's USD price at the import boundary only
 fun Double.usdToVnd(): Long =

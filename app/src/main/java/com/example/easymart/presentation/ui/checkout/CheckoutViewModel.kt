@@ -11,6 +11,7 @@ import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentResult
 import com.example.easymart.domain.model.PaymentStatus
+import com.example.easymart.domain.shipping.ShippingFeePolicy
 import com.example.easymart.domain.usecase.auth.ObserveCurrentUserUseCase
 import com.example.easymart.domain.usecase.cart.RemovePurchasedCartItemsUseCase
 import com.example.easymart.domain.usecase.order.DeductStockAfterOrderSuccessUseCase
@@ -66,9 +67,7 @@ class CheckoutViewModel @Inject constructor(
     fun pay(
         cartItems: List<CartItem>,
         address: Address?,
-        paymentMethod: PaymentMethod?,
-        subtotal: Long,
-        shippingFee: Long
+        paymentMethod: PaymentMethod?
     ) {
 
         val userId = uiState.value.currentUserId
@@ -77,6 +76,13 @@ class CheckoutViewModel @Inject constructor(
                 _uiEvent.emit(
                     CheckoutUiEvent.ShowErrorMessage("Bạn cần đăng nhập để thanh toán")
                 )
+            }
+            return
+        }
+
+        if (cartItems.isEmpty()) {
+            viewModelScope.launch {
+                _uiEvent.emit(CheckoutUiEvent.ShowErrorMessage("Giỏ hàng trống"))
             }
             return
         }
@@ -99,6 +105,13 @@ class CheckoutViewModel @Inject constructor(
             name = address.name,
             phone = address.phone,
             addressString = address.addressString,
+        )
+
+        //tổng tiền sản phẩm và phí vận chuyển
+        val subtotal = cartItems.sumOf { it.totalPriceVnd }
+        val shippingFee = ShippingFeePolicy.calculate(
+            subtotalVnd = subtotal,
+            totalItemQuantity = cartItems.sumOf { it.quantity }
         )
         val totalAmount = subtotal + shippingFee
 

@@ -1,6 +1,7 @@
 package com.example.easymart.presentation.ui.cart
 
 import com.example.easymart.domain.model.CartItem
+import com.example.easymart.domain.shipping.ShippingFeePolicy
 
 data class CartUiState(
     val isLoading: Boolean = false,
@@ -16,7 +17,10 @@ data class CartUiState(
         get() = selectedItems.sumOf { it.totalPriceVnd }
 
     val shipping
-        get() = selectedItems.sumOf { it.quantity * 15_000L }
+        get() = ShippingFeePolicy.calculate(
+            subtotalVnd = subtotal,
+            totalItemQuantity = selectedItems.sumOf { it.quantity }
+        )
 
     val total
         get() = subtotal + shipping
