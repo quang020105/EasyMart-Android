@@ -19,7 +19,17 @@ data class OrderRemoteDto(
     val shippingAddressString: String = "",
     val createdAt: Long = 0L,
     val updatedAt: Long = 0L,
-    val stockDeducted: Boolean = false
+    val stockDeducted: Boolean = false,
+    val stockRestored: Boolean = false,
+    val cancellationReason: String? = null,
+    val cancellationRequestedAt: Long? = null,
+    val cancellationRequestedBy: String? = null,
+    val cancelledAt: Long? = null,
+    val cancelledBy: String? = null,
+    val refundAmountVnd: Long = 0L,
+    val refundMode: String? = null,
+    val refundedAt: Long? = null,
+    val refundedBy: String? = null
 )
 
 data class OrderRemoteItemDto(

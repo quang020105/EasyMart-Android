@@ -15,6 +15,7 @@ import com.example.easymart.domain.model.Payment
 import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.domain.model.Product
+import com.example.easymart.domain.model.RefundMode
 import com.example.easymart.domain.model.SyncStatus
 import com.example.easymart.utils.DEFAULT_SHIPPING_FEE_PER_ITEM_VND
 import com.example.easymart.utils.legacyPriceToVnd
@@ -36,7 +37,17 @@ fun Order.toEntity(): OrderEntity {
         syncStatus = syncStatus,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        stockDeducted = stockDeducted
+        stockDeducted = stockDeducted,
+        stockRestored = stockRestored,
+        cancellationReason = cancellationReason,
+        cancellationRequestedAt = cancellationRequestedAt,
+        cancellationRequestedBy = cancellationRequestedBy,
+        cancelledAt = cancelledAt,
+        cancelledBy = cancelledBy,
+        refundAmountVnd = refundAmountVnd,
+        refundMode = refundMode,
+        refundedAt = refundedAt,
+        refundedBy = refundedBy
     )
 }
 
@@ -60,7 +71,17 @@ fun OrderEntity.toDomain(
         remoteId = remoteId,
         isSynced = isSynced,
         syncStatus = syncStatus,
-        stockDeducted = stockDeducted
+        stockDeducted = stockDeducted,
+        stockRestored = stockRestored,
+        cancellationReason = cancellationReason,
+        cancellationRequestedAt = cancellationRequestedAt,
+        cancellationRequestedBy = cancellationRequestedBy,
+        cancelledAt = cancelledAt,
+        cancelledBy = cancelledBy,
+        refundAmountVnd = refundAmountVnd,
+        refundMode = refundMode,
+        refundedAt = refundedAt,
+        refundedBy = refundedBy
     )
 }
 
@@ -113,7 +134,17 @@ fun OrderWithItems.toDomain(): Order {
         remoteId = order.remoteId,
         isSynced = order.isSynced,
         syncStatus = order.syncStatus,
-        stockDeducted = order.stockDeducted
+        stockDeducted = order.stockDeducted,
+        stockRestored = order.stockRestored,
+        cancellationReason = order.cancellationReason,
+        cancellationRequestedAt = order.cancellationRequestedAt,
+        cancellationRequestedBy = order.cancellationRequestedBy,
+        cancelledAt = order.cancelledAt,
+        cancelledBy = order.cancelledBy,
+        refundAmountVnd = order.refundAmountVnd,
+        refundMode = order.refundMode,
+        refundedAt = order.refundedAt,
+        refundedBy = order.refundedBy
     )
 }
 
@@ -138,6 +169,16 @@ fun OrderWithItems.toRemoteDto(): OrderRemoteDto {
         createdAt = order.createdAt,
         updatedAt = order.updatedAt,
         stockDeducted = order.stockDeducted,
+        stockRestored = order.stockRestored,
+        cancellationReason = order.cancellationReason,
+        cancellationRequestedAt = order.cancellationRequestedAt,
+        cancellationRequestedBy = order.cancellationRequestedBy,
+        cancelledAt = order.cancelledAt,
+        cancelledBy = order.cancelledBy,
+        refundAmountVnd = order.refundAmountVnd,
+        refundMode = order.refundMode?.name,
+        refundedAt = order.refundedAt,
+        refundedBy = order.refundedBy,
         items = items.map { it.toRemoteDto() }
     )
 }
@@ -165,7 +206,17 @@ fun OrderRemoteDto.toEntity(existingLocalId: Int = 0): OrderEntity {
         syncStatus = SyncStatus.SYNCED,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        stockDeducted = stockDeducted
+        stockDeducted = stockDeducted,
+        stockRestored = stockRestored,
+        cancellationReason = cancellationReason,
+        cancellationRequestedAt = cancellationRequestedAt,
+        cancellationRequestedBy = cancellationRequestedBy,
+        cancelledAt = cancelledAt,
+        cancelledBy = cancelledBy,
+        refundAmountVnd = refundAmountVnd,
+        refundMode = refundMode?.let { parseRefundMode(it) },
+        refundedAt = refundedAt,
+        refundedBy = refundedBy
     )
 }
 
@@ -231,6 +282,9 @@ private fun parsePaymentStatus(value: String): PaymentStatus =
 
 private fun parsePaymentMethod(value: String): PaymentMethod =
     runCatching { PaymentMethod.valueOf(value) }.getOrDefault(PaymentMethod.COD)
+
+private fun parseRefundMode(value: String): RefundMode? =
+    runCatching { RefundMode.valueOf(value) }.getOrNull()
 
 fun OrderItem.toDto(): OrderItemDto {
     return OrderItemDto(

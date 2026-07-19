@@ -57,6 +57,8 @@ fun Order.toAdminOrderDetailUiModel(): AdminOrderDetailUiModel {
         subtotalText = moneyFormat.format(subtotal),
         shippingFeeText = moneyFormat.format(shippingFee),
         discountText = null,
-        totalText = moneyFormat.format(totalAmount)
+        totalText = moneyFormat.format(totalAmount),
+        cancellationReason = cancellationReason,
+        refundAmountText = refundAmountVnd.takeIf { it > 0L }?.let(moneyFormat::format)
     )
 }

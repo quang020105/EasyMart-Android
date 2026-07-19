@@ -1,7 +1,6 @@
 package com.example.easymart.di
 
 import android.content.Context
-import com.example.easymart.data.local.dao.OrderDao
 import com.example.easymart.domain.repository.AddressRepository
 import com.example.easymart.domain.repository.AuthRepository
 import com.example.easymart.domain.repository.CartRepository
@@ -36,8 +35,10 @@ import com.example.easymart.domain.usecase.image_search.SearchByImageUseCase
 import com.example.easymart.domain.usecase.location.GetDistrictsUseCase
 import com.example.easymart.domain.usecase.location.GetProvincesUseCase
 import com.example.easymart.domain.usecase.location.GetWardsUseCase
-import com.example.easymart.domain.usecase.order.CancelOrderUseCase
 import com.example.easymart.domain.usecase.order.DeductStockAfterOrderSuccessUseCase
+import com.example.easymart.domain.usecase.order.ApproveOrderCancellationUseCase
+import com.example.easymart.domain.usecase.order.CancelCreatedOrderUseCase
+import com.example.easymart.domain.usecase.order.ConfirmManualRefundUseCase
 import com.example.easymart.domain.usecase.order.GetAdminOrderDetailUseCase
 import com.example.easymart.domain.usecase.order.GetObserveAllOrdersUseCase
 import com.example.easymart.domain.usecase.order.GetOrderDetailUseCase
@@ -49,6 +50,7 @@ import com.example.easymart.domain.usecase.order.OrderAutoProcessUseCase
 import com.example.easymart.domain.usecase.order.SyncOrderUseCase
 import com.example.easymart.domain.usecase.order.SyncPendingOrdersUseCase
 import com.example.easymart.domain.usecase.order.UpdateAdminOrderStatusUseCase
+import com.example.easymart.domain.usecase.order.RequestOrderCancellationUseCase
 import com.example.easymart.domain.usecase.ocr.AnalyzeProductImageUseCase
 import com.example.easymart.domain.usecase.payment.GetWalletBalanceUseCase
 import com.example.easymart.domain.usecase.payment.ProcessPaymentUseCase
@@ -210,13 +212,6 @@ object UseCaseModule {
         @ApplicationContext context: Context
     ): OrderAutoProcessUseCase = OrderAutoProcessUseCase(context)
 
-    @Provides
-    fun provideCancelUseUseCase(
-        orderDao: OrderDao,
-        orderAutoProcessUC: OrderAutoProcessUseCase
-    ) = CancelOrderUseCase(orderDao, orderAutoProcessUC)
-
-
     // order
 
     @Provides
@@ -274,6 +269,26 @@ object UseCaseModule {
     fun provideUpdateAdminOrderStatusUseCase(
         orderRepo: OrderRepository
     ) = UpdateAdminOrderStatusUseCase(orderRepo)
+
+    @Provides
+    fun provideRequestOrderCancellationUseCase(
+        orderRepo: OrderRepository
+    ) = RequestOrderCancellationUseCase(orderRepo)
+
+    @Provides
+    fun provideCancelCreatedOrderUseCase(
+        orderRepo: OrderRepository
+    ) = CancelCreatedOrderUseCase(orderRepo)
+
+    @Provides
+    fun provideApproveOrderCancellationUseCase(
+        orderRepo: OrderRepository
+    ) = ApproveOrderCancellationUseCase(orderRepo)
+
+    @Provides
+    fun provideConfirmManualRefundUseCase(
+        orderRepo: OrderRepository
+    ) = ConfirmManualRefundUseCase(orderRepo)
 
 
     // auth

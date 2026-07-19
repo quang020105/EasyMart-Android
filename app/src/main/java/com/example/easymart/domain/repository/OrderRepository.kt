@@ -24,4 +24,12 @@ interface OrderRepository {
         orderStatus: OrderStatus,
         paymentStatus: PaymentStatus? = null
     )
+    suspend fun requestOrderCancellation(
+        orderId: Int,
+        requesterId: String,
+        reason: String
+    )
+    suspend fun cancelCreatedOrder(orderId: Int, requesterId: String, reason: String)
+    suspend fun approveOrderCancellation(remoteId: String, adminId: String)
+    suspend fun confirmManualRefund(remoteId: String, adminId: String)
 }

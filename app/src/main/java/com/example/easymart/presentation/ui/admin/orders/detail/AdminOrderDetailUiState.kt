@@ -21,6 +21,13 @@ data class AdminOrderConfirmation(
     val message: String,
     val confirmText: String,
     val isDanger: Boolean,
+    val actionType: AdminOrderActionType,
     val orderStatus: OrderStatus,
     val paymentStatus: PaymentStatus? = null
 )
+
+enum class AdminOrderActionType {
+    UPDATE_STATUS,
+    APPROVE_CANCELLATION,
+    CONFIRM_MANUAL_REFUND
+}

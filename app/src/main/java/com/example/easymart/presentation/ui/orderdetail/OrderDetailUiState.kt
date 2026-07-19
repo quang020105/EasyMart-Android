@@ -7,3 +7,15 @@ sealed class OrderDetailUiState {
     data class Success(val order: Order) : OrderDetailUiState()
     data class Error(val message: String) : OrderDetailUiState()
 }
+
+data class OrderCancellationUiState(
+    val pendingOrderId: Int? = null,
+    val reason: String = "",
+    val isSubmitting: Boolean = false,
+    val mode: CustomerCancellationMode = CustomerCancellationMode.REQUEST
+)
+
+enum class CustomerCancellationMode {
+    DIRECT,
+    REQUEST
+}

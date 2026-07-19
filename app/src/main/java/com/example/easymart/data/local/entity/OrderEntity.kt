@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentStatus
+import com.example.easymart.domain.model.RefundMode
 import com.example.easymart.domain.model.SyncStatus
 
 @Entity(tableName = "orders")
@@ -28,5 +29,15 @@ data class OrderEntity(
     val syncStatus: SyncStatus = SyncStatus.PENDING,
     val createdAt: Long,
     val updatedAt: Long = createdAt,
-    val stockDeducted: Boolean = false
+    val stockDeducted: Boolean = false,
+    val stockRestored: Boolean = false,
+    val cancellationReason: String? = null,
+    val cancellationRequestedAt: Long? = null,
+    val cancellationRequestedBy: String? = null,
+    val cancelledAt: Long? = null,
+    val cancelledBy: String? = null,
+    val refundAmountVnd: Long = 0L,
+    val refundMode: RefundMode? = null,
+    val refundedAt: Long? = null,
+    val refundedBy: String? = null
 )

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.easymart.domain.model.Order
+import com.example.easymart.domain.order.OrderCancellationPolicy
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.common.components.ProductCard
@@ -36,6 +37,7 @@ import com.example.easymart.utils.toVNDString
 fun OrderPrimaryContent(
     modifier: Modifier = Modifier,
     order: Order,
+    onRequestCancellation: () -> Unit = {},
 ) {
     val dimens = LocalAppDimens.current
     Card(
@@ -155,10 +157,20 @@ fun OrderPrimaryContent(
             )
 
             //nút hành động
-            order.status.toActionString()?.let {
+            val canCancelImmediately = OrderCancellationPolicy.canCustomerCancelImmediately(order)
+            val actionText = if (OrderCancellationPolicy.canCustomerRequestCancellation(order)) {
+                "Yêu cầu hủy đơn"
+            } else {
+                order.status.toActionString()
+            }
+            actionText?.let {
                 RoundedActionButton(
                     text = it,
-                    onClick = { /* TODO: Handle contact seller action */ },
+                    onClick = {
+                        if (canCancelImmediately || OrderCancellationPolicy.canCustomerRequestCancellation(order)) {
+                            onRequestCancellation()
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = dimens.spaceSm),

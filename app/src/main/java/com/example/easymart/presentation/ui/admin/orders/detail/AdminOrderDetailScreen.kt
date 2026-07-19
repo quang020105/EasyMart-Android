@@ -35,6 +35,7 @@ fun AdminOrderDetailScreen(
     onMoveToProcessing: () -> Unit,
     onMoveToShipping: () -> Unit,
     onConfirmDelivered: () -> Unit,
+    onConfirmRefund: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -79,7 +80,8 @@ fun AdminOrderDetailScreen(
         item {
             PaymentInfoSection(
                 paymentMethod = order.paymentMethod,
-                paymentStatus = order.paymentStatus
+                paymentStatus = order.paymentStatus,
+                refundAmountText = order.refundAmountText
             )
         }
 
@@ -101,12 +103,15 @@ fun AdminOrderDetailScreen(
         item {
             AdminOrderActionSection(
                 orderStatus = order.orderStatus,
+                paymentStatus = order.paymentStatus,
+                refundAmountText = order.refundAmountText,
                 isLoading = isActionLoading,
                 onConfirmOrder = onConfirmOrder,
                 onCancelOrder = onCancelOrder,
                 onMoveToProcessing = onMoveToProcessing,
                 onMoveToShipping = onMoveToShipping,
-                onConfirmDelivered = onConfirmDelivered
+                onConfirmDelivered = onConfirmDelivered,
+                onConfirmRefund = onConfirmRefund
             )
         }
     }
@@ -134,7 +139,9 @@ data class AdminOrderDetailUiModel(
     val subtotalText: String,
     val shippingFeeText: String,
     val discountText: String?,
-    val totalText: String
+    val totalText: String,
+    val cancellationReason: String? = null,
+    val refundAmountText: String? = null
 )
 
 @Preview(showBackground = true)
@@ -181,7 +188,8 @@ private fun AdminOrderDetailScreenPreview() {
             onCancelOrder = {},
             onMoveToProcessing = {},
             onMoveToShipping = {},
-            onConfirmDelivered = {}
+            onConfirmDelivered = {},
+            onConfirmRefund = {}
         )
     }
 }

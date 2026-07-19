@@ -15,4 +15,26 @@ interface OrderRemoteDataSource {
         paymentStatus: String?,
         updatedAt: Long
     )
+    suspend fun requestCancellation(
+        remoteId: String,
+        requesterId: String,
+        reason: String,
+        updatedAt: Long
+    ): OrderRemoteDto
+    suspend fun cancelCreatedOrder(
+        remoteId: String,
+        requesterId: String,
+        reason: String,
+        updatedAt: Long
+    ): OrderRemoteDto
+    suspend fun approveCancellation(
+        remoteId: String,
+        adminId: String,
+        updatedAt: Long
+    ): OrderRemoteDto
+    suspend fun confirmManualRefund(
+        remoteId: String,
+        adminId: String,
+        updatedAt: Long
+    ): OrderRemoteDto
 }

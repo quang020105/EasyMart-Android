@@ -77,7 +77,7 @@ class OrderViewModel @Inject constructor(
                when(order.status){
                     OrderStatus.DELIVERED, OrderStatus.CANCELLED  -> _uiEvent.send(OrderUiEvent.NavigateToBuyAgain(order.id))
                     OrderStatus.SHIPPING-> _uiEvent.send(OrderUiEvent.NavigateToTrack(order.id))
-                    OrderStatus.CREATED,  OrderStatus.CONFIRMED  -> {
+                     OrderStatus.CREATED,  OrderStatus.CONFIRMED, OrderStatus.CANCELLATION_REQUESTED -> {
                             //todo: hủy đơn
                     }
                     else -> {}

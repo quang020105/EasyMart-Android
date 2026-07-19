@@ -55,6 +55,7 @@ fun OrderScreen(
         "Chờ lấy hàng" to OrderStatus.PACKING,
         "Đang giao" to OrderStatus.SHIPPING,
         "Đã giao" to OrderStatus.DELIVERED,
+        "Chờ duyệt hủy" to OrderStatus.CANCELLATION_REQUESTED,
         "Đã hủy" to OrderStatus.CANCELLED
     )
 

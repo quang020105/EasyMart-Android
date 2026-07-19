@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.easymart.domain.model.OrderStatus
+import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.utils.canAdminCancel
 import com.example.easymart.utils.hasAdminAction
@@ -37,53 +38,52 @@ import com.example.easymart.utils.toAdminPrimaryActionString
 @Composable
 fun AdminOrderActionSection(
     orderStatus: OrderStatus,
+    paymentStatus: PaymentStatus,
+    refundAmountText: String?,
     isLoading: Boolean,
     onConfirmOrder: () -> Unit,
     onCancelOrder: () -> Unit,
     onMoveToProcessing: () -> Unit,
     onMoveToShipping: () -> Unit,
     onConfirmDelivered: () -> Unit,
+    onConfirmRefund: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     SectionCard(modifier = modifier) {
-        SectionTitle(
-            icon = Icons.Rounded.Security,
-            title = "Thao tác Admin"
-        )
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            if (!orderStatus.hasAdminAction()) {
+        SectionTitle(icon = Icons.Rounded.Security, title = "Thao tác quản trị")
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            if (!orderStatus.hasAdminAction() && paymentStatus != PaymentStatus.REFUND_REQUIRED) {
                 Text(
                     text = "Đơn hàng hiện không còn thao tác xử lý.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            } else {
-                val primaryActionText = orderStatus.toAdminPrimaryActionString()
+            }
 
-                if (primaryActionText != null) {
+            if (orderStatus.hasAdminAction()) {
+                orderStatus.toAdminPrimaryActionString()?.let { text ->
                     PrimaryActionButton(
-                        text = primaryActionText,
+                        text = text,
                         icon = orderStatus.toPrimaryActionIcon(),
                         isLoading = isLoading,
-                        onClick = {
-                            when (orderStatus) {
-                                OrderStatus.CREATED -> onConfirmOrder()
-                                OrderStatus.CONFIRMED -> onMoveToProcessing()
-                                OrderStatus.PACKING -> onMoveToShipping()
-                                OrderStatus.SHIPPING -> onConfirmDelivered()
-                                OrderStatus.DELIVERED,
-                                OrderStatus.CANCELLED -> Unit
-                            }
+                        onClick = when (orderStatus) {
+                            OrderStatus.CREATED -> onConfirmOrder
+                            OrderStatus.CONFIRMED -> onMoveToProcessing
+                            OrderStatus.PACKING -> onMoveToShipping
+                            OrderStatus.SHIPPING -> onConfirmDelivered
+                            OrderStatus.CANCELLATION_REQUESTED -> onCancelOrder
+                            OrderStatus.DELIVERED, OrderStatus.CANCELLED -> ({})
                         }
                     )
                 }
 
                 if (orderStatus.canAdminCancel()) {
                     DangerActionButton(
-                        text = "Hủy đơn",
+                        text = if (orderStatus == OrderStatus.CANCELLATION_REQUESTED) {
+                            "Duyệt hủy đơn"
+                        } else {
+                            "Hủy đơn"
+                        },
                         icon = Icons.Rounded.Cancel,
                         enabled = !isLoading,
                         onClick = onCancelOrder
@@ -91,24 +91,26 @@ fun AdminOrderActionSection(
                 }
             }
 
-            Text(
-                text = "Chỉ hiển thị thao tác phù hợp với trạng thái hiện tại của đơn hàng.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            if (paymentStatus == PaymentStatus.REFUND_REQUIRED) {
+                PrimaryActionButton(
+                    text = refundAmountText?.let { "Xác nhận đã hoàn $it" }
+                        ?: "Xác nhận đã hoàn tiền",
+                    icon = Icons.Rounded.CheckCircle,
+                    isLoading = isLoading,
+                    onClick = onConfirmRefund
+                )
+            }
         }
     }
 }
 
-private fun OrderStatus.toPrimaryActionIcon(): ImageVector {
-    return when (this) {
-        OrderStatus.CREATED -> Icons.Rounded.Verified
-        OrderStatus.CONFIRMED -> Icons.Rounded.Inventory2
-        OrderStatus.PACKING -> Icons.Rounded.LocalShipping
-        OrderStatus.SHIPPING -> Icons.Rounded.CheckCircle
-        OrderStatus.DELIVERED,
-        OrderStatus.CANCELLED -> Icons.Rounded.Security
-    }
+private fun OrderStatus.toPrimaryActionIcon(): ImageVector = when (this) {
+    OrderStatus.CANCELLATION_REQUESTED -> Icons.Rounded.Cancel
+    OrderStatus.CREATED -> Icons.Rounded.Verified
+    OrderStatus.CONFIRMED -> Icons.Rounded.Inventory2
+    OrderStatus.PACKING -> Icons.Rounded.LocalShipping
+    OrderStatus.SHIPPING -> Icons.Rounded.CheckCircle
+    OrderStatus.DELIVERED, OrderStatus.CANCELLED -> Icons.Rounded.Security
 }
 
 @Composable
@@ -132,17 +134,10 @@ private fun PrimaryActionButton(
                 color = MaterialTheme.colorScheme.onPrimary
             )
         } else {
-            Icon(
-                imageVector = icon,
-                contentDescription = null
-            )
+            Icon(imageVector = icon, contentDescription = null)
         }
         Spacer(modifier = Modifier.width(8.dp))
-
-        Text(
-            text = text,
-            fontWeight = FontWeight.Bold
-        )
+        Text(text = text, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -159,24 +154,11 @@ private fun DangerActionButton(
         enabled = enabled,
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(
-            width = 1.dp,
-            color = Color(0xFFDC2626)
-        )
+        border = BorderStroke(width = 1.dp, color = Color(0xFFDC2626))
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = Color(0xFFDC2626)
-        )
-
+        Icon(imageVector = icon, contentDescription = null, tint = Color(0xFFDC2626))
         Spacer(modifier = Modifier.width(4.dp))
-
-        Text(
-            text = text,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFFDC2626)
-        )
+        Text(text = text, fontWeight = FontWeight.Bold, color = Color(0xFFDC2626))
     }
 }
 
@@ -186,12 +168,15 @@ private fun AdminOrderActionSectionPreview() {
     EasyMartTheme {
         AdminOrderActionSection(
             orderStatus = OrderStatus.PACKING,
+            paymentStatus = PaymentStatus.UNPAID,
+            refundAmountText = null,
             isLoading = false,
             onConfirmOrder = {},
             onCancelOrder = {},
             onMoveToProcessing = {},
             onMoveToShipping = {},
             onConfirmDelivered = {},
+            onConfirmRefund = {},
             modifier = Modifier.padding(16.dp)
         )
     }

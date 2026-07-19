@@ -40,7 +40,8 @@ import com.example.easymart.utils.toDisplayString
 @Composable
 fun OrderDetailScreen(
     uiState: OrderDetailUiState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRequestCancellation: () -> Unit = {}
 ) {
     val dimens = LocalAppDimens.current
     Surface(
@@ -114,7 +115,8 @@ fun OrderDetailScreen(
                     }
                     item {
                         OrderPrimaryContent(
-                            order = uiState.order
+                            order = uiState.order,
+                            onRequestCancellation = onRequestCancellation
                         )
                     }
                 }

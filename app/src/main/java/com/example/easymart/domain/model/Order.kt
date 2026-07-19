@@ -1,6 +1,5 @@
 package com.example.easymart.domain.model
 
-//tập hợp đơn hàng
 data class Order(
     val id: Int = 0,
     val remoteId: String? = null,
@@ -18,21 +17,36 @@ data class Order(
     val updatedAt: Long = createdAt,
     val isSynced: Boolean = false,
     val syncStatus: SyncStatus = SyncStatus.PENDING,
-    val stockDeducted: Boolean = false,
+    val stockDeducted: Boolean = false, // tồn kho đã được trừ hay chưa, tránh trừ nhiều lần
+    val stockRestored: Boolean = false, // tồn kho đã được khôi phục hay chưa
+    val cancellationReason: String? = null, // lý do hủy đơn
+    val cancellationRequestedAt: Long? = null,
+    val cancellationRequestedBy: String? = null,
+    val cancelledAt: Long? = null,
+    val cancelledBy: String? = null,
+    val refundAmountVnd: Long = 0L,
+    val refundMode: RefundMode? = null,
+    val refundedAt: Long? = null,
+    val refundedBy: String? = null,
 )
 
 enum class OrderStatus {
-    CREATED, //đã tạo đơn
-    CONFIRMED, //đã xác nhận
-    PACKING, //đang chuẩn bị hàng
-    SHIPPING, //đang vận chuyển
-    DELIVERED, //đã giao hàng
-    CANCELLED // đã hủy
+    CREATED,
+    CONFIRMED,
+    PACKING,
+    SHIPPING,
+    DELIVERED,
+    CANCELLATION_REQUESTED,
+    CANCELLED,
 }
 
 enum class SyncStatus {
     PENDING,
     SYNCING,
     SYNCED,
-    FAILED
+    FAILED,
+}
+
+enum class RefundMode {
+    MANUAL_SIMULATION,
 }

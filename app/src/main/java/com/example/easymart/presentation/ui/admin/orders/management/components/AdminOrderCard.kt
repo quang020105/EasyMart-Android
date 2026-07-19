@@ -163,6 +163,7 @@ private fun OrderLeadingIcon(
     modifier: Modifier = Modifier
 ) {
     val icon = when (orderStatus) {
+        OrderStatus.CANCELLATION_REQUESTED -> Icons.Rounded.Cancel
         OrderStatus.CREATED -> Icons.Rounded.ShoppingBag
         OrderStatus.CONFIRMED -> Icons.AutoMirrored.Rounded.ReceiptLong
         OrderStatus.PACKING -> Icons.Rounded.Inventory2

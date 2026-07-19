@@ -218,7 +218,7 @@ fun OrderCard(
                 }
 
                 order.status
-                    .toPrimaryActionText(order.paymentMethod, order.paymentStatus)
+                    .toPrimaryActionText()
                     ?.let { actionText ->
                         RoundedActionButton(
                             text = actionText,

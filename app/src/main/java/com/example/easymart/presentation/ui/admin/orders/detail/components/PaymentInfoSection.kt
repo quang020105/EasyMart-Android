@@ -25,47 +25,43 @@ import androidx.compose.ui.unit.dp
 import com.example.easymart.domain.model.PaymentMethod
 import com.example.easymart.domain.model.PaymentStatus
 import com.example.easymart.presentation.theme.EasyMartTheme
-import com.example.easymart.utils.label
 import com.example.easymart.utils.toDisplayString
 
 @Composable
 fun PaymentInfoSection(
     paymentMethod: PaymentMethod,
     paymentStatus: PaymentStatus,
+    refundAmountText: String? = null,
     modifier: Modifier = Modifier
 ) {
     SectionCard(modifier = modifier) {
-        SectionTitle(
-            icon = Icons.Rounded.Payment,
-            title = "Thông tin thanh toán"
-        )
-
+        SectionTitle(icon = Icons.Rounded.Payment, title = "Thông tin thanh toán")
         OrderDetailInfoRow(
             label = "Phương thức:",
             value = paymentMethod.toDisplayString(),
             icon = Icons.Rounded.Payment
         )
-
         SectionDivider()
-
         OrderDetailInfoRow(
             label = "Trạng thái:",
             value = paymentStatus.toDisplayString(),
             icon = Icons.Rounded.WarningAmber
         )
-
-        if (paymentMethod == PaymentMethod.COD) {
-            CodPaymentNote()
+        if (refundAmountText != null) {
+            SectionDivider()
+            OrderDetailInfoRow(
+                label = "Số tiền hoàn:",
+                value = refundAmountText,
+                icon = Icons.Rounded.Payment
+            )
         }
+        if (paymentMethod == PaymentMethod.COD) CodPaymentNote()
     }
 }
 
 @Composable
-private fun CodPaymentNote(
-    modifier: Modifier = Modifier
-) {
+private fun CodPaymentNote(modifier: Modifier = Modifier) {
     val primary = MaterialTheme.colorScheme.primary
-
     Box(
         modifier = modifier
             .background(
@@ -78,21 +74,11 @@ private fun CodPaymentNote(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.Top
         ) {
-            Icon(
-                imageVector = Icons.Rounded.Info,
-                contentDescription = null,
-                tint = primary
-            )
-
+            Icon(Icons.Rounded.Info, contentDescription = null, tint = primary)
             Text(
                 text = buildAnnotatedString {
                     append("Với đơn COD, khi xác nhận đã giao, hệ thống tự cập nhật thanh toán thành ")
-                    withStyle(
-                        style = SpanStyle(
-                            color = primary,
-                            fontWeight = FontWeight.Bold
-                        )
-                    ) {
+                    withStyle(SpanStyle(color = primary, fontWeight = FontWeight.Bold)) {
                         append("Đã thanh toán.")
                     }
                 },

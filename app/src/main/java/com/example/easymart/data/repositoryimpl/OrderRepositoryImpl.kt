@@ -153,6 +153,70 @@ class OrderRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun requestOrderCancellation(
+        orderId: Int,
+        requesterId: String,
+        reason: String
+    ) {
+        val localOrder = getOrderById(orderId) ?: error("Không tìm thấy đơn hàng")
+        check(localOrder.userId == requesterId) { "Bạn không thể hủy đơn hàng của người khác" }
+
+        if (localOrder.remoteId.isNullOrBlank()) {
+            syncOrder(orderId)
+        }
+
+        val syncedOrder = orderDao.getOrderWithItemsOrNull(orderId)?.toDomain()
+            ?: error("Không tìm thấy đơn hàng")
+        val remoteId = syncedOrder.remoteId ?: error("Đơn hàng chưa được đồng bộ")
+        val updated = remoteDS.requestCancellation(
+            remoteId = remoteId,
+            requesterId = requesterId,
+            reason = reason,
+            updatedAt = System.currentTimeMillis()
+        )
+        mergeRemoteOrders(requesterId, listOf(updated))
+    }
+
+    override suspend fun cancelCreatedOrder(
+        orderId: Int,
+        requesterId: String,
+        reason: String
+    ) {
+        val localOrder = getOrderById(orderId) ?: error("Không tìm thấy đơn hàng")
+        check(localOrder.userId == requesterId) { "Bạn không thể hủy đơn hàng của người khác" }
+
+        if (localOrder.remoteId.isNullOrBlank()) {
+            syncOrder(orderId)
+        }
+
+        val syncedOrder = orderDao.getOrderWithItemsOrNull(orderId)?.toDomain()
+            ?: error("Không tìm thấy đơn hàng")
+        val remoteId = syncedOrder.remoteId ?: error("Đơn hàng chưa được đồng bộ")
+        val updated = remoteDS.cancelCreatedOrder(
+            remoteId = remoteId,
+            requesterId = requesterId,
+            reason = reason,
+            updatedAt = System.currentTimeMillis()
+        )
+        mergeRemoteOrders(requesterId, listOf(updated))
+    }
+
+    override suspend fun approveOrderCancellation(remoteId: String, adminId: String) {
+        remoteDS.approveCancellation(
+            remoteId = remoteId,
+            adminId = adminId,
+            updatedAt = System.currentTimeMillis()
+        )
+    }
+
+    override suspend fun confirmManualRefund(remoteId: String, adminId: String) {
+        remoteDS.confirmManualRefund(
+            remoteId = remoteId,
+            adminId = adminId,
+            updatedAt = System.currentTimeMillis()
+        )
+    }
+
     //  hợp nhất các đơn hàng từ remote vào local
     private suspend fun mergeRemoteOrders(userId: String, remoteOrders: List<OrderRemoteDto>) {
         remoteOrders.forEach { originalRemote ->

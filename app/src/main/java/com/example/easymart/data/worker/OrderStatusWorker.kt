@@ -30,7 +30,10 @@ class OrderStatusWorker @AssistedInject constructor(
         val order = orderDao.getOrderWithItems(orderId).order
 
         //nếu đơn hàng đã hủy thì không cập nhật trạng thái nữa
-        if(order.orderStatus == OrderStatus.CANCELLED) {
+        if (
+            order.orderStatus == OrderStatus.CANCELLED ||
+            order.orderStatus == OrderStatus.CANCELLATION_REQUESTED
+        ) {
             return Result.success()
         }
         //cập nhật trạng thái đơn hàng

@@ -9,6 +9,7 @@ import com.example.easymart.domain.model.PaymentStatus
 
 fun OrderStatus.toDisplayString(): String {
     return when (this) {
+        OrderStatus.CANCELLATION_REQUESTED -> "Đang chờ hủy"
         OrderStatus.CREATED -> "Chờ xử lý"
         OrderStatus.CONFIRMED -> "Đã xác nhận"
         OrderStatus.PACKING -> "Chờ lấy hàng"
@@ -30,6 +31,7 @@ fun OrderStatus.toActionString(): String? {
 // màu sắc cho nút hành động dựa trên trạng thái đơn hàng
 fun OrderStatus.toActionColor(): Color {
     return when (this) {
+        OrderStatus.CANCELLATION_REQUESTED -> Color(0xFFD97706)
         OrderStatus.CREATED, OrderStatus.CONFIRMED -> Color(0xFFD32F2F)
         OrderStatus.PACKING, OrderStatus.SHIPPING -> Color(0xFF1976D2)
         OrderStatus.DELIVERED, OrderStatus.CANCELLED -> Color(0xFF2E7D32)
@@ -46,6 +48,12 @@ data class ChipColorScheme(
 
 fun OrderStatus.colorScheme(): ChipColorScheme {
     return when (this) {
+        OrderStatus.CANCELLATION_REQUESTED -> ChipColorScheme(
+            containerColor = Color(0xFFFFFBEB),
+            contentColor = Color(0xFFD97706),
+            borderColor = Color(0xFFFDE68A)
+        )
+
         OrderStatus.CREATED -> ChipColorScheme(
             containerColor = Color(0xFFFFF7ED),
             contentColor = Color(0xFFEA580C),
@@ -172,6 +180,7 @@ fun PaymentMethod.colorScheme(): ChipColorScheme {
 // action chuyển trạng đơn hàng cho admin
 fun OrderStatus.toAdminPrimaryActionString(): String? {
     return when (this) {
+        OrderStatus.CANCELLATION_REQUESTED -> null
         OrderStatus.CREATED -> "Xác nhận đơn"
         OrderStatus.CONFIRMED -> "Chuyển sang chờ lấy hàng"
         OrderStatus.PACKING -> "Chuyển sang đang giao"
@@ -183,6 +192,7 @@ fun OrderStatus.toAdminPrimaryActionString(): String? {
 
 fun OrderStatus.canAdminCancel(): Boolean {
     return when (this) {
+        OrderStatus.CANCELLATION_REQUESTED,
         OrderStatus.CREATED,
         OrderStatus.CONFIRMED,
         OrderStatus.PACKING -> true

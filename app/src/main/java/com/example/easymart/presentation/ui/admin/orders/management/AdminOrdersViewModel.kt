@@ -56,7 +56,7 @@ class AdminOrdersViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            errorMessage = error.message ?: "Khong the tai danh sach don hang"
+                            errorMessage = error.message ?: "Không thể tải danh sách đơn hàng"
                         )
                     }
                 }

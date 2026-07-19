@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.easymart.domain.model.OrderStatus
 import com.example.easymart.domain.model.PaymentStatus
+import com.example.easymart.domain.usecase.auth.GetCurrentUserUseCase
+import com.example.easymart.domain.usecase.order.ApproveOrderCancellationUseCase
+import com.example.easymart.domain.usecase.order.ConfirmManualRefundUseCase
 import com.example.easymart.domain.usecase.order.GetAdminOrderDetailUseCase
 import com.example.easymart.domain.usecase.order.UpdateAdminOrderStatusUseCase
 import com.example.easymart.presentation.ui.admin.orders.toAdminOrderDetailUiModel
@@ -19,7 +22,10 @@ import javax.inject.Inject
 @HiltViewModel
 class AdminOrderDetailViewModel @Inject constructor(
     private val getAdminOrderDetailUseCase: GetAdminOrderDetailUseCase,
-    private val updateAdminOrderStatusUseCase: UpdateAdminOrderStatusUseCase
+    private val updateAdminOrderStatusUseCase: UpdateAdminOrderStatusUseCase,
+    private val approveOrderCancellationUseCase: ApproveOrderCancellationUseCase,
+    private val confirmManualRefundUseCase: ConfirmManualRefundUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AdminOrderDetailUiState(isLoading = true))
     val uiState = _uiState.asStateFlow()
@@ -62,26 +68,39 @@ class AdminOrderDetailViewModel @Inject constructor(
         confirmText = "Xác nhận"
     )
 
-    fun cancelOrder() = requestStatusChange(
-        orderStatus = OrderStatus.CANCELLED,
-        paymentStatus = PaymentStatus.FAILED,
-        title = "Hủy đơn hàng",
-        message = "Bạn có chắc muốn hủy đơn hàng này? Thao tác này sẽ cập nhật trạng thái đơn và thanh toán.",
-        confirmText = "Hủy đơn",
-        isDanger = true
+    fun cancelOrder() = requestConfirmation(
+        AdminOrderConfirmation(
+            title = "Duyệt hủy đơn",
+            message = "Xác nhận hủy đơn? Tồn kho sẽ được hoàn lại. Đơn đã thanh toán sẽ chuyển sang chờ hoàn tiền.",
+            confirmText = "Duyệt hủy",
+            isDanger = true,
+            actionType = AdminOrderActionType.APPROVE_CANCELLATION,
+            orderStatus = OrderStatus.CANCELLED
+        )
+    )
+
+    fun confirmRefund() = requestConfirmation(
+        AdminOrderConfirmation(
+            title = "Xác nhận hoàn tiền",
+            message = "Xác nhận admin đã hoàn tiền thủ công cho khách hàng?",
+            confirmText = "Đã hoàn tiền",
+            isDanger = false,
+            actionType = AdminOrderActionType.CONFIRM_MANUAL_REFUND,
+            orderStatus = OrderStatus.CANCELLED
+        )
     )
 
     fun moveToProcessing() = requestStatusChange(
         orderStatus = OrderStatus.PACKING,
         title = "Chuyển sang chờ lấy hàng",
-        message = "Bạn có chắc muốn chuyển đơn hàng sang trạng thái chờ lấy hàng?",
+        message = "Chuyển đơn hàng sang trạng thái chờ lấy hàng?",
         confirmText = "Chuyển trạng thái"
     )
 
     fun moveToShipping() = requestStatusChange(
         orderStatus = OrderStatus.SHIPPING,
         title = "Chuyển sang đang giao",
-        message = "Bạn có chắc muốn chuyển đơn hàng sang trạng thái đang giao?",
+        message = "Chuyển đơn hàng sang trạng thái đang giao?",
         confirmText = "Chuyển trạng thái"
     )
 
@@ -94,7 +113,7 @@ class AdminOrderDetailViewModel @Inject constructor(
             orderStatus = OrderStatus.DELIVERED,
             paymentStatus = paymentStatus,
             title = "Xác nhận đã giao",
-            message = "Bạn có chắc đơn hàng này đã được giao thành công?",
+            message = "Xác nhận đơn hàng đã được giao thành công?",
             confirmText = "Xác nhận"
         )
     }
@@ -103,13 +122,16 @@ class AdminOrderDetailViewModel @Inject constructor(
         _uiState.update { it.copy(pendingConfirmation = null) }
     }
 
-    // xác nhận thay đổi trạng thái đơn hàng
     fun confirmPendingAction() {
         val confirmation = _uiState.value.pendingConfirmation ?: return
-        updateStatus(
-            orderStatus = confirmation.orderStatus,
-            paymentStatus = confirmation.paymentStatus
-        )
+        when (confirmation.actionType) {
+            AdminOrderActionType.UPDATE_STATUS -> updateStatus(
+                orderStatus = confirmation.orderStatus,
+                paymentStatus = confirmation.paymentStatus
+            )
+            AdminOrderActionType.APPROVE_CANCELLATION -> approveCancellation()
+            AdminOrderActionType.CONFIRM_MANUAL_REFUND -> confirmManualRefund()
+        }
     }
 
     private fun requestStatusChange(
@@ -119,28 +141,50 @@ class AdminOrderDetailViewModel @Inject constructor(
         confirmText: String,
         paymentStatus: PaymentStatus? = null,
         isDanger: Boolean = false
-    ) {
+    ) = requestConfirmation(
+        AdminOrderConfirmation(
+            title = title,
+            message = message,
+            confirmText = confirmText,
+            isDanger = isDanger,
+            actionType = AdminOrderActionType.UPDATE_STATUS,
+            orderStatus = orderStatus,
+            paymentStatus = paymentStatus
+        )
+    )
+
+    private fun requestConfirmation(confirmation: AdminOrderConfirmation) {
         if (_uiState.value.isActionLoading) return
-        _uiState.update {
-            it.copy(
-                pendingConfirmation = AdminOrderConfirmation(
-                    title = title,
-                    message = message,
-                    confirmText = confirmText,
-                    isDanger = isDanger,
-                    orderStatus = orderStatus,
-                    paymentStatus = paymentStatus
-                )
-            )
+        _uiState.update { it.copy(pendingConfirmation = confirmation) }
+    }
+
+    private fun updateStatus(orderStatus: OrderStatus, paymentStatus: PaymentStatus? = null) {
+        runAdminAction("Cập nhật đơn hàng thành công") { id, _ ->
+            updateAdminOrderStatusUseCase(id, orderStatus, paymentStatus)
         }
     }
 
-    // update thật
-    private fun updateStatus(orderStatus: OrderStatus, paymentStatus: PaymentStatus? = null) {
+    private fun approveCancellation() = runAdminAction(
+        "Đã duyệt hủy đơn và cập nhật tồn kho"
+    ) { id, adminId ->
+        approveOrderCancellationUseCase(id, adminId)
+    }
+
+    private fun confirmManualRefund() = runAdminAction(
+        "Đã xác nhận hoàn tiền"
+    ) { id, adminId ->
+        confirmManualRefundUseCase(id, adminId)
+    }
+
+    private fun runAdminAction(
+        successMessage: String,
+        action: suspend (remoteId: String, adminId: String) -> Unit
+    ) {
         val id = remoteId
-        if (id == null) {
+        val adminId = getCurrentUserUseCase()?.id
+        if (id == null || adminId == null) {
             viewModelScope.launch {
-                _uiEvent.send(AdminOrderDetailUiEvent.ShowMessage("Không tìm thấy đơn hàng"))
+                _uiEvent.send(AdminOrderDetailUiEvent.ShowMessage("Không xác định được tài khoản hoặc đơn hàng"))
             }
             return
         }
@@ -154,7 +198,7 @@ class AdminOrderDetailViewModel @Inject constructor(
                 )
             }
             runCatching {
-                updateAdminOrderStatusUseCase(id, orderStatus, paymentStatus)
+                action(id, adminId)
                 getAdminOrderDetailUseCase(id)
             }.onSuccess { order ->
                 _uiState.update {
@@ -164,15 +208,10 @@ class AdminOrderDetailViewModel @Inject constructor(
                         errorMessage = null
                     )
                 }
-                _uiEvent.send(AdminOrderDetailUiEvent.ShowMessage("Cập nhật đơn hàng thành công"))
-            }.onFailure { error ->
-                val message = "Cập nhật đơn hàng không thành công. Vui lòng thử lại."
-                _uiState.update {
-                    it.copy(
-                        isActionLoading = false,
-                        errorMessage = message
-                    )
-                }
+                _uiEvent.send(AdminOrderDetailUiEvent.ShowMessage(successMessage))
+            }.onFailure {
+                val message = "Không thể hoàn tất thao tác. Vui lòng thử lại."
+                _uiState.update { it.copy(isActionLoading = false, errorMessage = message) }
                 _uiEvent.send(AdminOrderDetailUiEvent.ShowMessage(message))
             }
         }
