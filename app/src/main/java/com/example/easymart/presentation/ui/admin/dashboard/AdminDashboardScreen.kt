@@ -24,8 +24,6 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +46,7 @@ import com.example.easymart.domain.model.DashboardPeriod
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.admin.dashboard.components.AnalyticsSummaryRow
+import com.example.easymart.presentation.ui.admin.dashboard.components.DashboardPeriodMenu
 import com.example.easymart.presentation.ui.admin.dashboard.components.DashboardStatCard
 import com.example.easymart.presentation.ui.admin.dashboard.components.PeriodChip
 import com.example.easymart.presentation.ui.admin.dashboard.components.QuickActionCard
@@ -208,32 +207,21 @@ fun AdminDashboardScreen(
                                     text = uiState.period.label,
                                     onClick = { isPeriodMenuVisible = true }
                                 )
-                                DropdownMenu(
+                                DashboardPeriodMenu(
                                     expanded = isPeriodMenuVisible,
-                                    onDismissRequest = { isPeriodMenuVisible = false }
-                                ) {
-                                    DashboardPeriod.entries.forEach { period ->
-                                        DropdownMenuItem(
-                                            text = { Text(period.label) },
-                                            onClick = {
-                                                isPeriodMenuVisible = false
-                                                onSelectPeriod(period)
-                                            }
-                                        )
+                                    onDismissRequest = { isPeriodMenuVisible = false },
+                                    selectedPeriod = uiState.period,
+                                    onPeriodSelected = { period ->
+                                        isPeriodMenuVisible = false
+                                        onSelectPeriod(period)
                                     }
-                                }
+                                )
                             }
                         }
 
                         Spacer(modifier = Modifier.height(dimens.spaceMd))
 
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                        ) {
-                            Column {
+                        Column(modifier = Modifier.fillMaxWidth()) {
                                 AnalyticsSummaryRow(
                                     title = "Sản phẩm",
                                     subtitle = "Tổng số sản phẩm trong cửa hàng",
@@ -281,7 +269,6 @@ fun AdminDashboardScreen(
                                     sparklineColor = Color(0xFFFB923C),
                                     sparklineValues = null
                                 )
-                            }
                         }
                     }
                 }

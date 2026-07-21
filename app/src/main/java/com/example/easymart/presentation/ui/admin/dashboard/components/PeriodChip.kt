@@ -30,14 +30,14 @@ fun PeriodChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val shape = RoundedCornerShape(999.dp)
+    val shape = RoundedCornerShape(8.dp)
 
     Surface(
         onClick = onClick,
         modifier = modifier
-            .border(1.dp, Color(0xFFE5E7EB), shape),
+            .border(1.dp, Color(0xFFBFDBFE), shape),
         shape = shape,
-        color = Color.White,
+        color = Color(0xFFF8FAFF),
         shadowElevation = 0.dp
     ) {
         Row(
@@ -47,22 +47,22 @@ fun PeriodChip(
             Text(
                 text = text,
                 style = MaterialTheme.typography.labelLarge.copy(
-                    color = Color(0xFF344054),
-                    fontWeight = FontWeight.Medium
+                    color = Color(0xFF1D4ED8),
+                    fontWeight = FontWeight.SemiBold
                 )
             )
             Spacer(modifier = Modifier.width(4.dp))
             Icon(
                 imageVector = Icons.Filled.DateRange,
                 contentDescription = null,
-                tint = Color(0xFF667085),
+                tint = Color(0xFF2563EB),
                 modifier = Modifier.size(18.dp)
             )
             Spacer(modifier = Modifier.width(2.dp))
             Icon(
                 imageVector = Icons.Filled.ExpandMore,
                 contentDescription = null,
-                tint = Color(0xFF667085),
+                tint = Color(0xFF2563EB),
                 modifier = Modifier.size(18.dp)
             )
         }
