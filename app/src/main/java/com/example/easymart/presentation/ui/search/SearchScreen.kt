@@ -27,9 +27,6 @@ import com.example.easymart.presentation.ui.search.components.SuggestionItem
 fun SearchScreen(
     modifier: Modifier = Modifier,
     uiState: SearchUiState,
-//    onSearchTextChange: (String) -> Unit = {},
-//    onSearchClick: (String) -> Unit = {},
-//    onBackClick: () -> Unit = {},
     onProductClick: (Product) -> Unit = {},
     onSuggestionClick: (String) -> Unit = {}
 ) {
@@ -40,12 +37,6 @@ fun SearchScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-//        SearchTopbar(
-//            text = uiState.searchQuery,
-//            onSearchTextChange = onSearchTextChange,
-//            onSearchClick = onSearchClick,
-//            onBackClick = onBackClick
-//        )
 
         when {
             uiState.isLoading -> {

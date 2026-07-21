@@ -15,6 +15,7 @@ data class Order(
     val shippingAddress: Address,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = createdAt,
+    val deliveredAt: Long? = null,
     val isSynced: Boolean = false,
     val syncStatus: SyncStatus = SyncStatus.PENDING,
     val stockDeducted: Boolean = false, // tồn kho đã được trừ hay chưa, tránh trừ nhiều lần

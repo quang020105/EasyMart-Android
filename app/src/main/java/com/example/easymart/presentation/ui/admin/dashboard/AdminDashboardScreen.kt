@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CloudDownload
@@ -20,16 +21,21 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.easymart.R
+import com.example.easymart.domain.model.DashboardPeriod
 import com.example.easymart.presentation.theme.EasyMartTheme
 import com.example.easymart.presentation.theme.dimens.LocalAppDimens
 import com.example.easymart.presentation.ui.admin.dashboard.components.AnalyticsSummaryRow
@@ -51,6 +58,7 @@ import kotlin.math.roundToInt
 fun AdminDashboardScreen(
     uiState: AdminDashboardUiState,
     onRefresh: () -> Unit,
+    onSelectPeriod: (DashboardPeriod) -> Unit,
     onImportFakeStoreProducts: () -> Unit,
     onNavigateOrders: () -> Unit,
     onNavigateProducts: () -> Unit,
@@ -58,6 +66,7 @@ fun AdminDashboardScreen(
 ) {
     val dimens = LocalAppDimens.current
     val listState = rememberLazyListState()
+    var isPeriodMenuVisible by remember { mutableStateOf(false) }
 
     Surface(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -82,8 +91,8 @@ fun AdminDashboardScreen(
                 ) {
                     DashboardStatCard(
                         title = "Doanh thu",
-                        value = formatCurrency(uiState.revenueToday),
-                        trendText = "+18.6% so với hôm qua",
+                        value = formatCurrency(uiState.revenueVnd),
+                        trendText = formatTrend(uiState.revenueVnd, uiState.previousRevenueVnd),
                         tintColor = Color(0xFFF1F7FF),
                         iconBackground = Color(0xFFE3F0FF),
                         valueColor = Color(0xFF2563EB),
@@ -94,15 +103,18 @@ fun AdminDashboardScreen(
                     )
 
                     DashboardStatCard(
-                        title = "Đơn hàng",
-                        value = uiState.orderCount.toString(),
-                        trendText = "+12.4% so với hôm qua",
+                        title = "Đơn mới",
+                        value = uiState.ordersInPeriod.toString(),
+                        trendText = formatTrend(
+                            uiState.ordersInPeriod.toLong(),
+                            uiState.previousOrdersInPeriod.toLong()
+                        ),
                         tintColor = Color(0xFFF0FDF4),
                         iconBackground = Color(0xFFDCFCE7),
                         valueColor = Color(0xFF16A34A),
                         trendColor = Color(0xFF16A34A),
                         topIcon = Icons.Filled.ShoppingCart,
-                        topRightIcon = Icons.Filled.TrendingUp,
+                        topRightIcon = Icons.AutoMirrored.Filled.TrendingUp,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -191,7 +203,26 @@ fun AdminDashboardScreen(
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
-                            PeriodChip(text = "Hôm nay", onClick = {})
+                            Column(horizontalAlignment = Alignment.End) {
+                                PeriodChip(
+                                    text = uiState.period.label,
+                                    onClick = { isPeriodMenuVisible = true }
+                                )
+                                DropdownMenu(
+                                    expanded = isPeriodMenuVisible,
+                                    onDismissRequest = { isPeriodMenuVisible = false }
+                                ) {
+                                    DashboardPeriod.entries.forEach { period ->
+                                        DropdownMenuItem(
+                                            text = { Text(period.label) },
+                                            onClick = {
+                                                isPeriodMenuVisible = false
+                                                onSelectPeriod(period)
+                                            }
+                                        )
+                                    }
+                                }
+                            }
                         }
 
                         Spacer(modifier = Modifier.height(dimens.spaceMd))
@@ -212,7 +243,7 @@ fun AdminDashboardScreen(
                                     iconContainerColor = Color(0xFFE8F0FF),
                                     valueColor = Color(0xFF111827),
                                     sparklineColor = Color(0xFF60A5FA),
-                                    sparklineValues = demoSparkline(uiState.productCount)
+                                    sparklineValues = null
                                 )
                                 HorizontalDivider(color = Color(0xFFF1F5F9))
                                 AnalyticsSummaryRow(
@@ -224,19 +255,31 @@ fun AdminDashboardScreen(
                                     iconContainerColor = Color(0xFFF3ECFF),
                                     valueColor = Color(0xFF111827),
                                     sparklineColor = Color(0xFFA78BFA),
-                                    sparklineValues = demoSparkline(uiState.categoryCount)
+                                    sparklineValues = null
                                 )
                                 HorizontalDivider(color = Color(0xFFF1F5F9))
                                 AnalyticsSummaryRow(
                                     title = "Đơn hàng",
                                     subtitle = "Tổng số đơn hàng",
-                                    value = uiState.orderCount.toString(),
+                                    value = uiState.totalOrderCount.toString(),
                                     icon = Icons.Filled.ShoppingCart,
                                     iconTint = Color(0xFF16A34A),
                                     iconContainerColor = Color(0xFFDCFCE7),
                                     valueColor = Color(0xFF111827),
                                     sparklineColor = Color(0xFF34D399),
-                                    sparklineValues = demoSparkline(uiState.orderCount)
+                                    sparklineValues = uiState.dailyOrders.map { it.value.toFloat() }
+                                )
+                                HorizontalDivider(color = Color(0xFFF1F5F9))
+                                AnalyticsSummaryRow(
+                                    title = "Cần xử lý",
+                                    subtitle = "Đơn chờ xác nhận hoặc chờ duyệt hủy",
+                                    value = uiState.pendingActionCount.toString(),
+                                    icon = Icons.Filled.Description,
+                                    iconTint = Color(0xFFEA580C),
+                                    iconContainerColor = Color(0xFFFFEDD5),
+                                    valueColor = Color(0xFF111827),
+                                    sparklineColor = Color(0xFFFB923C),
+                                    sparklineValues = null
                                 )
                             }
                         }
@@ -316,22 +359,21 @@ private fun ImportStatusCard(
     }
 }
 
-private fun demoSparkline(value: Int): List<Float> {
-    val base = value.coerceAtLeast(1).toFloat()
-    return listOf(
-        base * 0.6f,
-        base * 0.7f,
-        base * 0.8f,
-        base * 0.65f,
-        base * 0.9f,
-        base * 0.75f,
-        base
-    )
+private fun formatCurrency(value: Long): String {
+    return "${"%,d".format(value)} đ"
 }
 
-private fun formatCurrency(value: Double): String {
-    val formatted = (value / 1000.0).roundToInt() * 1000
-    return "${"%,d".format(formatted.toLong())} đ"
+private fun formatTrend(current: Long, previous: Long): String {
+    if (previous == 0L) {
+        return if (current == 0L) "Chưa có dữ liệu so sánh" else "Mới trong kỳ này"
+    }
+
+    val percentage = ((current - previous).toDouble() / previous.toDouble() * 100).roundToInt()
+    return when {
+        percentage > 0 -> "Tăng $percentage% so với kỳ trước"
+        percentage < 0 -> "Giảm ${-percentage}% so với kỳ trước"
+        else -> "Không đổi so với kỳ trước"
+    }
 }
 
 
@@ -341,14 +383,16 @@ fun AdminDashboardPreview() {
     EasyMartTheme {
         AdminDashboardScreen(
             uiState = AdminDashboardUiState(
-                revenueToday = 12500000.0,
-                orderCount = 320,
+                revenueVnd = 12500000L,
+                ordersInPeriod = 320,
+                totalOrderCount = 320,
                 productCount = 120,
                 categoryCount = 8,
                 isLoading = false,
                 error = null
             ),
             onRefresh = {},
+            onSelectPeriod = {},
             onImportFakeStoreProducts = {},
             onNavigateOrders = {},
             onNavigateProducts = {},

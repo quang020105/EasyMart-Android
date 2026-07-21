@@ -29,6 +29,7 @@ data class OrderEntity(
     val syncStatus: SyncStatus = SyncStatus.PENDING,
     val createdAt: Long,
     val updatedAt: Long = createdAt,
+    val deliveredAt: Long? = null,
     val stockDeducted: Boolean = false,
     val stockRestored: Boolean = false,
     val cancellationReason: String? = null,

@@ -35,7 +35,7 @@ fun AnalyticsSummaryRow(
     iconContainerColor: Color,
     valueColor: Color,
     sparklineColor: Color,
-    sparklineValues: List<Float>,
+    sparklineValues: List<Float>? = null,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -89,15 +89,16 @@ fun AnalyticsSummaryRow(
             )
         )
 
-        Spacer(modifier = Modifier.width(14.dp))
-
-        SparklineChart(
-            values = sparklineValues,
-            color = sparklineColor,
-            modifier = Modifier
-                .width(72.dp)
-                .height(30.dp)
-        )
+        sparklineValues?.let { values ->
+            Spacer(modifier = Modifier.width(14.dp))
+            SparklineChart(
+                values = values,
+                color = sparklineColor,
+                modifier = Modifier
+                    .width(72.dp)
+                    .height(30.dp)
+            )
+        }
     }
 }
 

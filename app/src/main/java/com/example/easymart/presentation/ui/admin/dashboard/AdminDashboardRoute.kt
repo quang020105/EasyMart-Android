@@ -18,6 +18,7 @@ fun AdminDashboardRoute(
     AdminDashboardScreen(
         uiState = uiState,
         onRefresh = { viewModel.refresh() },
+        onSelectPeriod = viewModel::selectPeriod,
         onImportFakeStoreProducts = { viewModel.importFakeStoreProducts() },
         onNavigateOrders = onNavigateOrders,
         onNavigateProducts = onNavigateProducts,

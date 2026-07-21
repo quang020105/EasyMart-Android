@@ -10,6 +10,9 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -91,6 +94,21 @@ class FirestoreProductRemoteDataSource @Inject constructor(
     suspend fun getProductsOnce(): List<ProductFirestoreDto> {
         val snapshot = productRef().get().await()
         return snapshot.documents.map { mapDocToProduct(it) }
+    }
+
+    fun observeProducts(): Flow<List<Product>> = callbackFlow {
+        val listener = productRef().addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+
+            trySend(snapshot?.documents.orEmpty().map { document ->
+                mapDocToProduct(document).toDomain()
+            })
+        }
+
+        awaitClose { listener.remove() }
     }
 
     suspend fun uploadImage(localUri: String, storagePath: String): String {

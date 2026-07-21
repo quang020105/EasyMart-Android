@@ -19,6 +19,7 @@ data class OrderRemoteDto(
     val shippingAddressString: String = "",
     val createdAt: Long = 0L,
     val updatedAt: Long = 0L,
+    val deliveredAt: Long? = null,
     val stockDeducted: Boolean = false,
     val stockRestored: Boolean = false,
     val cancellationReason: String? = null,

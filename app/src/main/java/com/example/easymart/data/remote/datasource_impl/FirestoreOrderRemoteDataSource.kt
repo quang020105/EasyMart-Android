@@ -91,6 +91,9 @@ class FirestoreOrderRemoteDataSource @Inject constructor(
         if (paymentStatus != null) {
             updates["paymentStatus"] = paymentStatus
         }
+        if (orderStatus == OrderStatus.DELIVERED.name) {
+            updates["deliveredAt"] = updatedAt
+        }
         ordersRef().document(remoteId).update(updates).await()
     }
 
@@ -377,6 +380,7 @@ class FirestoreOrderRemoteDataSource @Inject constructor(
             shippingAddressString = getString("shippingAddressString").orEmpty(),
             createdAt = getLong("createdAt") ?: 0L,
             updatedAt = getLong("updatedAt") ?: 0L,
+            deliveredAt = getLong("deliveredAt"),
             stockDeducted = getBoolean("stockDeducted") ?: false,
             stockRestored = getBoolean("stockRestored") ?: false,
             cancellationReason = getString("cancellationReason"),

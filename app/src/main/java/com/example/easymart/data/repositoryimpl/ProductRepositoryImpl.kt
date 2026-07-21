@@ -252,6 +252,17 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun observeAllProductsForAdmin(): Flow<Resource<List<Product>>> {
+        val source: Flow<List<Product>> = firestoreDS.observeProducts()
+        val mapped: Flow<Resource<List<Product>>> = source.map { products ->
+            Resource.Success(products)
+        }
+
+        return mapped.catch { error ->
+                emit(Resource.Error(error.message ?: "Không thể tải sản phẩm từ Firebase"))
+            }
+    }
+
     private suspend fun syncProduct(local: ProductEntity) {
         val now = System.currentTimeMillis()
         val basePath = local.storagePath ?: "products/${local.id}"

@@ -16,4 +16,5 @@ interface ProductRepository {
     suspend fun importFakeStoreProductsToFirestore(): Resource<Int>
     suspend fun updateVisibilityLocalOnly(productId: Int, isVisible: Boolean): Resource<Unit>
     suspend fun deductStockForOrder(order: Order): Resource<Unit>
+    fun observeAllProductsForAdmin(): Flow<Resource<List<Product>>>
 }
