@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -77,7 +79,7 @@ fun AiProductScanCard(
 
                     // Title
                     Text(
-                        text = "Quét bằng AI",
+                        text = stringResource(R.string.ui_text_110),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold
                         )
@@ -87,7 +89,7 @@ fun AiProductScanCard(
 
                     // Description
                     Text(
-                        text = "AI sẽ phân tích ảnh sản phẩm và tự động điền thông tin vào biểu mẫu giúp bạn nhập liệu nhanh hơn.",
+                        text = stringResource(R.string.ui_text_111),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 22.sp
@@ -115,7 +117,7 @@ fun AiProductScanCard(
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Text(
-                    text = "Quét bằng AI",
+                    text = stringResource(R.string.ui_text_110),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.SemiBold
                     )

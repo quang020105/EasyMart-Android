@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.category.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -124,7 +125,7 @@ fun CategorySearchBoxTopBar(
                     IconButton(onClick = { onTextChange("") }) {
                         Icon(
                             imageVector = Icons.Filled.Close,
-                            contentDescription = "Xóa tìm kiếm",
+                            contentDescription = stringResource(R.string.ui_text_069),
                             modifier = Modifier.size(dimens.iconSmall),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -148,7 +149,7 @@ fun CartIconWithBadgeItem(
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_cart),
-            contentDescription = "Giỏ hàng",
+            contentDescription = stringResource(R.string.ui_text_211),
             tint = MaterialTheme.colorScheme.onPrimary
         )
         if (count > 0) {

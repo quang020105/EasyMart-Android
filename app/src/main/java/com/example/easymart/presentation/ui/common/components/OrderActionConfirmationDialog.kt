@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.common.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -118,7 +120,7 @@ fun OrderActionConfirmationDialog(
                             .height(dimens.buttonHeight),
                         shape = RoundedCornerShape(dimens.radiusMedium)
                     ) {
-                        Text(text = "Quay lại")
+                        Text(text = stringResource(R.string.ui_text_246))
                     }
 
                     Button(
@@ -154,9 +156,9 @@ fun OrderActionConfirmationDialog(
 private fun OrderActionConfirmationDialogPreview() {
     EasyMartTheme {
         OrderActionConfirmationDialog(
-            title = "Hủy đơn hàng",
-            message = "Đơn hàng sẽ được hủy và không thể tiếp tục xử lý.",
-            confirmText = "Xác nhận hủy",
+            title = stringResource(R.string.ui_text_247),
+            message = stringResource(R.string.ui_text_248),
+            confirmText = stringResource(R.string.ui_text_249),
             icon = Icons.Rounded.WarningAmber,
             isDanger = true,
             isLoading = false,

@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -60,7 +62,7 @@ fun ConfirmSaveProductDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Lưu thay đổi sản phẩm?",
+                    text = stringResource(R.string.ui_text_125),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold
                     ),
@@ -70,7 +72,7 @@ fun ConfirmSaveProductDialog(
         },
         text = {
             Text(
-                text = "Các thông tin sản phẩm sẽ được cập nhật trong hệ thống EasyMart và có thể ảnh hưởng đến nội dung hiển thị cho khách hàng.",
+                text = stringResource(R.string.ui_text_126),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -85,7 +87,7 @@ fun ConfirmSaveProductDialog(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(14.dp)
                 ) {
-                    Text(text = "Hủy")
+                    Text(text = stringResource(R.string.ui_text_101))
                 }
 
                 Button(
@@ -96,7 +98,7 @@ fun ConfirmSaveProductDialog(
                         containerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
-                    Text(text = "Lưu")
+                    Text(text = stringResource(R.string.ui_text_127))
                 }
             }
         },

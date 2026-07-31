@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.management.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -84,7 +86,7 @@ fun AdminOrderCard(
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 OrderInfoLine(
-                    label = "Mã đơn:",
+                    label = stringResource(R.string.ui_text_062),
                     value = order.id,
                     valueColor = Color(0xFF2563EB),
                     valueFontWeight = FontWeight.Bold,
@@ -92,19 +94,19 @@ fun AdminOrderCard(
                 )
 
                 OrderInfoLine(
-                    label = "Khách hàng:",
+                    label = stringResource(R.string.ui_text_063),
                     value = order.customerName,
                     icon = Icons.Rounded.Person
                 )
 
                 OrderInfoLine(
-                    label = "SĐT:",
+                    label = stringResource(R.string.ui_text_064),
                     value = order.phoneNumber,
                     icon = Icons.Rounded.Phone
                 )
 
                 OrderInfoLine(
-                    label = "Tổng tiền:",
+                    label = stringResource(R.string.ui_text_065),
                     value = order.totalAmountText,
                     valueColor = Color(0xFF2563EB),
                     valueFontWeight = FontWeight.Bold,
@@ -112,7 +114,7 @@ fun AdminOrderCard(
                 )
 
                 OrderInfoLine(
-                    label = "Ngày đặt:",
+                    label = stringResource(R.string.ui_text_066),
                     value = order.createdDateText,
                     icon = Icons.Rounded.CalendarMonth
                 )
@@ -150,7 +152,7 @@ fun AdminOrderCard(
 
             Icon(
                 imageVector = Icons.Rounded.MoreVert,
-                contentDescription = "Xem chi tiết",
+                contentDescription = stringResource(R.string.ui_text_067),
                 tint = Color(0xFF94A3B8)
             )
         }
@@ -247,7 +249,7 @@ fun AdminOrderCardPreview() {
                     id = "ORD-001",
                     customerName = "Nguyễn Văn A",
                     phoneNumber = "0987654321",
-                    totalAmountText = "450.000đ",
+        totalAmountText = stringResource(R.string.ui_text_357),
                     createdDateText = "04/06/2026",
                     orderStatus = OrderStatus.CREATED,
                     paymentMethod = PaymentMethod.COD,

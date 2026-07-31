@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -24,11 +26,11 @@ fun ShippingInfoSection(
     SectionCard(modifier = modifier) {
         SectionTitle(
             icon = Icons.Rounded.LocationOn,
-            title = "Địa chỉ giao hàng"
+            title = stringResource(R.string.label_address)
         )
 
         OrderDetailInfoRow(
-            label = "Người nhận:",
+            label = stringResource(R.string.ui_text_057),
             value = receiverName,
             icon = Icons.Rounded.Person
         )
@@ -36,7 +38,7 @@ fun ShippingInfoSection(
         SectionDivider()
 
         OrderDetailInfoRow(
-            label = "SĐT nhận hàng:",
+            label = stringResource(R.string.ui_text_058),
             value = receiverPhone,
             icon = Icons.Rounded.Phone
         )
@@ -44,7 +46,7 @@ fun ShippingInfoSection(
         SectionDivider()
 
         OrderDetailMultilineInfoRow(
-            label = "Địa chỉ:",
+            label = stringResource(R.string.ui_text_059),
             value = addressDetail,
             icon = Icons.Rounded.LocationOn
         )
@@ -53,7 +55,7 @@ fun ShippingInfoSection(
             SectionDivider()
 
             OrderDetailMultilineInfoRow(
-                label = "Ghi chú giao hàng:",
+                label = stringResource(R.string.ui_text_060),
                 value = shippingNote,
                 icon = Icons.Rounded.Notes
             )

@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -66,7 +68,7 @@ fun ProductDetailBottomActions(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = if (isVisible) "Ẩn sản phẩm" else "Hiện sản phẩm",
+                    text = if (isVisible) stringResource(R.string.ui_text_141) else stringResource(R.string.ui_text_142),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = Color(0xFF2563EB)
@@ -94,7 +96,7 @@ fun ProductDetailBottomActions(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "Chỉnh sửa",
+                    text = stringResource(R.string.ui_text_143),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.SemiBold
                     )

@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.deliveryaddress.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -28,7 +30,7 @@ fun DeleteSwipeBackground(
     ) {
             Icon(
                 painter = painterResource(id = com.example.easymart.R.drawable.ic_delete),
-                contentDescription = "Xóa",
+                contentDescription = stringResource(R.string.ui_text_200),
             )
     }
 }

@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -47,11 +49,11 @@ fun OrderHeaderSection(
     SectionCard(modifier = modifier) {
         SectionTitle(
             icon = Icons.Rounded.ReceiptLong,
-            title = "Thông tin đơn hàng"
+            title = stringResource(R.string.ui_text_039)
         )
 
         OrderDetailInfoRow(
-            label = "Mã đơn hàng:",
+            label = stringResource(R.string.ui_text_037),
             value = orderCode,
             icon = Icons.Rounded.ReceiptLong,
             valueWeight = FontWeight.Bold
@@ -60,7 +62,7 @@ fun OrderHeaderSection(
         SectionDivider()
 
         OrderDetailInfoRow(
-            label = "Ngày đặt hàng:",
+            label = stringResource(R.string.ui_text_040),
             value = createdDateText,
             icon = Icons.Rounded.CalendarMonth
         )
@@ -68,7 +70,7 @@ fun OrderHeaderSection(
         SectionDivider()
 
         OrderDetailInfoRow(
-            label = "Trạng thái đơn hàng:",
+            label = stringResource(R.string.ui_text_041),
             value = "",
             icon = Icons.Rounded.Inventory2,
             valueContent = {
@@ -79,7 +81,7 @@ fun OrderHeaderSection(
         SectionDivider()
 
         OrderDetailInfoRow(
-            label = "Trạng thái thanh toán:",
+            label = stringResource(R.string.ui_text_042),
             value = "",
             icon = Icons.Rounded.Payment,
             valueContent = {
@@ -90,7 +92,7 @@ fun OrderHeaderSection(
         SectionDivider()
 
         OrderDetailInfoRow(
-            label = "Phương thức thanh toán:",
+            label = stringResource(R.string.ui_text_043),
             value = "",
             icon = Icons.Rounded.AccountBalanceWallet,
             valueContent = {

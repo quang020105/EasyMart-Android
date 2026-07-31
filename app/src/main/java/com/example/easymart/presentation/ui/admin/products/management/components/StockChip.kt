@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.management.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,7 +32,7 @@ fun StockChip(
     val containerColor = if (isVisible) Color(0xFFEAF8EF) else Color(0xFFFFF1F2)
     val contentColor = if (isVisible) Color(0xFF16A34A) else Color(0xFFDC2626)
     val icon = if (isVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-    val label = if (isVisible) "Hiển thị" else "Ẩn"
+    val label = if (isVisible) stringResource(R.string.ui_text_150) else stringResource(R.string.ui_text_089)
 
     Surface(
         modifier = modifier,

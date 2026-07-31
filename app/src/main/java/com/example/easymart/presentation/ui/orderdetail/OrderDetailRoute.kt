@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.orderdetail
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,13 +44,13 @@ fun OrderDetailRoute(
     if (cancellationState.pendingOrderId != null) {
         val isDirectCancellation = cancellationState.mode == CustomerCancellationMode.DIRECT
         OrderActionConfirmationDialog(
-            title = if (isDirectCancellation) "Hủy đơn hàng" else "Gửi yêu cầu hủy đơn",
+            title = if (isDirectCancellation) stringResource(R.string.ui_text_247) else stringResource(R.string.ui_text_311),
             message = if (isDirectCancellation) {
                 "Đơn hàng sẽ được hủy ngay. Nếu đơn đã thanh toán, hệ thống sẽ chuyển đơn sang chờ hoàn tiền."
             } else {
                 "Yêu cầu hủy của bạn sẽ được gửi đến quản trị viên để kiểm tra và xử lý."
             },
-            confirmText = if (isDirectCancellation) "Xác nhận hủy" else "Gửi yêu cầu",
+            confirmText = if (isDirectCancellation) stringResource(R.string.ui_text_249) else stringResource(R.string.ui_text_312),
             icon = if (isDirectCancellation) Icons.Rounded.Cancel else Icons.Rounded.Info,
             isDanger = isDirectCancellation,
             isLoading = cancellationState.isSubmitting,
@@ -59,8 +61,8 @@ fun OrderDetailRoute(
                     value = cancellationState.reason,
                     onValueChange = viewModel::updateCancellationReason,
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Lý do hủy đơn") },
-                    placeholder = { Text("Nhập lý do để chúng tôi hỗ trợ tốt hơn") },
+                    label = { Text(stringResource(R.string.ui_text_313)) },
+                    placeholder = { Text(stringResource(R.string.ui_text_314)) },
                     enabled = !cancellationState.isSubmitting,
                     minLines = 3,
                     maxLines = 4

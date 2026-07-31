@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.management.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -54,7 +56,7 @@ fun AdminProductCard(
 ) {
     val dimens = LocalAppDimens.current
     val isFromApi = product.storagePath.isNullOrBlank() && product.localImageUri.isNullOrBlank()
-    val statusLabel = if (isFromApi) "Có sẵn từ API" else "Đã thêm"
+    val statusLabel = if (isFromApi) stringResource(R.string.ui_text_152) else stringResource(R.string.ui_text_167)
     val statusColor = if (isFromApi) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer
 
     Card(
@@ -96,7 +98,7 @@ fun AdminProductCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = product.brand.ifBlank { "Chưa có thương hiệu" },
+                        text = product.brand.ifBlank { stringResource(R.string.ui_text_155) },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
@@ -120,7 +122,7 @@ fun AdminProductCard(
                         }
 
                     Text(
-                        text = "Cập nhật: ${formatDate(product.updatedAt)}",
+                        text = stringResource(R.string.ui_text_168, formatDate(product.updatedAt)),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -150,12 +152,12 @@ fun AdminProductCard(
                     ) {
                         Icon(Icons.Filled.SouthWest, contentDescription = null)
                         Spacer(modifier = Modifier.width(dimens.spaceXs))
-                        Text("Import")
+                        Text(stringResource(R.string.ui_text_169))
                     }
                     Spacer(modifier = Modifier.width(dimens.spaceXs))
                 } else {
                     IconButton(onClick = onEdit) {
-                        Icon(Icons.Filled.Edit, contentDescription = "Sửa")
+                        Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.ui_text_170))
                     }
                 }
             }

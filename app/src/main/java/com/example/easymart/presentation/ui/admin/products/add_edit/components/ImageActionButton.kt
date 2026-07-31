@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -69,7 +71,7 @@ fun ImageActionButton(
 private fun ImageActionButtonPreview() {
     EasyMartTheme {
         ImageActionButton(
-            title = "Chọn ảnh từ thư viện",
+            title = stringResource(R.string.ui_text_131),
             icon = Icons.Rounded.Collections,
             onClick = {}
         )

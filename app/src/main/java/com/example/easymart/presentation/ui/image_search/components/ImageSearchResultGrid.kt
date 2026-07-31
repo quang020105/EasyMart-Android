@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.image_search.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -44,7 +46,7 @@ fun ImageSearchResultGrid(
         verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
     ) {
         Text(
-            text = "${products.size} kết quả phù hợp",
+            text = stringResource(R.string.ui_text_286, products.size),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = appColors.textPrimary
         )
@@ -129,7 +131,7 @@ private fun ImageSearchProductCard(
                     modifier = Modifier.padding(end = dimens.spaceXs)
                 )
                 Text(
-                    text = if (product.rating.rate > 0) product.rating.rate.toString() else "Mới",
+                    text = if (product.rating.rate > 0) product.rating.rate.toString() else stringResource(R.string.ui_text_242),
                     style = MaterialTheme.typography.labelMedium,
                     color = appColors.textSecondary,
                     modifier = Modifier.weight(1f)
@@ -155,7 +157,7 @@ private fun MatchScoreChip(score: Double) {
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
     ) {
         Text(
-            text = "$displayScore%",
+            text = stringResource(R.string.ui_text_287, displayScore),
             modifier = Modifier.padding(
                 horizontal = dimens.spaceSm,
                 vertical = dimens.spaceXs

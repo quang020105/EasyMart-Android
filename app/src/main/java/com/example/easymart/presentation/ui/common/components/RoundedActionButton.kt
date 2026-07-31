@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.common.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
@@ -76,7 +78,7 @@ fun RoundedActionButtonPreview() {
     EasyMartTheme {
         Surface {
             RoundedActionButton(
-                text = "Click Me",
+                text = stringResource(R.string.ui_text_252),
                 onClick = {}
             )
         }

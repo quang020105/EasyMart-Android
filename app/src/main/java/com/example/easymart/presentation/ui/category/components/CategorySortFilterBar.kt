@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.category.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -71,7 +73,7 @@ fun CategorySortFilterBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         FilterDropdownPill(
-            label = "Sắp xếp",
+            label = stringResource(R.string.ui_text_220),
             value = selectedSort.label,
             icon = sortIcon(selectedSort),
             selectedValue = selectedSort,
@@ -80,7 +82,7 @@ fun CategorySortFilterBar(
         )
 
         FilterDropdownPill(
-            label = "Giá",
+            label = stringResource(R.string.ui_text_221),
             value = selectedPriceFilter.label,
             icon = Icons.Filled.LocalOffer,
             selectedValue = selectedPriceFilter,
@@ -89,7 +91,7 @@ fun CategorySortFilterBar(
         )
 
         FilterDropdownPill(
-            label = "Kho hàng",
+            label = stringResource(R.string.ui_text_222),
             value = selectedStockFilter.label,
             icon = Icons.Filled.Inventory2,
             selectedValue = selectedStockFilter,
@@ -98,7 +100,7 @@ fun CategorySortFilterBar(
         )
 
         FilterDropdownPill(
-            label = "Đánh giá",
+            label = stringResource(R.string.ui_text_156),
             value = selectedRatingFilter.label,
             icon = Icons.Filled.Star,
             selectedValue = selectedRatingFilter,

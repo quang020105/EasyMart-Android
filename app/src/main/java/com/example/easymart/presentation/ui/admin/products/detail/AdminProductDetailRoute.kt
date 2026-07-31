@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.detail
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,7 +44,7 @@ fun AdminProductDetailRoute(
         }
         else -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = uiState.error ?: "Không tìm thấy sản phẩm")
+                Text(text = uiState.error ?: stringResource(R.string.ui_text_138))
             }
         }
     }

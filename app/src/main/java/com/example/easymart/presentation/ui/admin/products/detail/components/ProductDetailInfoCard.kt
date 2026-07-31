@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,7 +45,7 @@ fun ProductDetailInfoCard(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "Thông tin sản phẩm",
+                text = stringResource(R.string.ui_text_144),
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold
                 )
@@ -63,7 +65,7 @@ fun ProductDetailInfoCard(
                         icon = Icons.Filled.LocalOffer,
                         iconColor = Color(0xFF2563EB),
                         iconBackground = Color(0xFFEAF2FF),
-                        label = "Mã sản phẩm",
+                        label = stringResource(R.string.ui_text_145),
                         value = "#${product.id.toString().padStart(4, '0')}"
                     )
 
@@ -72,7 +74,7 @@ fun ProductDetailInfoCard(
                         icon = Icons.Filled.Category,
                         iconColor = Color(0xFF2563EB),
                         iconBackground = Color(0xFFEAF2FF),
-                        label = "Danh mục",
+                        label = stringResource(R.string.ui_text_013),
                         value = product.category.ifBlank { "Chưa có" }
                     )
                 }
@@ -86,7 +88,7 @@ fun ProductDetailInfoCard(
                         icon = Icons.Filled.LocalOffer,
                         iconColor = Color(0xFF2563EB),
                         iconBackground = Color(0xFFEAF2FF),
-                        label = "Thương hiệu",
+                        label = stringResource(R.string.ui_text_080),
                         value = product.brand.ifBlank { "Chưa có" }
                     )
 
@@ -102,7 +104,7 @@ fun ProductDetailInfoCard(
                         icon = Icons.Filled.Inventory2,
                         iconColor = Color(0xFFD97706),
                         iconBackground = Color(0xFFFFF7E6),
-                        label = "Tồn kho",
+                        label = stringResource(R.string.ui_text_146),
                         value = product.stockQuantity.toString()
                     )
 
@@ -111,7 +113,7 @@ fun ProductDetailInfoCard(
                         icon = Icons.Filled.RemoveShoppingCart,
                         iconColor = Color(0xFF7C3AED),
                         iconBackground = Color(0xFFF3E8FF),
-                        label = "Đã bán",
+                        label = stringResource(R.string.ui_text_147),
                         value = product.soldQuantity.toString()
                     )
                 }
@@ -125,7 +127,7 @@ fun ProductDetailInfoCard(
                         icon = Icons.Filled.Sync,
                         iconColor = if (product.isSynced) Color(0xFF16A34A) else Color(0xFFDC2626),
                         iconBackground = if (product.isSynced) Color(0xFFEAF8EF) else Color(0xFFFFF1F2),
-                        label = "Đồng bộ",
+                        label = stringResource(R.string.ui_text_148),
                         value = if (product.isSynced) "Đã đồng bộ" else "Chưa đồng bộ",
                         valueColor = if (product.isSynced) Color(0xFF16A34A) else Color(0xFFDC2626)
                     )
@@ -135,7 +137,7 @@ fun ProductDetailInfoCard(
                         icon = Icons.Filled.Visibility,
                         iconColor = if (product.isVisible) Color(0xFF16A34A) else Color(0xFFDC2626),
                         iconBackground = if (product.isVisible) Color(0xFFEAF8EF) else Color(0xFFFFF1F2),
-                        label = "Trạng thái",
+                        label = stringResource(R.string.ui_text_149),
                         value = if (product.isVisible) "Đang hiển thị" else "Đang ẩn",
                         valueColor = if (product.isVisible) Color(0xFF16A34A) else Color(0xFFDC2626)
                     )

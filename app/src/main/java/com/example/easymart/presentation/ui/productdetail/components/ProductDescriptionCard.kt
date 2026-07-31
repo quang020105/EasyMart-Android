@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.productdetail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,11 +33,11 @@ internal fun ProductDescriptionCard(
             verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
         ) {
             ProductDetailSectionHeader(
-                title = "Mô tả sản phẩm",
-                subtitle = "Thông tin chi tiết trước khi đặt mua"
+                title = stringResource(R.string.label_description),
+                subtitle = stringResource(R.string.ui_text_318)
             )
             Text(
-                text = description.ifBlank { "Sản phẩm chưa có mô tả chi tiết." },
+                text = description.ifBlank { stringResource(R.string.ui_text_319) },
                 style = MaterialTheme.typography.bodyMedium,
                 color = appColors.textSecondary
             )

@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.detail
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -86,7 +88,7 @@ fun AdminOrderDetailRoute(
                         .padding(innerPadding),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = uiState.errorMessage ?: "Không tìm thấy đơn hàng")
+                    Text(text = uiState.errorMessage ?: stringResource(R.string.ui_text_029))
                 }
             }
         }

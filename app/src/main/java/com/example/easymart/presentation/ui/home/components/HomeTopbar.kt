@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.home.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -113,7 +114,7 @@ fun CartIconWithBadgeItem(
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_cart),
-            contentDescription = "Giỏ hàng",
+            contentDescription = stringResource(R.string.ui_text_211),
             modifier = Modifier.size(dimens.iconLarge),
             tint = MaterialTheme.colorScheme.onPrimary
         )

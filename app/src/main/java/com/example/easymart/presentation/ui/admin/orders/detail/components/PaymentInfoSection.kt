@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -35,22 +37,22 @@ fun PaymentInfoSection(
     modifier: Modifier = Modifier
 ) {
     SectionCard(modifier = modifier) {
-        SectionTitle(icon = Icons.Rounded.Payment, title = "Thông tin thanh toán")
+        SectionTitle(icon = Icons.Rounded.Payment, title = stringResource(R.string.ui_text_053))
         OrderDetailInfoRow(
-            label = "Phương thức:",
+            label = stringResource(R.string.ui_text_054),
             value = paymentMethod.toDisplayString(),
             icon = Icons.Rounded.Payment
         )
         SectionDivider()
         OrderDetailInfoRow(
-            label = "Trạng thái:",
+            label = stringResource(R.string.ui_text_055),
             value = paymentStatus.toDisplayString(),
             icon = Icons.Rounded.WarningAmber
         )
         if (refundAmountText != null) {
             SectionDivider()
             OrderDetailInfoRow(
-                label = "Số tiền hoàn:",
+                label = stringResource(R.string.ui_text_056),
                 value = refundAmountText,
                 icon = Icons.Rounded.Payment
             )

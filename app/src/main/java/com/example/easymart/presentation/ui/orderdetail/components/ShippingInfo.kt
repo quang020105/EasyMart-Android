@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.orderdetail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,7 +38,7 @@ fun ShippingInfo(
     ) {
         Column(modifier = Modifier.padding(dimens.spaceMd)) {
             Text(
-                text = "Thông tin giao hàng",
+                text = stringResource(R.string.ui_text_306),
                 style = MaterialTheme.typography.titleMedium
             )
 
@@ -46,20 +48,20 @@ fun ShippingInfo(
             )
 
             Text(
-                text = name ?: "Chưa có tên",
+                text = name ?: stringResource(R.string.ui_text_308),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(dimens.spaceSm))
             Text(
-                text = addressString ?: "Chưa có địa chỉ",
+                text = addressString ?: stringResource(R.string.ui_text_309),
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(dimens.spaceXs))
             Text(
-                text = "Số điện thoại: $phone",
+                text = stringResource(R.string.ui_text_310, java.lang.String.valueOf(phone)),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )

@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.dashboard.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -134,7 +136,7 @@ fun DashboardStatCard(
 fun DashboardStatCardPreview() {
     EasyMartTheme {
         DashboardStatCard(
-            title = "Doanh thu",
+            title = stringResource(R.string.ui_text_006),
             value = "150 triệu",
             trendText = "+12.5%",
             tintColor = Color(0xFFE0F7FA),

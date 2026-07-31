@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.auth.forgot_password
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -49,13 +51,13 @@ fun ForgotPasswordScreen(
             ) {
                 Spacer(modifier = Modifier.height(dimens.space3xl))
                 Text(
-                    text = "Quên mật khẩu",
+                    text = stringResource(R.string.ui_text_184),
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(dimens.spaceMd))
                 Text(
-                    text = "Nhập email để nhận liên kết đặt lại mật khẩu.",
+                    text = stringResource(R.string.ui_text_185),
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
@@ -70,14 +72,14 @@ fun ForgotPasswordScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = dimens.spaceSm),
-                    label = { Text("Email") },
+                    label = { Text(stringResource(R.string.ui_text_186)) },
                     isError = errorMessage != null,
                     errorMessage = errorMessage
                 )
 
                 if (isSuccess) {
                     Text(
-                        text = "Đã gửi email đặt lại mật khẩu. Vui lòng kiểm tra hộp thư.",
+                        text = stringResource(R.string.ui_text_187),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Center,
@@ -89,7 +91,7 @@ fun ForgotPasswordScreen(
 
                 Spacer(modifier = Modifier.height(dimens.spaceXl))
                 RoundedActionButton(
-                    text = "Gửi email đặt lại",
+                    text = stringResource(R.string.ui_text_188),
                     onClick = onSubmitClick,
                     modifier = Modifier.fillMaxWidth(),
                     verticalPadding = dimens.spaceLg,
@@ -98,13 +100,13 @@ fun ForgotPasswordScreen(
 
                 Spacer(modifier = Modifier.height(dimens.space2xl))
                 Text(
-                    text = "Đã nhớ mật khẩu?",
+                    text = stringResource(R.string.ui_text_189),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(dimens.spaceMd))
                 Text(
-                    text = "Đăng nhập",
+                    text = stringResource(R.string.label_login),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable { onNavigateToLogin() }

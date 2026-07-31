@@ -1,5 +1,7 @@
 package com.example.easymart.presentation.ui.checkout
 
+import com.example.easymart.R
+
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
@@ -15,6 +17,7 @@ import com.example.easymart.domain.shipping.ShippingFeePolicy
 import com.example.easymart.presentation.ui.cart.CartViewModel
 import com.example.easymart.presentation.ui.deliveryaddress.AddressViewModel
 import com.example.easymart.presentation.ui.payment.SelectPaymentViewModel
+import androidx.core.net.toUri
 
 @SuppressLint("QueryPermissionsNeeded")
 @Composable
@@ -68,13 +71,13 @@ fun CheckOutRoute(
                 is CheckoutUiEvent.NavigateToOnlineProcessing -> {
                     val checkoutUrl = event.checkoutUrl
                     if (checkoutUrl.isNullOrBlank()) {
-                        Toast.makeText(context, "Checkout URL PayOS không hợp lệ", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.ui_text_359), Toast.LENGTH_SHORT).show()
                         return@collect
                     }
 
                     // 1) Mở PayOS bằng Chrome Custom Tabs
                     val customTabsIntent = CustomTabsIntent.Builder().build()
-                    customTabsIntent.launchUrl(context, Uri.parse(checkoutUrl))
+                    customTabsIntent.launchUrl(context, checkoutUrl.toUri())
 
                     // 2) Hiển thị màn Processing ngay khi user được chuyển sang PayOS
                     // Trạng thái cuối cùng sẽ được chốt khi PayOS redirect deeplink về app + webhook cập nhật backend.

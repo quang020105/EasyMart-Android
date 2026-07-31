@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.category
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -61,7 +63,7 @@ fun CategoryScreen(
         ) {
             item {
                 Text(
-                    text = "Danh mục sản phẩm",
+                    text = stringResource(R.string.ui_text_216),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onBackground
                 )

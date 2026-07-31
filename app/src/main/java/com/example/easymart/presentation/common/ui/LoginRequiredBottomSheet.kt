@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.common.ui
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -29,7 +31,7 @@ fun LoginRequiredBottomSheet(
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("🔒 Cần đăng nhập", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.ui_text_001), style = MaterialTheme.typography.titleMedium)
 
         Spacer(Modifier.height(8.dp))
 
@@ -45,11 +47,11 @@ fun LoginRequiredBottomSheet(
             modifier = Modifier.fillMaxWidth(),
             onClick = onLoginClick
         ) {
-            Text("Đăng nhập")
+            Text(stringResource(R.string.label_login))
         }
 
         TextButton(onClick = onDismiss) {
-            Text("Để sau")
+            Text(stringResource(R.string.ui_text_002))
         }
     }
 }

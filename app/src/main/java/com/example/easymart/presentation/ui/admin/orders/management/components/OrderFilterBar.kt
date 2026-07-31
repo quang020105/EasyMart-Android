@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.management.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -61,13 +63,13 @@ fun OrderFilterBar(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Text(
-                text = "Bộ lọc",
+                text = stringResource(R.string.ui_text_070),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF0F172A)
             )
 
-            FilterGroupTitle(text = "Trạng thái đơn hàng")
+            FilterGroupTitle(text = stringResource(R.string.ui_text_071))
 
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -87,7 +89,7 @@ fun OrderFilterBar(
                 }
             }
 
-            FilterGroupTitle(text = "Phương thức thanh toán")
+            FilterGroupTitle(text = stringResource(R.string.label_payments))
 
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -107,7 +109,7 @@ fun OrderFilterBar(
                 }
             }
 
-            FilterGroupTitle(text = "Trạng thái thanh toán")
+            FilterGroupTitle(text = stringResource(R.string.ui_text_072))
 
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),

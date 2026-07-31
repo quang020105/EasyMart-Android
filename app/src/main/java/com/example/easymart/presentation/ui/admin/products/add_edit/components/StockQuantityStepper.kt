@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -53,7 +55,7 @@ fun StockQuantityStepper(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Remove,
-                    contentDescription = "Decrease quantity"
+                    contentDescription = stringResource(R.string.ui_text_136)
                 )
             }
 
@@ -91,7 +93,7 @@ fun StockQuantityStepper(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Add,
-                    contentDescription = "Increase quantity"
+                    contentDescription = stringResource(R.string.ui_text_137)
                 )
             }
         }

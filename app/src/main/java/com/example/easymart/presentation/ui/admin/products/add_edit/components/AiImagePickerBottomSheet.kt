@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -109,7 +111,7 @@ fun AiImagePickerSheetContent(
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(
-            text = "Chọn ảnh để quét bằng AI",
+            text = stringResource(R.string.ui_text_099),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold
             ),
@@ -119,7 +121,7 @@ fun AiImagePickerSheetContent(
         Spacer(modifier = Modifier.size(8.dp))
 
         Text(
-            text = "AI sẽ phân tích 1 ảnh bạn chọn để trích xuất thông tin sản phẩm.",
+            text = stringResource(R.string.ui_text_100),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -165,7 +167,7 @@ fun AiImagePickerSheetContent(
                 contentPadding = PaddingValues(vertical = 12.dp)
             ) {
                 Text(
-                    text = "Hủy",
+                    text = stringResource(R.string.ui_text_101),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.SemiBold
                     )
@@ -183,7 +185,7 @@ fun AiImagePickerSheetContent(
                 )
             ) {
                 Text(
-                    text = "Bắt đầu quét",
+                    text = stringResource(R.string.ui_text_102),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontWeight = FontWeight.SemiBold
                     )
@@ -297,7 +299,7 @@ private fun EmptyAiImageListState(
         Spacer(modifier = Modifier.size(16.dp))
 
         Text(
-            text = "Chưa có ảnh nào để quét",
+            text = stringResource(R.string.ui_text_103),
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.SemiBold
             ),
@@ -307,7 +309,7 @@ private fun EmptyAiImageListState(
         Spacer(modifier = Modifier.size(8.dp))
 
         Text(
-            text = "Hãy thêm ít nhất 1 ảnh sản phẩm trước khi dùng AI.",
+            text = stringResource(R.string.ui_text_104),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -319,7 +321,7 @@ private fun EmptyAiImageListState(
             onClick = onDismiss,
             shape = RoundedCornerShape(16.dp)
         ) {
-            Text("Đóng")
+            Text(stringResource(R.string.ui_text_076))
         }
     }
 }
@@ -329,8 +331,8 @@ private fun EmptyAiImageListState(
 private fun AiImagePickerItemPreview(){
     val sampleItem = AiScanImageItemUi(
         id = "1",
-        title = "Ảnh chính",
-        subtitle = "Ảnh 1 • 1.2 MB",
+        title = stringResource(R.string.ui_text_073),
+        subtitle = stringResource(R.string.ui_text_105),
         painter = ColorPainter(Color(0xFFF1F1F1))
     )
 
@@ -346,24 +348,37 @@ private fun AiImagePickerItemPreview(){
 @Preview(showBackground = true)
 @Composable
 private fun AiImagePickerSheetContentPreview() {
-    val sampleItems = remember {
+    val primaryImageTitle = stringResource(R.string.ui_text_073)
+    val primaryImageSubtitle = stringResource(R.string.ui_text_105)
+    val backImageTitle = stringResource(R.string.ui_text_106)
+    val backImageSubtitle = stringResource(R.string.ui_text_107)
+    val labelImageTitle = stringResource(R.string.ui_text_108)
+    val labelImageSubtitle = stringResource(R.string.ui_text_109)
+    val sampleItems = remember(
+        primaryImageTitle,
+        primaryImageSubtitle,
+        backImageTitle,
+        backImageSubtitle,
+        labelImageTitle,
+        labelImageSubtitle
+    ) {
         listOf(
             AiScanImageItemUi(
                 id = "1",
-                title = "Ảnh chính",
-                subtitle = "Ảnh 1 • 1.2 MB",
+                title = primaryImageTitle,
+                subtitle = primaryImageSubtitle,
                 painter = ColorPainter(Color(0xFFF1F1F1))
             ),
             AiScanImageItemUi(
                 id = "2",
-                title = "Ảnh mặt sau",
-                subtitle = "Ảnh 2 • 1.1 MB",
+                title = backImageTitle,
+                subtitle = backImageSubtitle,
                 painter = ColorPainter(Color(0xFFE8E8E8))
             ),
             AiScanImageItemUi(
                 id = "3",
-                title = "Ảnh tem / nhãn",
-                subtitle = "Ảnh 3 • 1.3 MB",
+                title = labelImageTitle,
+                subtitle = labelImageSubtitle,
                 painter = ColorPainter(Color(0xFFE0E0E0))
             )
         )

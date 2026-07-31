@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.cart
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -58,16 +59,16 @@ fun CartScreen(
     if (uiState.pendingRemoveItem != null) {
         AlertDialog(
             onDismissRequest = onCancelRemove,
-            title = { Text(text = "Xóa sản phẩm?") },
-            text = { Text(text = "Bạn có muốn xóa sản phẩm này khỏi giỏ hàng không?") },
+            title = { Text(text = stringResource(R.string.ui_text_198)) },
+            text = { Text(text = stringResource(R.string.ui_text_199)) },
             confirmButton = {
                 TextButton(onClick = onConfirmRemove) {
-                    Text(text = "Xóa")
+                    Text(text = stringResource(R.string.ui_text_200))
                 }
             },
             dismissButton = {
                 TextButton(onClick = onCancelRemove) {
-                    Text(text = "Hủy")
+                    Text(text = stringResource(R.string.ui_text_101))
                 }
             }
         )
@@ -76,16 +77,16 @@ fun CartScreen(
     if (uiState.pendingRemoveSelected) {
         AlertDialog(
             onDismissRequest = onCancelRemoveSelected,
-            title = { Text(text = "Xóa $selectedCount sản phẩm?") },
-            text = { Text(text = "Bạn có chắc chắn muốn xóa các sản phẩm đã chọn khỏi giỏ hàng không?") },
+            title = { Text(text = stringResource(R.string.ui_text_201, selectedCount)) },
+            text = { Text(text = stringResource(R.string.ui_text_202)) },
             confirmButton = {
                 TextButton(onClick = onConfirmRemoveSelected) {
-                    Text(text = "Xóa")
+                    Text(text = stringResource(R.string.ui_text_200))
                 }
             },
             dismissButton = {
                 TextButton(onClick = onCancelRemoveSelected) {
-                    Text(text = "Hủy")
+                    Text(text = stringResource(R.string.ui_text_101))
                 }
             }
         )
@@ -120,10 +121,10 @@ fun CartScreen(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.pic_empty_cart),
-                        contentDescription = "Giỏ hàng trống"
+                        contentDescription = stringResource(R.string.ui_text_203)
                     )
                     Text(
-                        text = "Giỏ hàng trống",
+                        text = stringResource(R.string.ui_text_203),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(top = dimens.spaceSm)
                     )
@@ -175,7 +176,7 @@ fun CartScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = "Tạm tính",
+                        text = stringResource(R.string.ui_text_204),
                         style = MaterialTheme.typography.bodySmall,
                     )
                     Text(
@@ -191,7 +192,7 @@ fun CartScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = "Phí vận chuyển",
+                        text = stringResource(R.string.ui_text_205),
                         style = MaterialTheme.typography.bodySmall,
                     )
                     Text(
@@ -207,7 +208,7 @@ fun CartScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = "Giảm giá",
+                        text = stringResource(R.string.ui_text_206),
                         style = MaterialTheme.typography.bodySmall,
                     )
                     Text(
@@ -230,7 +231,7 @@ fun CartScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
-                        text = "Tổng thanh toán",
+                        text = stringResource(R.string.ui_text_207),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
@@ -254,12 +255,12 @@ fun CartScreen(
                         )
                     )
                     Text(
-                        text = "Chọn tất cả",
+                        text = stringResource(R.string.ui_text_208),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f)
                     )
                     RoundedActionButton(
-                        text = "Mua hàng",
+                        text = stringResource(R.string.ui_text_209),
                         onClick = onCheckOutClick,
                         modifier = Modifier.fillMaxWidth(0.45f),
                         enabled = uiState.selectedItems.isNotEmpty(),
@@ -268,7 +269,7 @@ fun CartScreen(
                 }
                 if (uiState.selectedItems.isEmpty()) {
                     Text(
-                        text = "Chọn ít nhất 1 sản phẩm để thanh toán.",
+                        text = stringResource(R.string.ui_text_210),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                         modifier = Modifier.padding(top = dimens.spaceXs)

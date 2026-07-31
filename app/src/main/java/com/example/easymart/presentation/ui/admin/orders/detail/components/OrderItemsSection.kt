@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -30,7 +32,7 @@ fun OrderItemsSection(
     SectionCard(modifier = modifier) {
         SectionTitle(
             icon = Icons.Rounded.ShoppingBag,
-            title = "Danh sách sản phẩm"
+            title = stringResource(R.string.ui_text_047)
         )
 
         Column {
@@ -63,16 +65,16 @@ private fun OrderItemsSectionPreview() {
                 OrderDetailItemUiModel(
                     productName = "Tai nghe Bluetooth Pro X1",
                     imageUrl = null,
-                    priceAtPurchaseText = "350.000đ",
+        priceAtPurchaseText = stringResource(R.string.ui_text_349),
                     quantityText = "1",
-                    lineTotalText = "350.000đ"
+        lineTotalText = stringResource(R.string.ui_text_349)
                 ),
                 OrderDetailItemUiModel(
                     productName = "Bàn phím cơ Mini K68",
                     imageUrl = null,
-                    priceAtPurchaseText = "420.000đ",
+        priceAtPurchaseText = stringResource(R.string.ui_text_350),
                     quantityText = "1",
-                    lineTotalText = "420.000đ"
+        lineTotalText = stringResource(R.string.ui_text_350)
                 )
             ),
             modifier = Modifier.padding(16.dp)

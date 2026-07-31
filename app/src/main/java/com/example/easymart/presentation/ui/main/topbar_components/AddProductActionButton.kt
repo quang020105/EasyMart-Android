@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.main.topbar_components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,13 +43,13 @@ fun AddProductActionButton(
         ) {
             Icon(
                 imageVector = Icons.Filled.Add,
-                contentDescription = "Thêm sản phẩm",
+                contentDescription = stringResource(R.string.ui_text_299),
                 tint = Color.White,
                 modifier = Modifier.size(22.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Sản phẩm",
+                text = stringResource(R.string.ui_text_011),
                 color = Color.White,
                 style = MaterialTheme.typography.labelLarge
             )

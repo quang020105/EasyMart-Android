@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.management.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -62,10 +64,10 @@ fun SummaryRow(
                 icon = Icons.Filled.Inventory2,
                 iconColor = Color(0xFF2563EB),
                 iconBackground = Color(0xFFEAF2FF),
-                title = "Tổng sản phẩm",
+                title = stringResource(R.string.ui_text_181),
                 value = total.toString(),
                 valueColor = Color(0xFF2563EB),
-                subtitle = "sản phẩm"
+                subtitle = stringResource(R.string.ui_text_182)
             )
 
             Box(
@@ -81,10 +83,10 @@ fun SummaryRow(
                 icon = Icons.Filled.Visibility,
                 iconColor = Color(0xFF16A34A),
                 iconBackground = Color(0xFFEAF8EF),
-                title = "Đã hiển thị",
+                title = stringResource(R.string.ui_text_183),
                 value = visibleCount.toString(),
                 valueColor = Color(0xFF16A34A),
-                subtitle = "sản phẩm"
+                subtitle = stringResource(R.string.ui_text_182)
             )
         }
     }

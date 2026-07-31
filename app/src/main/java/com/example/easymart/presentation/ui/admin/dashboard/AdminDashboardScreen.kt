@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.admin.dashboard
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -78,7 +79,7 @@ fun AdminDashboardScreen(
             item {
                 WelcomeBanner(
                     userName = "Admin",
-                    subtitle = "Đây là tổng quan hoạt động của cửa hàng hôm nay.",
+                    subtitle = stringResource(R.string.ui_text_005),
                     illustrationPainter = painterResource(id = R.drawable.ic_shop)
                 )
             }
@@ -89,7 +90,7 @@ fun AdminDashboardScreen(
                     horizontalArrangement = Arrangement.spacedBy(dimens.spaceMd)
                 ) {
                     DashboardStatCard(
-                        title = "Doanh thu",
+                        title = stringResource(R.string.ui_text_006),
                         value = formatCurrency(uiState.revenueVnd),
                         trendText = formatTrend(uiState.revenueVnd, uiState.previousRevenueVnd),
                         tintColor = Color(0xFFF1F7FF),
@@ -102,7 +103,7 @@ fun AdminDashboardScreen(
                     )
 
                     DashboardStatCard(
-                        title = "Đơn mới",
+                        title = stringResource(R.string.ui_text_007),
                         value = uiState.ordersInPeriod.toString(),
                         trendText = formatTrend(
                             uiState.ordersInPeriod.toLong(),
@@ -121,7 +122,7 @@ fun AdminDashboardScreen(
 
             item {
                 Text(
-                    text = "Chức năng nhanh",
+                    text = stringResource(R.string.ui_text_008),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -133,31 +134,31 @@ fun AdminDashboardScreen(
                     verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
                 ) {
                     QuickActionCard(
-                        title = "Đơn hàng",
-                        subtitle = "Quản lý đơn hàng",
+                        title = stringResource(R.string.ui_text_009),
+                        subtitle = stringResource(R.string.ui_text_010),
                         icon = Icons.Filled.Description,
                         iconTint = Color(0xFF6D28D9),
                         iconContainerColor = Color(0xFFF3ECFF),
                         onClick = onNavigateOrders
                     )
                     QuickActionCard(
-                        title = "Sản phẩm",
-                        subtitle = "Quản lý sản phẩm",
+                        title = stringResource(R.string.ui_text_011),
+                        subtitle = stringResource(R.string.ui_text_012),
                         icon = Icons.Filled.Inventory2,
                         iconTint = Color(0xFF2563EB),
                         iconContainerColor = Color(0xFFE8F0FF),
                         onClick = onNavigateProducts
                     )
                     QuickActionCard(
-                        title = "Danh mục",
-                        subtitle = "Quản lý danh mục",
+                        title = stringResource(R.string.ui_text_013),
+                        subtitle = stringResource(R.string.ui_text_014),
                         icon = Icons.Filled.GridView,
                         iconTint = Color(0xFFEA580C),
                         iconContainerColor = Color(0xFFFFEDD5),
                         onClick = onNavigateCategories
                     )
                     QuickActionCard(
-                        title = "Import FakeStore",
+                        title = stringResource(R.string.ui_text_015),
                         subtitle = if (uiState.isImportingProducts) {
                             "Đang đồng bộ lên Firebase..."
                         } else {
@@ -175,7 +176,7 @@ fun AdminDashboardScreen(
                 if (uiState.isImportingProducts || uiState.importMessage != null) {
                     ImportStatusCard(
                         isLoading = uiState.isImportingProducts,
-                        message = uiState.importMessage ?: "Đang import sản phẩm FakeStore..."
+                        message = uiState.importMessage ?: stringResource(R.string.ui_text_016)
                     )
                 }
             }
@@ -198,7 +199,7 @@ fun AdminDashboardScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Thống kê nhanh",
+                                text = stringResource(R.string.ui_text_017),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
@@ -223,8 +224,8 @@ fun AdminDashboardScreen(
 
                         Column(modifier = Modifier.fillMaxWidth()) {
                                 AnalyticsSummaryRow(
-                                    title = "Sản phẩm",
-                                    subtitle = "Tổng số sản phẩm trong cửa hàng",
+                                    title = stringResource(R.string.ui_text_011),
+                                    subtitle = stringResource(R.string.ui_text_018),
                                     value = uiState.productCount.toString(),
                                     icon = Icons.Filled.Inventory2,
                                     iconTint = Color(0xFF2563EB),
@@ -235,8 +236,8 @@ fun AdminDashboardScreen(
                                 )
                                 HorizontalDivider(color = Color(0xFFF1F5F9))
                                 AnalyticsSummaryRow(
-                                    title = "Danh mục",
-                                    subtitle = "Tổng số danh mục",
+                                    title = stringResource(R.string.ui_text_013),
+                                    subtitle = stringResource(R.string.ui_text_019),
                                     value = uiState.categoryCount.toString(),
                                     icon = Icons.Filled.GridView,
                                     iconTint = Color(0xFF7C3AED),
@@ -247,8 +248,8 @@ fun AdminDashboardScreen(
                                 )
                                 HorizontalDivider(color = Color(0xFFF1F5F9))
                                 AnalyticsSummaryRow(
-                                    title = "Đơn hàng",
-                                    subtitle = "Tổng số đơn hàng",
+                                    title = stringResource(R.string.ui_text_009),
+                                    subtitle = stringResource(R.string.ui_text_020),
                                     value = uiState.totalOrderCount.toString(),
                                     icon = Icons.Filled.ShoppingCart,
                                     iconTint = Color(0xFF16A34A),
@@ -259,8 +260,8 @@ fun AdminDashboardScreen(
                                 )
                                 HorizontalDivider(color = Color(0xFFF1F5F9))
                                 AnalyticsSummaryRow(
-                                    title = "Cần xử lý",
-                                    subtitle = "Đơn chờ xác nhận hoặc chờ duyệt hủy",
+                                    title = stringResource(R.string.ui_text_021),
+                                    subtitle = stringResource(R.string.ui_text_022),
                                     value = uiState.pendingActionCount.toString(),
                                     icon = Icons.Filled.Description,
                                     iconTint = Color(0xFFEA580C),
@@ -310,7 +311,7 @@ private fun ErrorCard(message: String, onRetry: () -> Unit) {
                 modifier = Modifier.weight(1f)
             )
             FilledTonalButton(onClick = onRetry) {
-                Text(text = "Thử lại")
+                Text(text = stringResource(R.string.ui_text_023))
             }
         }
     }

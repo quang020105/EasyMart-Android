@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,7 +50,7 @@ fun ProductDescriptionCard(
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Text(
-                    text = "Mô tả",
+                    text = stringResource(R.string.ui_text_139),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -58,7 +60,7 @@ fun ProductDescriptionCard(
             Spacer(modifier = Modifier.padding(top = 14.dp))
 
             Text(
-                text = description.ifBlank { "Chưa có mô tả sản phẩm." },
+                text = description.ifBlank { stringResource(R.string.ui_text_140) },
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = MaterialTheme.typography.bodyLarge.lineHeight

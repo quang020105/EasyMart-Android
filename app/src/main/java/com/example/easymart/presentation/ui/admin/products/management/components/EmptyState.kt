@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.admin.products.management.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,7 +38,7 @@ fun EmptyState(onRefresh: () -> Unit) {
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(dimens.spaceSm))
-        Text("Chưa có sản phẩm phù hợp", style = MaterialTheme.typography.titleSmall)
+        Text(stringResource(R.string.ui_text_171), style = MaterialTheme.typography.titleSmall)
         Text(
             "Hãy thử làm mới danh sách để cập nhật dữ liệu",
             style = MaterialTheme.typography.bodySmall,
@@ -45,7 +46,7 @@ fun EmptyState(onRefresh: () -> Unit) {
         )
         Spacer(modifier = Modifier.height(dimens.spaceSm))
         FilledTonalButton(onClick = onRefresh) {
-            Text("Làm mới")
+            Text(stringResource(R.string.ui_text_172))
         }
     }
 }

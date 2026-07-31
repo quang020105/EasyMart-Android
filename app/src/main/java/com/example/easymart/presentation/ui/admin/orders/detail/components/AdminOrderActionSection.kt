@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -50,11 +52,11 @@ fun AdminOrderActionSection(
     modifier: Modifier = Modifier
 ) {
     SectionCard(modifier = modifier) {
-        SectionTitle(icon = Icons.Rounded.Security, title = "Thao tác quản trị")
+        SectionTitle(icon = Icons.Rounded.Security, title = stringResource(R.string.ui_text_030))
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             if (!orderStatus.hasAdminAction() && paymentStatus != PaymentStatus.REFUND_REQUIRED) {
                 Text(
-                    text = "Đơn hàng hiện không còn thao tác xử lý.",
+                    text = stringResource(R.string.ui_text_031),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -93,7 +95,7 @@ fun AdminOrderActionSection(
 
             if (paymentStatus == PaymentStatus.REFUND_REQUIRED) {
                 PrimaryActionButton(
-                    text = refundAmountText?.let { "Xác nhận đã hoàn $it" }
+                    text = refundAmountText?.let { stringResource(R.string.ui_text_032, it) }
                         ?: "Xác nhận đã hoàn tiền",
                     icon = Icons.Rounded.CheckCircle,
                     isLoading = isLoading,

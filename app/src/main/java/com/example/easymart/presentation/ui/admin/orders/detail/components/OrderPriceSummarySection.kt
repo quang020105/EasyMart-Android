@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,22 +31,22 @@ fun OrderPriceSummarySection(
     SectionCard(modifier = modifier) {
         SectionTitle(
             icon = Icons.Rounded.Paid,
-            title = "Tổng kết tiền"
+            title = stringResource(R.string.ui_text_048)
         )
 
         PriceSummaryRow(
-            label = "Tạm tính:",
+            label = stringResource(R.string.ui_text_049),
             value = subtotalText
         )
 
         PriceSummaryRow(
-            label = "Phí vận chuyển:",
+            label = stringResource(R.string.ui_text_050),
             value = shippingFeeText
         )
 
         if (!discountText.isNullOrBlank()) {
             PriceSummaryRow(
-                label = "Giảm giá:",
+                label = stringResource(R.string.ui_text_051),
                 value = discountText,
                 valueColor = Color(0xFFDC2626)
             )
@@ -101,7 +103,7 @@ private fun TotalPaymentRow(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "Tổng thanh toán:",
+            text = stringResource(R.string.ui_text_052),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -121,10 +123,10 @@ private fun TotalPaymentRow(
 private fun OrderPriceSummarySectionPreview() {
     EasyMartTheme {
         OrderPriceSummarySection(
-            subtotalText = "770.000đ",
-            shippingFeeText = "30.000đ",
-            discountText = "-50.000đ",
-            totalText = "750.000đ",
+        subtotalText = stringResource(R.string.ui_text_351),
+        shippingFeeText = stringResource(R.string.ui_text_352),
+        discountText = stringResource(R.string.ui_text_353),
+        totalText = stringResource(R.string.ui_text_354),
             modifier = Modifier.padding(16.dp)
         )
     }

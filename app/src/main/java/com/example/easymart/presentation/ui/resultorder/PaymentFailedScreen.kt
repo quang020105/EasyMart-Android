@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.resultorder
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -53,7 +55,7 @@ fun PaymentFailedScreen(
             Spacer(modifier = Modifier.height(dimens.spaceLg))
 
             Text(
-                text = "Thanh toán thất bại",
+                text = stringResource(R.string.ui_text_338),
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -67,19 +69,19 @@ fun PaymentFailedScreen(
             Spacer(modifier = Modifier.height(dimens.spaceXl))
 
             Button(onClick = onRetry) {
-                Text("Thử lại")
+                Text(stringResource(R.string.ui_text_023))
             }
 
             Spacer(modifier = Modifier.height(dimens.spaceMd))
 
             OutlinedButton(onClick = onChangePaymentMethod) {
-                Text("Đổi phương thức thanh toán")
+                Text(stringResource(R.string.ui_text_339))
             }
 
             Spacer(modifier = Modifier.height(dimens.spaceMd))
 
             TextButton(onClick = onBackToCheckOut) {
-                Text("Quay lại Checkout")
+                Text(stringResource(R.string.ui_text_340))
             }
         }
     }
@@ -90,7 +92,7 @@ fun PaymentFailedScreen(
 fun PaymentFailedScreenPreview() {
     EasyMartTheme {
         PaymentFailedScreen(
-            message = "Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.",
+            message = stringResource(R.string.ui_text_341),
             onRetry = {},
             onChangePaymentMethod = {},
             onBackToCheckOut = {}

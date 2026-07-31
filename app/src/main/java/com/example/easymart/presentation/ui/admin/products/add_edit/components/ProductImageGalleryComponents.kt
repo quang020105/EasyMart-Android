@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
@@ -90,7 +92,7 @@ fun ProductImageGallerySection(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Ảnh sản phẩm",
+                    text = stringResource(R.string.ui_text_077),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     )
@@ -161,7 +163,7 @@ fun ProductImageGallerySection(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 ImageActionButton(
-                    title = "Thêm ảnh",
+                    title = stringResource(R.string.ui_text_130),
                     icon = Icons.Rounded.PhotoLibrary,
                     iconTint = MaterialTheme.colorScheme.primary,
                     onClick = onAddImageClick,
@@ -169,7 +171,7 @@ fun ProductImageGallerySection(
                 )
 
                 ImageActionButton(
-                    title = "Chụp ảnh",
+                    title = stringResource(R.string.ui_text_132),
                     icon = Icons.Rounded.PhotoCamera,
                     iconTint = Color(0xFF2E7D32),
                     onClick = onCaptureImageClick,
@@ -241,7 +243,7 @@ fun ProductMainImageCard(
             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.92f)
         ) {
             Text(
-                text = "Ảnh chính",
+                text = stringResource(R.string.ui_text_073),
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                 style = MaterialTheme.typography.labelSmall.copy(
                     color = Color.White,
@@ -262,14 +264,14 @@ fun ProductMainImageCard(
         ) {
             Icon(
                 imageVector = Icons.Rounded.Close,
-                contentDescription = "Xóa ảnh chính",
+                contentDescription = stringResource(R.string.ui_text_133),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(18.dp)
             )
         }
 
         Text(
-            text = "Chọn ảnh phụ để thay đổi ảnh chính",
+            text = stringResource(R.string.ui_text_134),
             style = MaterialTheme.typography.labelMedium.copy(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             ),
@@ -358,7 +360,7 @@ fun ProductImageThumbnail(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Close,
-                    contentDescription = "Xóa ảnh",
+                    contentDescription = stringResource(R.string.ui_text_135),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(12.dp)
                 )
@@ -386,7 +388,7 @@ fun AddImageTile(
     ) {
         Icon(
             imageVector = Icons.Rounded.Add,
-            contentDescription = "Thêm ảnh",
+            contentDescription = stringResource(R.string.ui_text_130),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(28.dp)
         )

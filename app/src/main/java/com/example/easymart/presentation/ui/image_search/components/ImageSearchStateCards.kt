@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.image_search.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -62,12 +64,12 @@ fun ImageSearchLoadingState(
             }
         }
         Text(
-            text = "Đang tìm kiếm",
+            text = stringResource(R.string.ui_text_288),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = LocalAppColors.current.textPrimary
         )
         Text(
-            text = "AI đang phân tích ảnh và sắp xếp sản phẩm phù hợp",
+            text = stringResource(R.string.ui_text_289),
             style = MaterialTheme.typography.bodyMedium,
             color = LocalAppColors.current.textSecondary,
             textAlign = TextAlign.Center
@@ -105,13 +107,13 @@ fun ImageSearchEmptyState(
             )
         }
         Text(
-            text = if (hasSelectedImage) "Chưa có kết quả" else "Chưa có ảnh",
+            text = if (hasSelectedImage) stringResource(R.string.ui_text_290) else stringResource(R.string.ui_text_291),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = appColors.textPrimary,
             textAlign = TextAlign.Center
         )
         Text(
-            text = if (hasSelectedImage) "Nhấn Search để bắt đầu" else "Chọn ảnh từ Camera hoặc Gallery",
+            text = if (hasSelectedImage) stringResource(R.string.ui_text_292) else stringResource(R.string.ui_text_293),
             style = MaterialTheme.typography.bodyMedium,
             color = appColors.textSecondary,
             textAlign = TextAlign.Center
@@ -161,7 +163,7 @@ fun ImageSearchErrorState(
                 verticalArrangement = Arrangement.spacedBy(dimens.spaceXs)
             ) {
                 Text(
-                    text = "Không thể tìm kiếm",
+                    text = stringResource(R.string.ui_text_294),
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
@@ -180,7 +182,7 @@ fun ImageSearchErrorState(
                     modifier = Modifier.size(dimens.iconSmall)
                 )
                 Text(
-                    text = "Retry",
+                    text = stringResource(R.string.ui_text_295),
                     modifier = Modifier.padding(start = dimens.spaceXs)
                 )
             }
@@ -248,7 +250,7 @@ private fun ImageSearchEmptyStatePreview() {
 private fun ImageSearchErrorStatePreview() {
     EasyMartTheme {
         ImageSearchErrorState(
-            message = "Không thể kết nối đến máy chủ. Vui lòng thử lại.",
+            message = stringResource(R.string.ui_text_296),
             retryEnabled = true,
             onRetryClick = {},
             modifier = Modifier.padding(LocalAppDimens.current.spaceMd)

@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.profile.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -60,7 +61,7 @@ fun ProfileRowItem(
         IconButton(onClick = { onClick(tag) }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_chevron_right),
-                contentDescription = "Go",
+                contentDescription = stringResource(R.string.ui_text_328),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                 modifier = Modifier.size(dimens.iconMedium)
             )
@@ -80,7 +81,7 @@ fun ProfileRowItemPreview() {
     EasyMartTheme {
         ProfileRowItem(
             iconRes = R.drawable.ic_logout,
-            title = "Đăng xuất",
+            title = stringResource(R.string.label_logout),
             tag = "logout",
             onClick = {}
         )

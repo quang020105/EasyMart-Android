@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import android.content.Context
 import android.net.Uri
@@ -144,8 +146,8 @@ fun AdminAddEditProductScreen(
             add(
                 AiScanImageItemUi(
                     id = uiState.mainImageUri,
-                    title = "Ảnh chính",
-                    subtitle = "Ảnh",
+                    title = stringResource(R.string.ui_text_073),
+                    subtitle = stringResource(R.string.ui_text_028),
                     painter = rememberAsyncImagePainter(uiState.mainImageUri)
                 )
             )
@@ -154,8 +156,8 @@ fun AdminAddEditProductScreen(
             add(
                 AiScanImageItemUi(
                     id = uri,
-                    title = "Ảnh phụ",
-                    subtitle = "Ảnh",
+                    title = stringResource(R.string.ui_text_074),
+                    subtitle = stringResource(R.string.ui_text_028),
                     painter = rememberAsyncImagePainter(uri)
                 )
             )
@@ -233,7 +235,7 @@ fun AdminAddEditProductScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Xem ảnh sản phẩm",
+                            text = stringResource(R.string.ui_text_075),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White,
@@ -244,7 +246,7 @@ fun AdminAddEditProductScreen(
                             onClick = { showMainImagePreview = false }
                         ) {
                             Text(
-                                text = "Đóng",
+                                text = stringResource(R.string.ui_text_076),
                                 color = Color.White
                             )
                         }
@@ -260,7 +262,7 @@ fun AdminAddEditProductScreen(
                     ) {
                         Image(
                             painter = previewPainter,
-                            contentDescription = "Ảnh sản phẩm",
+                            contentDescription = stringResource(R.string.ui_text_077),
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
                                 .fillMaxSize()
@@ -306,14 +308,14 @@ fun AdminAddEditProductScreen(
                         verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
                     ) {
                         Text(
-                            text = "1. Thông tin sản phẩm",
+                            text = stringResource(R.string.ui_text_078),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.SemiBold
                         )
 
                         Column(verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)) {
                             Text(
-                                text = "Tiêu đề sản phẩm *",
+                                text = stringResource(R.string.ui_text_079),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Medium
                             )
@@ -329,7 +331,7 @@ fun AdminAddEditProductScreen(
                             )
 
                             Text(
-                                text = "Thương hiệu",
+                                text = stringResource(R.string.ui_text_080),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Medium
                             )
@@ -352,7 +354,7 @@ fun AdminAddEditProductScreen(
                             }
 
                             Text(
-                                text = "Giá bán *",
+                                text = stringResource(R.string.ui_text_081),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Medium
                             )
@@ -370,7 +372,7 @@ fun AdminAddEditProductScreen(
                             )
 
                             Text(
-                                text = "Số lượng tồn kho *",
+                                text = stringResource(R.string.ui_text_082),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Medium
                             )
@@ -397,7 +399,7 @@ fun AdminAddEditProductScreen(
                             )
 
                             Text(
-                                text = "Mô tả sản phẩm *",
+                                text = stringResource(R.string.ui_text_083),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Medium
                             )
@@ -436,7 +438,7 @@ fun AdminAddEditProductScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "2. Hình ảnh sản phẩm",
+                                text = stringResource(R.string.ui_text_084),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -531,7 +533,7 @@ fun AdminAddEditProductScreen(
                                 horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm)
                             ) {
                                 Text(
-                                    text = "AI Suggestions",
+                                    text = stringResource(R.string.ui_text_085),
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -542,7 +544,7 @@ fun AdminAddEditProductScreen(
                                         .padding(horizontal = 10.dp, vertical = 4.dp)
                                 ) {
                                     Text(
-                                        text = "AI Suggestion",
+                                        text = stringResource(R.string.ui_text_086),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSecondaryContainer
                                     )
@@ -556,7 +558,7 @@ fun AdminAddEditProductScreen(
                             if (uiState.suggestionConfidence != null) {
                                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                     Text(
-                                        text = "Độ tin cậy: ${(uiState.suggestionConfidence * 100).toInt()}%",
+                                        text = stringResource(R.string.ui_text_087, (uiState.suggestionConfidence * 100).toInt()),
                                         style = MaterialTheme.typography.bodySmall
                                     )
                                     LinearProgressIndicator(
@@ -585,13 +587,13 @@ fun AdminAddEditProductScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "OCR raw text",
+                                text = stringResource(R.string.ui_text_088),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.SemiBold
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             TextButton(onClick = { showOcrText = !showOcrText }) {
-                                Text(if (showOcrText) "Ẩn" else "Xem")
+                                Text(if (showOcrText) stringResource(R.string.ui_text_089) else stringResource(R.string.ui_text_090))
                             }
                         }
 
@@ -605,7 +607,7 @@ fun AdminAddEditProductScreen(
                                     )
                                 } else {
                                     Text(
-                                        text = "Chưa có dữ liệu OCR.",
+                                        text = stringResource(R.string.ui_text_091),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -639,7 +641,7 @@ fun AdminAddEditProductScreen(
                     }
                     Icon(Icons.Filled.Save, contentDescription = null)
                     Spacer(modifier = Modifier.size(8.dp))
-                    Text("Lưu sản phẩm")
+                    Text(stringResource(R.string.ui_text_092))
                 }
 
                 Spacer(modifier = Modifier.height(dimens.spaceMd))
@@ -716,7 +718,7 @@ private fun SuggestionRow(label: String, value: String?) {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
-            text = value?.takeIf { it.isNotBlank() } ?: "Chưa có gợi ý",
+            text = value?.takeIf { it.isNotBlank() } ?: stringResource(R.string.ui_text_093),
             style = MaterialTheme.typography.bodyMedium
         )
     }
@@ -728,12 +730,12 @@ fun AdminAddEditProductScreenPreview() {
     EasyMartTheme {
         AdminAddEditProductScreen(
             uiState = AdminAddEditProductUiState(
-                title = "Áo thun nam cổ tròn",
+                title = stringResource(R.string.ui_text_094),
                 brand = "EasyWear",
                 price = "199000",
                 description = "Áo thun nam cổ tròn chất liệu cotton mềm mại, thoáng mát, phù hợp mặc hàng ngày. Thiết kế đơn giản dễ phối đồ.",
                 category = "Thời trang nam",
-                categories = listOf("Thời trang nam", "Thời trang nữ", "Điện tử", "Gia dụng"),
+                categories = listOf(stringResource(R.string.ui_text_095), stringResource(R.string.ui_text_096), stringResource(R.string.ui_text_097), stringResource(R.string.ui_text_098)),
                 quantity = "50",
                 mainImageUri = "",
                 imageUris = listOf(
@@ -741,7 +743,7 @@ fun AdminAddEditProductScreenPreview() {
                 isLoading = false,
                 isScanning = false,
                 scanSuccess = true,
-                suggestedTitle = "Áo thun nam cổ tròn - Gợi ý AI",
+            suggestedTitle = stringResource(R.string.ui_text_358),
                 suggestedCategory = "Thời trang nam - Gợi ý AI",
                 suggestedDescription = "Áo thun nam cổ tròn chất liệu cotton, thiết kế đơn giản, phù hợp mặc hàng ngày. (Gợi ý từ AI)"
             ),

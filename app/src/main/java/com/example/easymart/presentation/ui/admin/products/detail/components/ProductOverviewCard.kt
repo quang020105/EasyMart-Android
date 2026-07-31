@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -151,7 +153,7 @@ fun ProductOverviewCard(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = product.category.ifBlank { "Chưa có danh mục" },
+                        text = product.category.ifBlank { stringResource(R.string.ui_text_154) },
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -159,7 +161,7 @@ fun ProductOverviewCard(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = product.brand.ifBlank { "Chưa có thương hiệu" },
+                        text = product.brand.ifBlank { stringResource(R.string.ui_text_155) },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
@@ -213,7 +215,7 @@ fun ProductOverviewCard(
                         Spacer(modifier = Modifier.width(12.dp))
 
                         Text(
-                            text = "${product.rating.count} đánh giá",
+                            text = stringResource(R.string.ui_text_156, product.rating.count),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -248,7 +250,7 @@ fun ProductOverviewCard(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Close,
-                        contentDescription = "Đóng preview",
+                        contentDescription = stringResource(R.string.ui_text_157),
                         tint = Color.White
                     )
                 }

@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.dashboard.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -106,8 +108,8 @@ fun QuickActionCard(
 private fun QuickActionCardPreview() {
     EasyMartTheme {
         QuickActionCard(
-            title = "Đơn hàng",
-            subtitle = "Quản lý đơn hàng",
+            title = stringResource(R.string.ui_text_009),
+            subtitle = stringResource(R.string.ui_text_010),
             icon = Icons.Filled.Description,
             iconTint = Color(0xFF6D28D9),
             iconContainerColor = Color(0xFFF3ECFF),

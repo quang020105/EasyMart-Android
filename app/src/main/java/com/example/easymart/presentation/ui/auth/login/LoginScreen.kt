@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.auth.login
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -60,7 +62,7 @@ fun LoginScreen(
             ) {
                 Spacer(modifier = Modifier.height(dimens.space4xl))
                 Text(
-                    text = "Đăng nhập",
+                    text = stringResource(R.string.label_login),
                     modifier = Modifier.padding(vertical = dimens.spaceLg),
                     style = MaterialTheme.typography.displayMedium,
                     fontWeight = FontWeight.Bold
@@ -72,7 +74,7 @@ fun LoginScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = dimens.spaceSm),
-                    label = { Text("Email") },
+                    label = { Text(stringResource(R.string.ui_text_186)) },
                     isError = formState.emailError != null,
                     errorMessage = formState.emailError,
                     keyboardOptions = KeyboardOptions(
@@ -91,7 +93,7 @@ fun LoginScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = dimens.spaceSm),
-                    label = { Text("Mật khẩu") },
+                    label = { Text(stringResource(R.string.ui_text_190)) },
                     isError = formState.passwordError != null,
                     errorMessage = formState.passwordError,
                     //passwordVisible = passwordVisible,
@@ -99,7 +101,7 @@ fun LoginScreen(
                     focusManager = LocalFocusManager.current
                 )
                 Text(
-                    text = "Quên mật khẩu?",
+                    text = stringResource(R.string.ui_text_191),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
@@ -109,7 +111,7 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(dimens.spaceMd))
                 RoundedActionButton(
-                    text = "Đăng nhập",
+                    text = stringResource(R.string.label_login),
                     onClick = {
                         focusManager.clearFocus()
                         onLoginClick(formState.email, "57478", formState.password)
@@ -120,13 +122,13 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(dimens.space2xl))
                 Text(
-                    text = "Bạn chưa có tài khoản?",
+                    text = stringResource(R.string.ui_text_192),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(dimens.spaceMd))
                 Text(
-                    text = "Đăng kí",
+                    text = stringResource(R.string.ui_text_193),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable { onNavigateToSignUp() }

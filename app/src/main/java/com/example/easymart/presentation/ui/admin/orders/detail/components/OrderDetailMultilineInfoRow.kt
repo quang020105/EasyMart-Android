@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
@@ -64,7 +66,7 @@ fun OrderDetailMultilineInfoRow(
 fun OrderDetailMultilineInfoRowPreview() {
     MaterialTheme {
         OrderDetailMultilineInfoRow(
-            label = "Ghi chú của khách hàng:",
+            label = stringResource(R.string.ui_text_038),
             value = "Xin vui lòng giao hàng vào buổi chiều, tôi sẽ không có mặt ở nhà vào buổi sáng."
         )
     }

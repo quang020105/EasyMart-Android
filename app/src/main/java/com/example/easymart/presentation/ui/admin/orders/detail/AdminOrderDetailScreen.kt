@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.detail
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -166,22 +168,22 @@ private fun AdminOrderDetailScreenPreview() {
                     OrderDetailItemUiModel(
                         productName = "Tai nghe Bluetooth Pro X1",
                         imageUrl = null,
-                        priceAtPurchaseText = "350.000đ",
+            priceAtPurchaseText = stringResource(R.string.ui_text_349),
                         quantityText = "1",
-                        lineTotalText = "350.000đ"
+            lineTotalText = stringResource(R.string.ui_text_349)
                     ),
                     OrderDetailItemUiModel(
                         productName = "Bàn phím cơ Mini K68",
                         imageUrl = null,
-                        priceAtPurchaseText = "420.000đ",
+            priceAtPurchaseText = stringResource(R.string.ui_text_350),
                         quantityText = "1",
-                        lineTotalText = "420.000đ"
+            lineTotalText = stringResource(R.string.ui_text_350)
                     )
                 ),
-                subtotalText = "770.000đ",
-                shippingFeeText = "30.000đ",
-                discountText = "-50.000đ",
-                totalText = "750.000đ"
+            subtotalText = stringResource(R.string.ui_text_351),
+            shippingFeeText = stringResource(R.string.ui_text_352),
+            discountText = stringResource(R.string.ui_text_353),
+            totalText = stringResource(R.string.ui_text_354)
             ),
             isActionLoading = false,
             onConfirmOrder = {},

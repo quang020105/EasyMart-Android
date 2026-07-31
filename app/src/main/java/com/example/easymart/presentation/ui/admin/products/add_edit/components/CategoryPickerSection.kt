@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -73,7 +75,7 @@ fun CategoryPickerSection(
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Danh mục *",
+            text = stringResource(R.string.ui_text_122),
             style = MaterialTheme.typography.titleSmall.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -113,7 +115,7 @@ fun CategoryPickerSection(
                 }
             },
             placeholder = {
-                Text("Chọn hoặc nhập danh mục")
+                Text(stringResource(R.string.ui_text_123))
             },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -182,7 +184,7 @@ fun CategoryPickerSection(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "Không tìm thấy danh mục phù hợp",
+                                text = stringResource(R.string.ui_text_124),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color(0xFF667085)
                             )

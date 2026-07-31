@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.category.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,12 +28,12 @@ fun CategoryEmptyState(
         verticalArrangement = Arrangement.spacedBy(dimens.spaceXs)
     ) {
         Text(
-            text = "Chưa có sản phẩm phù hợp",
+            text = stringResource(R.string.ui_text_171),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            text = "Thử đổi danh mục, bộ lọc hoặc từ khóa tìm kiếm",
+            text = stringResource(R.string.ui_text_217),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

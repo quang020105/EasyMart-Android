@@ -94,7 +94,7 @@ fun AddAddressScreen(
                             // cập nhật lỗi local khi đã touched
                             if (fullNameTouched) localFullNameError = validateFullName(it)
                         },
-                        label = { Text("Tên người nhận") },
+                        label = { Text(stringResource(R.string.ui_text_253)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = dimens.space2xl)
@@ -132,7 +132,7 @@ fun AddAddressScreen(
                             events.onPhoneChange(it)
                             if (phoneTouched) localPhoneError = validatePhone(it)
                         },
-                        label = { Text("Số điện thoại") },
+                        label = { Text(stringResource(R.string.ui_text_195)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .onFocusChanged { focusState ->
@@ -170,7 +170,7 @@ fun AddAddressScreen(
                             events.onDetailAddressChange(it)
                             if (detailTouched) localDetailError = validateDetail(it)
                         },
-                        label = { Text("Địa chỉ chi tiết") },
+                        label = { Text(stringResource(R.string.ui_text_254)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .onFocusChanged { focusState ->
@@ -203,7 +203,7 @@ fun AddAddressScreen(
 
                 Column(modifier = Modifier.fillMaxWidth()) {
                     SearchableDropDown(
-                        label = "Tỉnh/Thành phố *",
+                        label = stringResource(R.string.ui_text_255),
                         options = uiState.provinces,
                         selected = uiState.selectedProvince,
                         onSelect = { events.onProvinceSelected(it) },
@@ -213,7 +213,7 @@ fun AddAddressScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     SearchableDropDown(
-                        label = "Quận/Huyện *",
+                        label = stringResource(R.string.ui_text_256),
                         options = uiState.districts,
                         selected = uiState.selectedDistrict,
                         onSelect = { events.onDistrictSelected(it) },
@@ -226,7 +226,7 @@ fun AddAddressScreen(
 
 
                     SearchableDropDown(
-                        label = "Phường/Xã *",
+                        label = stringResource(R.string.ui_text_257),
                         options = uiState.wards,
                         selected = uiState.selectedWard,
                         onSelect = { events.onWardSelected(it) },
@@ -247,7 +247,7 @@ fun AddAddressScreen(
                             checkedColor = MaterialTheme.colorScheme.primary
                         )
                     )
-                    Text("Đặt làm địa chỉ mặc định")
+                    Text(stringResource(R.string.ui_text_258))
                 }
 
                 Spacer(modifier = Modifier.height(dimens.spaceLg))

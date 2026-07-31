@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.home
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -118,8 +119,8 @@ fun HomeScreen(
                 } else {
                     item {
                         SectionHeader(
-                            title = "Sản phẩm nổi bật",
-                            subtitle = "Được đánh giá cao và đang bán tốt"
+                            title = stringResource(R.string.ui_text_265),
+                            subtitle = stringResource(R.string.ui_text_266)
                         )
                     }
 
@@ -133,8 +134,8 @@ fun HomeScreen(
 
                     item {
                         SectionHeader(
-                            title = "Gợi ý cho bạn",
-                            subtitle = "${uiState.products.size} sản phẩm phù hợp"
+                            title = stringResource(R.string.ui_text_267),
+                            subtitle = stringResource(R.string.ui_text_268, uiState.products.size)
                         )
                     }
 
@@ -201,7 +202,7 @@ private fun HomePromoBanner() {
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.16f)
                 ) {
                     Text(
-                        text = "FLASH SALE",
+                        text = stringResource(R.string.ui_text_269),
                         modifier = Modifier.padding(
                             horizontal = dimens.spaceMd,
                             vertical = dimens.spaceXs
@@ -213,14 +214,14 @@ private fun HomePromoBanner() {
                     )
                 }
                 Text(
-                    text = "Ưu đãi hôm nay",
+                    text = stringResource(R.string.ui_text_270),
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold
                     ),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 Text(
-                    text = "Săn deal tốt, giao nhanh và chọn sản phẩm còn hàng.",
+                    text = stringResource(R.string.ui_text_271),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.88f),
                     maxLines = 2,
@@ -231,7 +232,7 @@ private fun HomePromoBanner() {
                     color = MaterialTheme.colorScheme.surface
                 ) {
                     Text(
-                        text = "Mua ngay",
+                        text = stringResource(R.string.action_buy_now),
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -261,7 +262,7 @@ private fun HomePromoBanner() {
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                     Text(
-                        text = "giảm tối đa",
+                        text = stringResource(R.string.ui_text_272),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.84f)
                     )
@@ -367,7 +368,7 @@ private fun FeaturedProductCard(
                             modifier = Modifier.size(dimens.iconSmall)
                         )
                         Text(
-                            text = if (inStock) "Thêm vào giỏ" else "Tạm hết hàng",
+                            text = if (inStock) stringResource(R.string.action_add_to_cart) else stringResource(R.string.ui_text_273),
                             style = MaterialTheme.typography.labelLarge.copy(
                                 fontWeight = FontWeight.Bold
                             )
@@ -447,7 +448,7 @@ private fun ProductMetaRow(product: Product) {
             maxLines = 1
         )
         Text(
-            text = "Đã bán ${product.soldQuantity}",
+            text = stringResource(R.string.ui_text_243, product.soldQuantity),
             style = MaterialTheme.typography.bodySmall,
             color = appColors.textSecondary,
             maxLines = 1
@@ -482,7 +483,7 @@ private fun StockLabel(
                 modifier = Modifier.size(dimens.iconSmall)
             )
             Text(
-                text = if (inStock) "Còn $stockQuantity sản phẩm" else "Hết hàng",
+                text = if (inStock) stringResource(R.string.ui_text_274, stockQuantity) else stringResource(R.string.ui_text_275),
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
             )
         }
@@ -528,12 +529,12 @@ private fun HomeEmptyState() {
             verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
         ) {
             Text(
-                text = "Chưa có sản phẩm",
+                text = stringResource(R.string.ui_text_276),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = appColors.textPrimary
             )
             Text(
-                text = "Danh sách sản phẩm sẽ xuất hiện tại đây sau khi đồng bộ.",
+                text = stringResource(R.string.ui_text_277),
                 style = MaterialTheme.typography.bodyMedium,
                 color = appColors.textSecondary
             )

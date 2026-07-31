@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.resultorder
+import com.example.easymart.R
 
 import com.example.easymart.presentation.ui.resultorder.components.InfoRow
 import com.example.easymart.presentation.ui.payment.mapper.PaymentMethodUiMapper
@@ -68,7 +69,7 @@ fun OrderSuccessScreen(
 
         // TITLE
         Text(
-            text = "Đặt hàng thành công",
+            text = stringResource(R.string.ui_text_333),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -77,7 +78,7 @@ fun OrderSuccessScreen(
         Spacer(modifier = Modifier.height(dimens.spaceSm))
 
         Text(
-            text = "Cảm ơn bạn đã mua sắm tại EasyMart",
+            text = stringResource(R.string.ui_text_334),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -99,7 +100,7 @@ fun OrderSuccessScreen(
             ) {
 
                 InfoRow(
-                    label = "Mã đơn hàng",
+                    label = stringResource(R.string.ui_text_335),
                     value = "EM$orderId",
                     dimens = dimens
                 )
@@ -141,7 +142,7 @@ fun OrderSuccessScreen(
                 )
 
                 InfoRow(
-                    label = "Tổng thanh toán",
+                    label = stringResource(R.string.ui_text_207),
                     value = totalAmount.toVNDString(),
                     dimens = dimens,
                     valueColor = MaterialTheme.colorScheme.primary,
@@ -154,7 +155,7 @@ fun OrderSuccessScreen(
 
         // ACTION BUTTONS
         RoundedActionButton(
-            text = "Xem đơn hàng",
+            text = stringResource(R.string.ui_text_336),
             onClick = onViewOrderClick,
             modifier = Modifier.fillMaxWidth(),
             cornerRadius = dimens.radiusXl,
@@ -170,7 +171,7 @@ fun OrderSuccessScreen(
                 .height(dimens.buttonHeight),
             shape = RoundedCornerShape(dimens.radiusXl)
         ) {
-            Text(text = "Tiếp tục mua sắm")
+            Text(text = stringResource(R.string.ui_text_337))
         }
 
         Spacer(modifier = Modifier.height(dimens.spaceLg))

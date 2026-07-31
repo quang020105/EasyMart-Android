@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.dashboard.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -37,7 +39,7 @@ fun DashboardPeriodMenu(
     ) {
         Column(modifier = Modifier.padding(6.dp)) {
             Text(
-                text = "Khoảng thời gian",
+                text = stringResource(R.string.ui_text_025),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

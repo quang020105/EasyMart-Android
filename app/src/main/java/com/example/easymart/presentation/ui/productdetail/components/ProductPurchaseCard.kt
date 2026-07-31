@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.productdetail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -64,12 +66,12 @@ internal fun ProductPurchaseCard(
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(dimens.spaceXs)) {
                     Text(
-                        text = "Số lượng",
+                        text = stringResource(R.string.label_quantity),
                         style = MaterialTheme.typography.labelLarge,
                         color = appColors.textSecondary
                     )
                     Text(
-                        text = "Tạm tính ${totalPriceVnd.toVNDString()}",
+                        text = stringResource(R.string.ui_text_325, totalPriceVnd.toVNDString()),
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                         color = appColors.textPrimary
                     )
@@ -105,7 +107,7 @@ internal fun ProductPurchaseCard(
                     )
                     Spacer(modifier = Modifier.width(dimens.spaceXs))
                     Text(
-                        text = "Thêm giỏ",
+                        text = stringResource(R.string.ui_text_326),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -121,7 +123,7 @@ internal fun ProductPurchaseCard(
                     contentPadding = PaddingValues(horizontal = dimens.spaceSm)
                 ) {
                     Text(
-                        text = if (inStock) "Mua ngay" else "Hết hàng",
+                        text = if (inStock) stringResource(R.string.action_buy_now) else stringResource(R.string.ui_text_275),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

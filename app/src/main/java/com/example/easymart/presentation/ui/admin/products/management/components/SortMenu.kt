@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.management.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -164,7 +166,7 @@ fun SortMenuPreview() {
 fun SortMenuItemPreview() {
     EasyMartTheme {
         SortMenuItem(
-            title = "Sắp xếp theo ngày cập nhật",
+            title = stringResource(R.string.ui_text_180),
             selected = true,
             onClick = {}
         )

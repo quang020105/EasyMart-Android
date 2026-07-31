@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.management.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -38,7 +40,7 @@ fun AdminOrderSearchBar(
         textStyle = MaterialTheme.typography.bodyLarge,
         placeholder = {
             Text(
-                text = "Tìm mã đơn, khách hàng, số điện thoại",
+                text = stringResource(R.string.ui_text_068),
                 color = Color(0xFF94A3B8),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -58,7 +60,7 @@ fun AdminOrderSearchBar(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Clear,
-                        contentDescription = "Xóa tìm kiếm",
+                        contentDescription = stringResource(R.string.ui_text_069),
                         tint = Color(0xFF94A3B8)
                     )
                 }

@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -60,7 +62,7 @@ fun AiScanningSheetContent(
     ) {
 
         Text(
-            text = "Đang quét bằng AI...",
+            text = stringResource(R.string.ui_text_112),
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold
             ),
@@ -104,7 +106,7 @@ fun AiScanningSheetContent(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "AI đang phân tích ảnh bạn chọn,\nvui lòng chờ trong giây lát.",
+            text = stringResource(R.string.ui_text_113),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -118,7 +120,7 @@ fun AiScanningSheetContent(
             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f)
         ) {
             Text(
-                text = "Đang nhận diện sản phẩm • Phân tích ảnh • Trích xuất dữ liệu",
+                text = stringResource(R.string.ui_text_114),
                 modifier = Modifier.padding(
                     horizontal = 16.dp,
                     vertical = 10.dp
@@ -143,7 +145,7 @@ fun AiScanningSheetContent(
             )
         ) {
             Text(
-                text = "Hủy quét",
+                text = stringResource(R.string.ui_text_115),
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.SemiBold
                 )

@@ -19,7 +19,6 @@ interface PaymentApi {
     @POST("orders")
     suspend fun createOrder(@Body body: CreateOrderRequest): CreateOrderResponse
 
-    // existing init / status
     @POST("payments/{serverOrderId}/init")
     suspend fun initPayment(
         @Path("serverOrderId") serverOrderId: Int,

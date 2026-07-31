@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.orderdetail
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -62,7 +64,7 @@ fun OrderDetailScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Đang tải đơn hàng...",
+                        text = stringResource(R.string.ui_text_315),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground
                     )

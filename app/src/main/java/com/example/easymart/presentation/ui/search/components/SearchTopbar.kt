@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.search.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -75,7 +76,7 @@ fun SearchTopbar(
             IconButton(onClick = onBackClick) {
                 Icon(
                     painter = painterResource(R.drawable.ic_back),
-                    contentDescription = "Quay lại"
+                    contentDescription = stringResource(R.string.ui_text_246)
                 )
             }
         },
@@ -99,7 +100,7 @@ fun SearchTopbar(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.ImageSearch,
-                        contentDescription = "Tìm kiếm bằng hình ảnh",
+                        contentDescription = stringResource(R.string.ui_text_342),
                         modifier = Modifier.size(22.dp)
                     )
                 }
@@ -161,7 +162,7 @@ private fun SearchInputBox(
 
         if (text.isEmpty()) {
             Text(
-                text = "Tìm kiếm sản phẩm, danh mục...",
+                text = stringResource(R.string.ui_text_343),
                 color = onVariant,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
@@ -179,7 +180,7 @@ private fun SearchInputBox(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_search),
-                contentDescription = "Tìm kiếm",
+                contentDescription = stringResource(R.string.ui_text_283),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(19.dp)
             )
@@ -192,7 +193,7 @@ private fun SearchInputBox(
 fun SearchTopbarPreview() {
     EasyMartTheme {
         SearchTopbar(
-            text = "Giày thể thao"
+            text = stringResource(R.string.ui_text_344)
         )
     }
 }

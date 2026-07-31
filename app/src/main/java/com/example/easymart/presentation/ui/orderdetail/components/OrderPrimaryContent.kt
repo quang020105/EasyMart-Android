@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.orderdetail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,7 +51,7 @@ fun OrderPrimaryContent(
     ) {
         Column(modifier = Modifier.padding(dimens.spaceMd)) {
             Text(
-                text = "Thông tin giao hàng",
+                text = stringResource(R.string.ui_text_306),
                 style = MaterialTheme.typography.titleMedium
             )
 
@@ -82,7 +84,7 @@ fun OrderPrimaryContent(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "x${item.quantity}",
+                            text = stringResource(R.string.ui_text_239, item.quantity),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
@@ -113,16 +115,16 @@ fun OrderPrimaryContent(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = "Tổng cộng",
+                        text = stringResource(R.string.ui_text_307),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
-                        text = "Phương thức thanh toán",
+                        text = stringResource(R.string.label_payments),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     Text(
-                        text = "Trạng thái thanh toán",
+                        text = stringResource(R.string.ui_text_072),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )

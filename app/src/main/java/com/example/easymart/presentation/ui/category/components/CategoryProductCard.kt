@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.category.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -84,7 +85,7 @@ fun CategoryProductCard(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_add_to_cart),
-                        contentDescription = "Thêm vào giỏ",
+                        contentDescription = stringResource(R.string.action_add_to_cart),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }

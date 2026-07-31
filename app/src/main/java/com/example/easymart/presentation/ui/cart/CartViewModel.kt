@@ -122,17 +122,6 @@ class CartViewModel @Inject constructor(
                         state.copy(items = updatedItems)
                     }
                 }
-//            observeCartUS(userId).collect { items ->
-//                //tránh reset lại check đã chọn khi reset UI do room cập nhật
-//                _uiState.update { state ->
-//                    state.copy(
-//                        items = items.map { domain ->
-//                            val prev = state.items.find { it.id == domain.id }
-//                            domain.copy(isChecked = prev?.isChecked ?: false)
-//                        }
-//                    )
-//                }
-//            }
         }
     }
 
@@ -268,7 +257,7 @@ class CartViewModel @Inject constructor(
      * Không clear pendingSelectedProductIds ở đây, để observeCart có thể restore lại nếu items chưa đầy đủ
      */
 
-    //chưa viết unittest
+    //chưa test
     fun restoreSelectedItemsAfterLogin() {
         val pendingIds = pendingSelectedProductIds ?: return
         val currentItems = _uiState.value.items

@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.common.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,7 +24,7 @@ fun DefaultTopBar(
         navigationIcon = {
             if (showBack) {
                 IconButton(onClick = onBackClick) {
-                    Icon(painter = painterResource(id = R.drawable.ic_back), contentDescription = "Back")
+                    Icon(painter = painterResource(id = R.drawable.ic_back), contentDescription = stringResource(R.string.ui_text_212))
                 }
             }
         }

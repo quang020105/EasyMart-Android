@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.management
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -217,7 +219,7 @@ fun AdminProductsScreenPreview() {
             uiState = AdminProductsUiState(
                 isLoading = false,
                 products = mockProducts,
-                categories = listOf("Điện thoại", "Laptop", "Phụ kiện", "Thời trang"),
+                categories = listOf(stringResource(R.string.ui_text_163), stringResource(R.string.ui_text_164), stringResource(R.string.ui_text_165), stringResource(R.string.ui_text_166)),
                 searchQuery = "",
                 selectedCategory = null,
                 onlyLowStock = false,

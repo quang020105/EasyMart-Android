@@ -1,6 +1,8 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -170,7 +172,7 @@ fun InputBox(
 
             if (showCounter) {
                 Text(
-                    text = "${value.length}/$maxLength",
+                    text = stringResource(R.string.ui, value.length, maxLength),
                     color = resolvedHintColor,
                     fontSize = dims.textSmall,
                     modifier = Modifier.align(Alignment.CenterEnd)

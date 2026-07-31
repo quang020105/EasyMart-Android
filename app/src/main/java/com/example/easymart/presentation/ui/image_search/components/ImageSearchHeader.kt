@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.image_search.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -73,12 +75,12 @@ fun ImageSearchHeader(
                 verticalArrangement = Arrangement.spacedBy(dimens.spaceXs)
             ) {
                 Text(
-                    text = "Image Search",
+                    text = stringResource(R.string.ui_text_278),
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 Text(
-                    text = "Tìm sản phẩm bằng ảnh",
+                    text = stringResource(R.string.ui_text_279),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.84f)
                 )

@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.common.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,7 +26,7 @@ fun PasswordField(
     password: String,
     onPasswordChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    label: @Composable (() -> Unit)? = { Text(text = "Mật khẩu") },
+    label: @Composable (() -> Unit)? = { Text(text = stringResource(R.string.ui_text_190)) },
     placeholder: @Composable (() -> Unit)? = null,
     isError: Boolean = false,
     errorMessage: String? = null,
@@ -52,7 +53,7 @@ fun PasswordField(
             IconButton(onClick = { onVisibilityChange(!visible)}) {
                 Icon(
                     painter = painterResource(id = if(visible) R.drawable.ic_visibility else R.drawable.ic_visibility_off),
-                    contentDescription = if(visible) "Ẩn mật khẩu" else "Hiện mật khẩu"
+                    contentDescription = if(visible) stringResource(R.string.ui_text_250) else stringResource(R.string.ui_text_251)
                 )
             }
         },

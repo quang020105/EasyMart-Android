@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.cart.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -60,7 +61,7 @@ fun QuantityStepper(
         ) {
             StepButton(
                 iconRes = R.drawable.ic_minus,
-                contentDescription = "Giảm số lượng",
+                contentDescription = stringResource(R.string.ui_text_214),
                 onClick = onMinusClick,
                 size = 24.dp
             )
@@ -92,7 +93,7 @@ fun QuantityStepper(
 
             StepButton(
                 iconRes = R.drawable.ic_plus,
-                contentDescription = "Tăng số lượng",
+                contentDescription = stringResource(R.string.ui_text_215),
                 onClick = onPlusClick,
                 size = 24.dp
             )

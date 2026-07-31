@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.management.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,7 +42,7 @@ fun ErrorBanner(message: String, onRefresh: () -> Unit) {
             )
             Spacer(modifier = Modifier.width(dimens.spaceSm))
             FilledTonalButton(onClick = onRefresh) {
-                Text("Thử lại")
+                Text(stringResource(R.string.ui_text_023))
             }
         }
     }
@@ -50,6 +52,6 @@ fun ErrorBanner(message: String, onRefresh: () -> Unit) {
 @Composable
 fun ErrorBannerPreview() {
     EasyMartTheme {
-        ErrorBanner(message = "Lỗi kết nối", onRefresh = {})
+        ErrorBanner(message = stringResource(R.string.ui_text_173), onRefresh = {})
     }
 }

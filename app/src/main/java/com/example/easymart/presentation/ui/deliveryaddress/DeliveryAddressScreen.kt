@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.deliveryaddress
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -67,7 +68,7 @@ fun DeliveryAddressScreen(
     ) {
         item {
             Text(
-                text = "Địa chỉ",
+                text = stringResource(R.string.ui_text_262),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(dimens.spaceSm)
@@ -162,10 +163,10 @@ fun DeliveryAddressScreen(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_add),
-                        contentDescription = "Thêm địa chỉ"
+                        contentDescription = stringResource(R.string.ui_text_227)
                     )
                     Spacer(modifier = Modifier.width(dimens.spaceSm))
-                    Text(text = "Thêm địa chỉ")
+                    Text(text = stringResource(R.string.ui_text_227))
                 }
             }
         }
@@ -174,8 +175,8 @@ fun DeliveryAddressScreen(
     if (showDeleteDialog && deleteAddressId != null) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Xóa địa chỉ") },
-            text = { Text("Bạn có chắc chắn muốn xóa địa chỉ này không?") },
+            title = { Text(stringResource(R.string.ui_text_263)) },
+            text = { Text(stringResource(R.string.ui_text_264)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -184,7 +185,7 @@ fun DeliveryAddressScreen(
                         deleteAddressId = null
                     }
                 ) {
-                    Text("Xóa", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.ui_text_200), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
@@ -194,7 +195,7 @@ fun DeliveryAddressScreen(
                         deleteAddressId = null
                     }
                 ) {
-                    Text("Hủy")
+                    Text(stringResource(R.string.ui_text_101))
                 }
             }
         )

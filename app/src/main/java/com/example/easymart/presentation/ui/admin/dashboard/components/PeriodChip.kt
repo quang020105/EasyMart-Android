@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.dashboard.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 
 import androidx.compose.foundation.border
@@ -74,7 +76,7 @@ fun PeriodChip(
 fun PeriodChipPreview() {
     EasyMartTheme {
         PeriodChip(
-            text = "Tuần này",
+            text = stringResource(R.string.ui_text_026),
             onClick = {}
         )
     }

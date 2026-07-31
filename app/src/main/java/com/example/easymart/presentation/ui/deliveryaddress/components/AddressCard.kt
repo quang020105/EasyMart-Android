@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.deliveryaddress.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -89,7 +91,7 @@ fun AddressCard(
                 ) {
                     Icon(
                         painter = painterResource(id = com.example.easymart.R.drawable.ic_edit),
-                        contentDescription = "Edit address",
+                        contentDescription = stringResource(R.string.ui_text_259),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }

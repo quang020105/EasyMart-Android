@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.order
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -89,7 +91,7 @@ fun OrderScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = uiState.message.ifBlank { "Không thể tải danh sách đơn hàng" },
+                        text = uiState.message.ifBlank { stringResource(R.string.ui_text_301) },
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.Center
@@ -98,7 +100,7 @@ fun OrderScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Button(onClick = onRetry) {
-                        Text(text = "Thử lại")
+                        Text(text = stringResource(R.string.ui_text_023))
                     }
                 }
             }
@@ -111,7 +113,7 @@ fun OrderScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Bạn chưa có đơn hàng nào",
+                    text = stringResource(R.string.ui_text_302),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
@@ -158,7 +160,7 @@ fun OrderScreen(
                         )
                     } else {
                         Text(
-                            text = "Không có đơn hàng nào",
+                            text = stringResource(R.string.ui_text_303),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = Modifier

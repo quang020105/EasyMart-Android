@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.management
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -82,7 +84,7 @@ fun AdminOrdersScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Đơn hàng",
+                        text = stringResource(R.string.ui_text_009),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF0F172A)
@@ -91,7 +93,7 @@ fun AdminOrdersScreen(
                     Spacer(modifier = Modifier.weight(1f))
 
                     Text(
-                        text = "Hiển thị ${orders.size} đơn hàng",
+                        text = stringResource(R.string.ui_text_061, orders.size),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color(0xFF64748B)
                     )
@@ -132,7 +134,7 @@ private fun AdminOrderListScreenPreview() {
                     id = "1",
                     customerName = "Nguyễn Văn A",
                     phoneNumber = "0123456789",
-                    totalAmountText = "1.000.000 đ",
+            totalAmountText = stringResource(R.string.ui_text_355),
                     orderStatus = OrderStatus.CONFIRMED,
                     paymentMethod = PaymentMethod.COD,
                     paymentStatus = PaymentStatus.UNPAID,
@@ -142,7 +144,7 @@ private fun AdminOrderListScreenPreview() {
                     id = "2",
                     customerName = "Trần Thị B",
                     phoneNumber = "0987654321",
-                    totalAmountText = "500.000 đ",
+            totalAmountText = stringResource(R.string.ui_text_356),
                     orderStatus = OrderStatus.DELIVERED,
                     paymentMethod = PaymentMethod.COD,
                     paymentStatus = PaymentStatus.PAID,

@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -67,7 +69,7 @@ fun OrderDetailInfoRow(
 private fun OrderDetailInfoRowPreview() {
     EasyMartTheme {
         OrderDetailInfoRow(
-            label = "Mã đơn hàng:",
+            label = stringResource(R.string.ui_text_037),
             value = "ORD-001245",
             icon = Icons.Rounded.Info
         )

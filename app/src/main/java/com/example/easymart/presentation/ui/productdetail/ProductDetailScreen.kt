@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.productdetail
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -66,7 +68,7 @@ fun ProductDetailScreen(
             }
 
             uiState.product == null -> {
-                EmptyDetailState(message = uiState.error ?: "Không có dữ liệu sản phẩm")
+                EmptyDetailState(message = uiState.error ?: stringResource(R.string.ui_text_323))
             }
 
             else -> {
@@ -127,7 +129,7 @@ fun ProductDetailScreen(
                     } else if (uiState.similarProducts.isNotEmpty()) {
                         item {
                             ProductDetailSectionHeader(
-                                title = "Sản phẩm tương tự"
+                                title = stringResource(R.string.ui_text_327)
                             )
                         }
 

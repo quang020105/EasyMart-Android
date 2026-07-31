@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.main
+import androidx.compose.ui.res.stringResource
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -68,25 +69,25 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
     val bottomNavItems = listOf(
         BottomNavItem(
             route = Screen.Home.route,
-            label = "Trang chủ",
+            label = stringResource(R.string.ui_text_297),
             icon = R.drawable.ic_home,
             graphRoute = Screen.HomeGraph.route,
         ),
         BottomNavItem(
             route = Screen.Category.route,
-            label = "Danh mục",
+            label = stringResource(R.string.ui_text_013),
             icon = R.drawable.ic_category,
             graphRoute = Screen.CategoryGraph.route
         ),
         BottomNavItem(
             route = Screen.Search.route,
-            label = "Tìm kiếm",
+            label = stringResource(R.string.ui_text_283),
             icon = R.drawable.ic_search,
             graphRoute = Screen.SearchGraph.route
         ),
         BottomNavItem(
             route = Screen.Profile.route,
-            label = "Cá nhân",
+            label = stringResource(R.string.ui_text_298),
             icon = R.drawable.ic_person,
             graphRoute = Screen.ProfileGraph.route
         )
@@ -218,7 +219,7 @@ fun AppScaffold(navController: NavHostController, cartCount: Int = 1, startDeepL
                             title = { Text(config.title ?: "") },
                             navigationIcon = {
                                 if (showBottomBar) {
-                                    Text(text = "EasyMart")
+                                    Text(text = stringResource(R.string.app_name))
                                 } else {
                                     IconButton(
                                         onClick = {

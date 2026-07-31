@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.dashboard.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -107,8 +109,8 @@ fun AnalyticsSummaryRow(
 fun AnalyticsSummaryRowPreview() {
     EasyMartTheme {
         AnalyticsSummaryRow(
-            title = "Doanh thu",
-            subtitle = "Tháng này",
+            title = stringResource(R.string.ui_text_006),
+            subtitle = stringResource(R.string.ui_text_024),
             value = "₫120.000.000",
             icon = Icons.Filled.AttachMoney,
             iconTint = Color(0xFF4CAF50),

@@ -28,11 +28,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
     private const val PRODUCT_BASE_URL = "https://fakestoreapi.com/"
-    private const val ALGOLIA_BASE_URL = "http://192.168.1.106:3000/"
+    private const val ALGOLIA_BASE_URL = "http://192.168.77.102:3000/"
     private const val LOCATION_BASE_URL = "https://provinces.open-api.vn/"
     //private const val PAYMENT_BASE_URL = "http://127.0.0.1:3000/"
     private const val GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/"
-    private const val PAYMENT_BASE_URL = "http://192.168.1.40:3000/"
+    private const val PAYMENT_BASE_URL = "http://192.168.77.102:3000/"
 
     @Provides
     @Singleton

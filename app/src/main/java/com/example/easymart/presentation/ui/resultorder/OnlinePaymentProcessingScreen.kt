@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.resultorder
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -50,14 +51,14 @@ fun OnlinePaymentProcessingScreen(
             Spacer(modifier = Modifier.height(dimens.spaceLg))
 
             Text(
-                text = "Đang xử lý thanh toán",
+                text = stringResource(R.string.ui_text_331),
                 style = MaterialTheme.typography.titleMedium
             )
 
             Spacer(modifier = Modifier.height(dimens.spaceSm))
 
             Text(
-                text = "Vui lòng không thoát ứng dụng",
+                text = stringResource(R.string.ui_text_332),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

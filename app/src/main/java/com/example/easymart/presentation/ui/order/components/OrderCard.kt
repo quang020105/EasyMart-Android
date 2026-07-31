@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.order.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -160,7 +162,7 @@ fun OrderCard(
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = "x${item.quantity}",
+                            text = stringResource(R.string.ui_text_239, item.quantity),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -202,7 +204,7 @@ fun OrderCard(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = "Tổng thanh toán",
+                        text = stringResource(R.string.ui_text_207),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -233,7 +235,7 @@ fun OrderCard(
                     }
 
                 RoundedActionButton(
-                    text = "Chi tiết",
+                    text = stringResource(R.string.ui_text_300),
                     onClick = { onOpenDetail(order.id) },
                     horizontalPadding = dimens.spaceMd,
                     textStyle = MaterialTheme.typography.bodySmall,

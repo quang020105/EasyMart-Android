@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.navigation
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -458,10 +460,10 @@ fun AppNavGraph(
                     navArgument("reason") { type = NavType.StringType }
                 )
             ) { backStackEntry ->
-                val message = backStackEntry.arguments?.getString("reason")
+                val message = backStackEntry.arguments?.getString(stringResource(R.string.ui_text_003))
 
                 PaymentFailedRoute(
-                    message = message ?: "Thanh toán không thành công",
+                    message = message ?: stringResource(R.string.ui_text_004),
                     onRetry = {
                         navController.navigate(Screen.Checkout.route) {
                             popUpTo(Screen.HomeGraph.route)

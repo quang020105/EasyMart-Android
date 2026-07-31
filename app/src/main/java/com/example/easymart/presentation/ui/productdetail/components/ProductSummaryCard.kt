@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.productdetail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -67,14 +69,14 @@ internal fun ProductSummaryCard(
             ) {
                 DetailStatChip(
                     icon = Icons.Filled.Star,
-                    title = if (product.rating.rate > 0) product.rating.rate.toString() else "Mới",
-                    subtitle = "${product.rating.count} đánh giá",
+                    title = if (product.rating.rate > 0) product.rating.rate.toString() else stringResource(R.string.ui_text_242),
+                    subtitle = stringResource(R.string.ui_text_156, product.rating.count),
                     modifier = Modifier.weight(1f)
                 )
                 DetailStatChip(
                     icon = Icons.Filled.ShoppingBag,
                     title = product.soldQuantity.toString(),
-                    subtitle = "Đã bán",
+                    subtitle = stringResource(R.string.ui_text_147),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -84,13 +86,13 @@ internal fun ProductSummaryCard(
                 horizontalArrangement = Arrangement.spacedBy(dimens.spaceSm)
             ) {
                 StatusChip(
-                    text = if (inStock) "Còn ${product.stockQuantity} sản phẩm" else "Hết hàng",
+                    text = if (inStock) stringResource(R.string.ui_text_274, product.stockQuantity) else stringResource(R.string.ui_text_275),
                     icon = if (inStock) Icons.Filled.Inventory2 else Icons.Filled.RemoveShoppingCart,
                     positive = inStock,
                     modifier = Modifier.weight(1f)
                 )
                 InfoChip(
-                    text = "Chính hãng",
+                    text = stringResource(R.string.ui_text_320),
                     icon = Icons.Filled.Verified,
                     modifier = Modifier.weight(1f)
                 )

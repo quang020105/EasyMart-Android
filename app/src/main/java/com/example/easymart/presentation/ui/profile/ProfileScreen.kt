@@ -55,7 +55,7 @@ fun ProfileScreen(
             ) {
             Image(
                 painter = painterResource(R.drawable.pic_avatar_placeholder),
-                contentDescription = "User Avatar",
+                contentDescription = stringResource(R.string.ui_text_329),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -63,7 +63,7 @@ fun ProfileScreen(
 
         // Name
         Text(
-            text = user?.name ?: "Bạn chưa đăng nhập",
+            text = user?.name ?: stringResource(R.string.ui_text_330),
             modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = dimens.spaceLg),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground

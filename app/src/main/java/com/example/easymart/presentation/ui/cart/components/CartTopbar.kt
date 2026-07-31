@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.cart.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,12 +20,12 @@ fun CartTopbar(
 ) {
     val canDelete = selectedCount > 0
     TopAppBar(
-        title = { Text(text = "Giỏ hàng") },
+        title = { Text(text = stringResource(R.string.ui_text_211)) },
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back),
-                    contentDescription = "Back"
+                    contentDescription = stringResource(R.string.ui_text_212)
                 )
             }
         },
@@ -34,7 +35,7 @@ fun CartTopbar(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_delete),
-                    contentDescription = "Xóa sản phẩm đã chọn",
+                    contentDescription = stringResource(R.string.ui_text_213),
                     tint = if (canDelete) {
                         MaterialTheme.colorScheme.error
                     } else {

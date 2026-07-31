@@ -1,6 +1,8 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -155,7 +157,7 @@ fun ProductDescriptionInput(
             ) {
 
                 Text(
-                    text = "${text.length}/$maxLength",
+                    text = stringResource(R.string.ui, text.length, maxLength),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = dims.textSmall
                 )

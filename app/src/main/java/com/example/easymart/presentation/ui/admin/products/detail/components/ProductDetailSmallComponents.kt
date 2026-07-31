@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -60,7 +62,7 @@ fun ProductVisibilityBadge(
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                text = if (isVisible) "Hiển thị" else "Đang ẩn",
+                text = if (isVisible) stringResource(R.string.ui_text_150) else stringResource(R.string.ui_text_151),
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.SemiBold,
                     color = content
@@ -82,7 +84,7 @@ fun ProductSourceBadge(
         onClick = {},
         label = {
             Text(
-                text = if (isFromApi) "Có sẵn từ API" else "Admin thêm",
+                text = if (isFromApi) stringResource(R.string.ui_text_152) else stringResource(R.string.ui_text_153),
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.SemiBold
                 )
@@ -181,7 +183,7 @@ fun ProductInfoTilePreview() {
             icon = Icons.Filled.Visibility,
             iconColor = Color(0xFF16A34A),
             iconBackground = Color(0xFFEAF8EF),
-            label = "Trạng thái",
+            label = stringResource(R.string.ui_text_149),
             value = "Hiển thị"
         )
     }

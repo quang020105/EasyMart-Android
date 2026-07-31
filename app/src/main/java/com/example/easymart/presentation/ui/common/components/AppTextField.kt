@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.common.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -35,7 +37,7 @@ fun AppTextField(
     keyBoardActions: KeyboardActions = KeyboardActions.Default,
     trailingIcon: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
-    label:  @Composable (() -> Unit)? = { Text("Email") },
+    label:  @Composable (() -> Unit)? = { Text(stringResource(R.string.ui_text_186)) },
     singleLine: Boolean = true,
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
@@ -81,10 +83,10 @@ fun AppTextFieldPreview() {
         AppTextField(
             value = "",
             onValueChange = {},
-            label = { Text(text = "Email") },
-            placeholder = { Text(text = "Nhập email hoặc mật khẩu") },
+            label = { Text(text = stringResource(R.string.ui_text_186)) },
+            placeholder = { Text(text = stringResource(R.string.ui_text_240)) },
             isError = true,
-            errorMessage = "Email không hợp lệ",
+        errorMessage = stringResource(R.string.ui_text_360),
         )
     }
 }

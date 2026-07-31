@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.payment
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -45,7 +47,7 @@ fun SelectPaymentMethodScreen(
         ) {
 
             Text(
-                text = "Tổng thanh toán",
+                text = stringResource(R.string.ui_text_207),
                 style = MaterialTheme.typography.bodyMedium
             )
 
@@ -58,7 +60,7 @@ fun SelectPaymentMethodScreen(
             Spacer(Modifier.height(dimens.spaceXl))
 
             Text(
-                text = "Chọn phương thức thanh toán",
+                text = stringResource(R.string.ui_text_316),
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -92,7 +94,7 @@ fun SelectPaymentMethodScreen(
 
 
             RoundedActionButton(
-                text = "Xác nhận phương thức",
+                text = stringResource(R.string.ui_text_317),
                 onClick = onConfirmClick,
                 verticalPadding = dimens.spaceLg,
                 cornerRadius = dimens.radiusXl,

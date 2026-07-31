@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -59,7 +61,7 @@ fun OrderItemRow(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Giá mua: $priceAtPurchaseText",
+                text = stringResource(R.string.ui_text_044, priceAtPurchaseText),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -67,7 +69,7 @@ fun OrderItemRow(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "SL: $quantityText",
+                text = stringResource(R.string.ui_text_045, quantityText),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -77,7 +79,7 @@ fun OrderItemRow(
             horizontalAlignment = Alignment.End
         ) {
             Text(
-                text = "Thành tiền:",
+                text = stringResource(R.string.ui_text_046),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -128,9 +130,9 @@ private fun OrderItemRowPreview() {
         OrderItemRow(
             productName = "Tai nghe Bluetooth Pro X1",
             imageUrl = null,
-            priceAtPurchaseText = "350.000đ",
+        priceAtPurchaseText = stringResource(R.string.ui_text_349),
             quantityText = "1",
-            lineTotalText = "350.000đ"
+        lineTotalText = stringResource(R.string.ui_text_349)
         )
     }
 }

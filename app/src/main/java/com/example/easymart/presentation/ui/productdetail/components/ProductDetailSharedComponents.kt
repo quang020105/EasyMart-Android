@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.productdetail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -143,11 +145,11 @@ private fun ProductDetailSharedComponentsPreview() {
                 verticalArrangement = Arrangement.spacedBy(LocalAppDimens.current.spaceSm)
             ) {
                 ProductDetailSectionHeader(
-                    title = "Mô tả sản phẩm",
-                    subtitle = "Thông tin chi tiết trước khi đặt mua"
+                    title = stringResource(R.string.label_description),
+                    subtitle = stringResource(R.string.ui_text_318)
                 )
                 InfoChip(
-                    text = "Chính hãng",
+                    text = stringResource(R.string.ui_text_320),
                     icon = Icons.Filled.Verified
                 )
             }

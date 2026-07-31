@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.checkout.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -93,7 +94,7 @@ fun PaymentProduct(
                 )
             }
             Text(
-                text = "x${cartItem.quantity}",
+                text = stringResource(R.string.ui_text_239, cartItem.quantity),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier

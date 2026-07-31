@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -57,7 +59,7 @@ fun EmptyProductImagesPlaceholder(
 
         // Title
         Text(
-            text = "Chưa có ảnh nào",
+            text = stringResource(R.string.ui_text_128),
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.SemiBold
             )
@@ -67,7 +69,7 @@ fun EmptyProductImagesPlaceholder(
 
         // Subtitle
         Text(
-            text = "Vui lòng thêm ảnh sản phẩm để tiếp tục",
+            text = stringResource(R.string.ui_text_129),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -92,7 +94,7 @@ fun EmptyProductImagesPlaceholder(
             Spacer(modifier = Modifier.width(8.dp))
 
             Text(
-                text = "Thêm ảnh",
+                text = stringResource(R.string.ui_text_130),
                 style = MaterialTheme.typography.labelLarge
             )
         }

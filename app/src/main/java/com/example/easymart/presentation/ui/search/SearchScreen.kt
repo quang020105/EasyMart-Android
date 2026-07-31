@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.search
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -81,7 +83,7 @@ fun SearchScreen(
                 ) {
                     item {
                         Text(
-                            text = "Gợi ý tìm kiếm",
+                            text = stringResource(R.string.ui_text_345),
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(vertical = dimens.spaceSm)
                         )
@@ -103,7 +105,7 @@ fun SearchScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Không tìm thấy sản phẩm nào",
+                        text = stringResource(R.string.ui_text_346),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                         textAlign = TextAlign.Center
@@ -121,7 +123,7 @@ fun SearchScreenPreview() {
         SearchScreen(
             uiState = SearchUiState(
                 searchQuery = "Giày",
-                suggestions = listOf("Giày sneaker", "Giày thể thao", "Giày chạy bộ")
+                suggestions = listOf(stringResource(R.string.ui_text_347), stringResource(R.string.ui_text_344), stringResource(R.string.ui_text_348))
             )
         )
     }

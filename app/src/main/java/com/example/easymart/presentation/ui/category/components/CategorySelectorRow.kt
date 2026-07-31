@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.category.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -56,7 +58,7 @@ fun CategorySelectorRow(
     ) {
         item {
             CategoryFilterPill(
-                text = "Tất cả",
+                text = stringResource(R.string.ui_text_179),
                 icon = Icons.Filled.Tune,
                 selected = selectedCategory == null,
                 onClick = { onCategorySelected(null) }
@@ -156,7 +158,7 @@ private fun categoryIcon(category: String): ImageVector {
 fun CategorySelectorRowPreview() {
     EasyMartTheme {
         CategorySelectorRow(
-            categories = listOf("Điện thoại", "Laptop", "Phụ kiện", "Tablet", "Đồng hồ"),
+            categories = listOf(stringResource(R.string.ui_text_163), stringResource(R.string.ui_text_164), stringResource(R.string.ui_text_165), stringResource(R.string.ui_text_218), stringResource(R.string.ui_text_219)),
             selectedCategory = "Laptop",
             onCategorySelected = {}
         )

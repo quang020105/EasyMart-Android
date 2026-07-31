@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.management.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.horizontalScroll
@@ -63,31 +65,31 @@ fun FilterSection(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ProductFilterChip(
-                text = "Tất cả ($totalCount)",
+                text = stringResource(R.string.ui_text_174, totalCount),
                 selected = sourceFilter == ProductSourceFilter.ALL,
                 onClick = { onSelectSource(ProductSourceFilter.ALL) }
             )
 
             ProductFilterChip(
-                text = "Có sẵn từ API ($apiCount)",
+                text = stringResource(R.string.ui_text_175, apiCount),
                 selected = sourceFilter == ProductSourceFilter.API,
                 onClick = { onSelectSource(ProductSourceFilter.API) }
             )
 
             ProductFilterChip(
-                text = "Đã thêm ($addedCount)",
+                text = stringResource(R.string.ui_text_176, addedCount),
                 selected = sourceFilter == ProductSourceFilter.ADDED,
                 onClick = { onSelectSource(ProductSourceFilter.ADDED) }
             )
 
             ProductFilterChip(
-                text = "Đã ẩn ($hiddenCount)",
+                text = stringResource(R.string.ui_text_177, hiddenCount),
                 selected = false,
                 onClick = {}
             )
 
             ProductFilterChip(
-                text = "Hết hàng ($outOfStockCount)",
+                text = stringResource(R.string.ui_text_178, outOfStockCount),
                 selected = onlyLowStock,
                 onClick = { onToggleLowStock(!onlyLowStock) }
             )
@@ -101,7 +103,7 @@ fun FilterSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             CategoryFilterChip(
-                text = "Tất cả",
+                text = stringResource(R.string.ui_text_179),
                 icon = Icons.Filled.Tune,
                 selected = selectedCategory == null,
                 onClick = { onSelectCategory(null) }
@@ -222,7 +224,7 @@ private fun FilterSectionPreview() {
             addedCount = 7,
             hiddenCount = 4,
             outOfStockCount = 3,
-            categories = listOf("Điện thoại", "Laptop", "Phụ kiện", "Thời trang"),
+            categories = listOf(stringResource(R.string.ui_text_163), stringResource(R.string.ui_text_164), stringResource(R.string.ui_text_165), stringResource(R.string.ui_text_166)),
             selectedCategory = null,
             onlyLowStock = false,
             sourceFilter = ProductSourceFilter.ALL,

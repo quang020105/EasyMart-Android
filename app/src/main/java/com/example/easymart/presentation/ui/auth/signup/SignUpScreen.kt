@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.auth.signup
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -61,7 +63,7 @@ fun SignUpScreen(
             ) {
                 Spacer(modifier = Modifier.height(dimens.space2xl))
                 Text(
-                    text = "Đăng kí",
+                    text = stringResource(R.string.ui_text_193),
                     modifier = Modifier.padding(bottom = dimens.spaceLg),
                     style = MaterialTheme.typography.displayMedium
                 )
@@ -72,7 +74,7 @@ fun SignUpScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = dimens.spaceSm),
-                    label = { Text("Tên đầy đủ") },
+                    label = { Text(stringResource(R.string.ui_text_194)) },
                     isError = formState.fullNameError != null,
                     errorMessage = formState.fullNameError,
                     keyboardOptions = KeyboardOptions(
@@ -91,7 +93,7 @@ fun SignUpScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = dimens.spaceSm),
-                    label = { Text("Email") },
+                    label = { Text(stringResource(R.string.ui_text_186)) },
                     isError = formState.emailError != null,
                     errorMessage = formState.emailError,
                     keyboardOptions = KeyboardOptions(
@@ -110,7 +112,7 @@ fun SignUpScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = dimens.spaceSm),
-                    label = { Text("Số điện thoại") },
+                    label = { Text(stringResource(R.string.ui_text_195)) },
                     isError = formState.phoneError != null,
                     errorMessage = formState.phoneError,
                     keyboardOptions = KeyboardOptions(
@@ -129,7 +131,7 @@ fun SignUpScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = dimens.spaceSm),
-                    label = { Text("Mật khẩu") },
+                    label = { Text(stringResource(R.string.ui_text_190)) },
                     isError = formState.passwordError != null,
                     errorMessage = formState.passwordError,
 //                passwordVisible = passwordVisible,
@@ -142,7 +144,7 @@ fun SignUpScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = dimens.spaceSm),
-                    label = { Text("Xác nhận mật khẩu") },
+                    label = { Text(stringResource(R.string.ui_text_196)) },
                     isError = formState.confirmPasswordError != null,
                     errorMessage = formState.confirmPasswordError,
                 passwordVisible = passwordVisible,
@@ -151,7 +153,7 @@ fun SignUpScreen(
                 )
                 Spacer(modifier = Modifier.height(dimens.spaceXl))
                 RoundedActionButton(
-                    text = "Đăng kí",
+                    text = stringResource(R.string.ui_text_193),
                     onClick = {
                         focusManager.clearFocus()
                         onSignUpClick()
@@ -162,13 +164,13 @@ fun SignUpScreen(
                 )
                 Spacer(modifier = Modifier.height(dimens.space2xl))
                 Text(
-                    text = "Bạn đã có tài khoản?",
+                    text = stringResource(R.string.ui_text_197),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(dimens.spaceMd))
                 Text(
-                    text = "Đăng nhập",
+                    text = stringResource(R.string.label_login),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable { onNavigateToLogin() }

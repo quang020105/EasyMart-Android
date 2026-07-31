@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.productdetail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -177,7 +179,7 @@ private fun ProductImageFallback(
 
             if (showText) {
                 Text(
-                    text = "Không có ảnh sản phẩm",
+                    text = stringResource(R.string.ui_text_324),
                     modifier = Modifier.padding(
                         top = dimens.spaceSm,
                         start = dimens.spaceMd,
@@ -202,7 +204,7 @@ private fun ProductImageBoxPreview() {
     EasyMartTheme {
         ProductImageBox(
             imageUrl = null,
-            contentDescription = "Ảnh sản phẩm",
+            contentDescription = stringResource(R.string.ui_text_077),
             modifier = Modifier.size(180.dp),
             showFallbackText = true
         )

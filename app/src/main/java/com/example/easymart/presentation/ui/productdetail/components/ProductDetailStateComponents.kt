@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.productdetail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -57,7 +59,7 @@ internal fun SimilarLoadingCard(modifier: Modifier = Modifier) {
         ) {
             CircularProgressIndicator(modifier = Modifier.size(dimens.iconMedium))
             Text(
-                text = "Đang tìm sản phẩm tương tự...",
+                text = stringResource(R.string.ui_text_321),
                 style = MaterialTheme.typography.bodyMedium,
                 color = LocalAppColors.current.textSecondary
             )
@@ -94,7 +96,7 @@ internal fun EmptyDetailState(
                 verticalArrangement = Arrangement.spacedBy(dimens.spaceSm)
             ) {
                 Text(
-                    text = "Không tìm thấy sản phẩm",
+                    text = stringResource(R.string.ui_text_138),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = appColors.textPrimary
                 )
@@ -112,7 +114,7 @@ internal fun EmptyDetailState(
 @Composable
 private fun DetailInfoBannerPreview() {
     EasyMartTheme {
-        DetailInfoBanner(message = "Không thể làm mới dữ liệu sản phẩm.")
+        DetailInfoBanner(message = stringResource(R.string.ui_text_322))
     }
 }
 
@@ -128,6 +130,6 @@ private fun SimilarLoadingCardPreview() {
 @Composable
 private fun EmptyDetailStatePreview() {
     EasyMartTheme {
-        EmptyDetailState(message = "Không có dữ liệu sản phẩm")
+        EmptyDetailState(message = stringResource(R.string.ui_text_323))
     }
 }

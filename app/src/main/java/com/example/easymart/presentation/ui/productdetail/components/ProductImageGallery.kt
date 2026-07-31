@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.productdetail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -188,7 +190,7 @@ private fun ProductImageCounter(
         contentColor = MaterialTheme.colorScheme.onPrimary
     ) {
         Text(
-            text = "$currentPage/$totalPage",
+            text = stringResource(R.string.ui, currentPage, totalPage),
             modifier = Modifier.padding(
                 horizontal = 10.dp,
                 vertical = 5.dp

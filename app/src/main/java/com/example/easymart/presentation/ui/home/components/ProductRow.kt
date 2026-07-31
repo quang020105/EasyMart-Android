@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.home.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -50,7 +51,7 @@ fun ProductRow(
             )
         }
         RoundedActionButton(
-            text = "Thêm vào giỏ hàng",
+            text = stringResource(R.string.ui_text_241),
             onClick = { onAddToCart(product) },
             minHeight = dimens.buttonHeight,
             horizontalPadding = dimens.spaceLg,

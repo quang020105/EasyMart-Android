@@ -105,12 +105,12 @@ fun CheckoutScreen(
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_flash),
-                                contentDescription = "Mua ngay",
+                                contentDescription = stringResource(R.string.action_buy_now),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.width(dimens.spaceSm))
                             Text(
-                                text = "Đơn mua ngay",
+                                text = stringResource(R.string.ui_text_224),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -174,16 +174,16 @@ fun CheckoutScreen(
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_address),
-                                    contentDescription = "Địa chỉ giao hàng",
+                                    contentDescription = stringResource(R.string.label_address),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
-                                    text = "Bạn chưa có địa chỉ giao hàng",
+                                    text = stringResource(R.string.ui_text_225),
                                     style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier.padding(top = dimens.spaceSm)
                                 )
                                 Text(
-                                    text = "Thêm địa chỉ để tiếp tục thanh toán",
+                                    text = stringResource(R.string.ui_text_226),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(top = dimens.spaceXs)
@@ -198,10 +198,10 @@ fun CheckoutScreen(
                                 ) {
                                     Icon(
                                         painter = painterResource(id = R.drawable.ic_add),
-                                        contentDescription = "Thêm địa chỉ"
+                                        contentDescription = stringResource(R.string.ui_text_227)
                                     )
                                     Spacer(modifier = Modifier.width(dimens.spaceSm))
-                                    Text(text = "Thêm địa chỉ")
+                                    Text(text = stringResource(R.string.ui_text_227))
                                 }
                             }
                         }
@@ -212,7 +212,7 @@ fun CheckoutScreen(
                                     .padding(all = dimens.spaceLg)
                             ) {
                                 Text(
-                                    text = "Địa chỉ giao hàng",
+                                    text = stringResource(R.string.label_address),
                                     style = MaterialTheme.typography.titleMedium,
                                     modifier = Modifier.padding(bottom = dimens.spaceSm)
                                 )
@@ -224,7 +224,7 @@ fun CheckoutScreen(
                                 ) {
                                     Icon(
                                         painter = painterResource(id = R.drawable.ic_address),
-                                        contentDescription = "Biểu tượng địa chỉ",
+                                        contentDescription = stringResource(R.string.ui_text_228),
                                         tint = MaterialTheme.colorScheme.primary,
                                     )
 
@@ -303,7 +303,7 @@ fun CheckoutScreen(
                             .padding(all = dimens.spaceLg)
                     ) {
                         Text(
-                            text = "Phương thức thanh toán",
+                            text = stringResource(R.string.label_payments),
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(bottom = dimens.spaceSm)
                         )
@@ -322,7 +322,7 @@ fun CheckoutScreen(
 
                             Icon(
                                 imageVector = paymentUi.icon,
-                                contentDescription = "Biểu tượng ví",
+                                contentDescription = stringResource(R.string.ui_text_229),
                                 tint = MaterialTheme.colorScheme.primary,
                             )
                             Column(
@@ -348,7 +348,7 @@ fun CheckoutScreen(
             // sản phẩm
             item {
                 Text(
-                    text = "Sản phẩm chọn mua",
+                    text = stringResource(R.string.ui_text_230),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -362,7 +362,7 @@ fun CheckoutScreen(
             // Order summary header
             item {
                 Text(
-                    text = "Tóm tắt đơn hàng",
+                    text = stringResource(R.string.ui_text_231),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -387,7 +387,7 @@ fun CheckoutScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
-                            text = "Tổng tiền sản phẩm: ",
+                            text = stringResource(R.string.ui_text_232),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -404,7 +404,7 @@ fun CheckoutScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
-                            text = "Phí vận chuyển : ",
+                            text = stringResource(R.string.ui_text_233),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Text(
@@ -430,7 +430,7 @@ fun CheckoutScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Text(
-                            text = "Tổng tiền: ",
+                            text = stringResource(R.string.ui_text_234),
                             style = MaterialTheme.typography.bodyLarge,
                         )
                         Text(
@@ -452,7 +452,7 @@ fun CheckoutScreen(
         ) {
             if (address == null && !isAddressLoading) {
                 Text(
-                    text = "Vui lòng thêm địa chỉ giao hàng trước khi đặt hàng",
+                    text = stringResource(R.string.ui_text_235),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier
@@ -465,13 +465,13 @@ fun CheckoutScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
-                Text(text = "Tổng cộng: ", style = MaterialTheme.typography.titleSmall)
+                Text(text = stringResource(R.string.ui_text_236), style = MaterialTheme.typography.titleSmall)
                 Text(
                     text = total.toVNDString(), color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.titleLarge
                 )
                 RoundedActionButton(
-                    text = if (isLoading) "Đang xử lý" else "Thanh toán",
+                    text = if (isLoading) stringResource(R.string.ui_text_237) else stringResource(R.string.ui_text_238),
                     enabled = !isLoading && address != null,
                     onClick = onConfirmClick,
                     modifier = Modifier.padding(horizontal = dimens.spaceMd, vertical = dimens.spaceXs)

@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.deliveryaddress.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -79,7 +80,7 @@ fun <T> SearchableDropDown(
         ) {
             if (options.isEmpty()) {
                 DropdownMenuItem(
-                    text = { Text(text = "Không có kết quả") },
+                    text = { Text(text = stringResource(R.string.ui_text_260)) },
                     onClick = {}
                 )
             } else {
@@ -112,7 +113,7 @@ fun SearchableDropDownPreview(
         var selected by remember { mutableStateOf<String?>(null) }
 
         SearchableDropDown(
-            label = "Tỉnh/Thành phố",
+            label = stringResource(R.string.ui_text_261),
             options = sampleOptions,
             selected = selected,
             onSelect = { selected = it },

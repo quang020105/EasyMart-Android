@@ -1,4 +1,5 @@
 package com.example.easymart.presentation.ui.common.components
+import androidx.compose.ui.res.stringResource
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -114,7 +115,7 @@ fun ItemProductRecommendCard(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.AddShoppingCart,
-                            contentDescription = "Thêm vào giỏ hàng",
+                            contentDescription = stringResource(R.string.ui_text_241),
                             modifier = Modifier
                                 .padding(dimens.spaceSm)
                                 .size(dimens.iconSmall)
@@ -190,7 +191,7 @@ private fun ProductCompactMeta(product: Product) {
                 tint = appColors.warning
             )
             Text(
-                text = if (product.rating.rate > 0) product.rating.rate.toString() else "Mới",
+                text = if (product.rating.rate > 0) product.rating.rate.toString() else stringResource(R.string.ui_text_242),
                 style = MaterialTheme.typography.labelMedium,
                 color = appColors.textSecondary,
                 maxLines = 1
@@ -198,7 +199,7 @@ private fun ProductCompactMeta(product: Product) {
         }
 
         Text(
-            text = "Đã bán ${product.soldQuantity}",
+            text = stringResource(R.string.ui_text_243, product.soldQuantity),
             style = MaterialTheme.typography.labelMedium,
             color = appColors.textSecondary,
             maxLines = 1,
@@ -234,7 +235,7 @@ private fun StockCompactChip(
                 modifier = Modifier.size(dimens.iconSmall)
             )
             Text(
-                text = if (inStock) "Còn $stockQuantity" else "Hết",
+                text = if (inStock) stringResource(R.string.ui_text_244, stockQuantity) else stringResource(R.string.ui_text_245),
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                 maxLines = 1
             )

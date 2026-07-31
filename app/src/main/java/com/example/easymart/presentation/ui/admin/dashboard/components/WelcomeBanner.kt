@@ -1,5 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 package com.example.easymart.presentation.ui.admin.dashboard.components
+import androidx.compose.ui.res.stringResource
 
 import android.annotation.SuppressLint
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -68,7 +69,7 @@ fun WelcomeBanner(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Text(
-                        text = "Xin chào, $userName! 👋",
+                        text = stringResource(R.string.ui_text_027, userName),
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.SemiBold,
                             color = Color(0xFF101828)
@@ -102,7 +103,7 @@ fun WelcomeBanner(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Ảnh",
+                            text = stringResource(R.string.ui_text_028),
                             style = MaterialTheme.typography.labelLarge.copy(
                                 color = Color(0xFF98A2B3)
                             )
@@ -144,7 +145,7 @@ private fun WelcomeBannerPreview() {
     MaterialTheme {
         WelcomeBanner(
             userName = "Admin",
-            subtitle = "Đây là tổng quan hoạt động của cửa hàng hôm nay.",
+            subtitle = stringResource(R.string.ui_text_005),
             illustrationPainter = painterResource(id = R.drawable.ic_online_shop)
         )
     }

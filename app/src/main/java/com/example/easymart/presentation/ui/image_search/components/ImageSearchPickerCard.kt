@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.image_search.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import android.net.Uri
 import androidx.compose.animation.AnimatedContent
@@ -86,7 +88,7 @@ fun ImageSearchPickerCard(
                         modifier = Modifier.size(dimens.iconSmall)
                     )
                     Text(
-                        text = "Camera",
+                        text = stringResource(R.string.ui_text_280),
                         modifier = Modifier.padding(start = dimens.spaceXs)
                     )
                 }
@@ -108,7 +110,7 @@ fun ImageSearchPickerCard(
                         modifier = Modifier.size(dimens.iconSmall)
                     )
                     Text(
-                        text = "Gallery",
+                        text = stringResource(R.string.ui_text_281),
                         modifier = Modifier.padding(start = dimens.spaceXs)
                     )
                 }
@@ -145,7 +147,7 @@ fun ImageSearchPickerCard(
                     )
                 }
                 Text(
-                    text = if (selectedImage == null) "Chọn ảnh để tìm kiếm" else "Tìm kiếm",
+                    text = if (selectedImage == null) stringResource(R.string.ui_text_282) else stringResource(R.string.ui_text_283),
                     modifier = Modifier.padding(start = dimens.spaceXs),
                     style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                 )
@@ -202,7 +204,7 @@ private fun ImagePreviewPanel(
                         )
                     }
                     Text(
-                        text = "Chưa chọn ảnh",
+                        text = stringResource(R.string.ui_text_284),
                         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                         color = appColors.aiAccent
                     )
@@ -210,7 +212,7 @@ private fun ImagePreviewPanel(
             } else {
                 AsyncImage(
                     model = imageUri,
-                    contentDescription = "Ảnh tìm kiếm",
+                    contentDescription = stringResource(R.string.ui_text_285),
                     modifier = Modifier.matchParentSize(),
                     contentScale = ContentScale.Crop
                 )
@@ -227,7 +229,7 @@ private fun ImagePreviewPanel(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Close,
-                        contentDescription = "Xóa ảnh",
+                        contentDescription = stringResource(R.string.ui_text_135),
                         tint = appColors.textPrimary
                     )
                 }

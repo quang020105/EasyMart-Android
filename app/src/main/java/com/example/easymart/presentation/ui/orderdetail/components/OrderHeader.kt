@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.orderdetail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,12 +53,12 @@ fun OrderHeader(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Đơn hàng #$orderId",
+                    text = stringResource(R.string.ui_text_009, orderId),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                 )
                 Spacer(modifier = Modifier.height(dimens.spaceXs))
                 Text(
-                    text = "Thời gian đặt: ${createdAt.toDateTimeString()}",
+                    text = stringResource(R.string.ui_text_305, createdAt.toDateTimeString()),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )

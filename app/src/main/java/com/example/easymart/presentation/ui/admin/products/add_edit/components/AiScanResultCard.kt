@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.products.add_edit.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -65,7 +67,7 @@ fun AiScanSuccessCard(
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Text(
-                    text = "Quét bằng AI thành công! 🎉",
+                    text = stringResource(R.string.ui_text_116),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF166534)
@@ -74,7 +76,7 @@ fun AiScanSuccessCard(
             }
 
             Text(
-                text = "AI đã trích xuất thông tin. Hãy kiểm tra lại thông tin trước khi lưu.",
+                text = stringResource(R.string.ui_text_117),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xFF4B5563)
             )
@@ -91,7 +93,7 @@ fun AiScanSuccessCard(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Quét lại ảnh khác")
+                Text(stringResource(R.string.ui_text_118))
 
             }
         }
@@ -129,7 +131,7 @@ fun AiScanErrorCard(
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Text(
-                    text = "Quét bằng AI không thành công",
+                    text = stringResource(R.string.ui_text_119),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFFB91C1C)
@@ -138,7 +140,7 @@ fun AiScanErrorCard(
             }
 
             Text(
-                text = "AI không thể trích xuất thông tin từ ảnh này. Vui lòng chọn ảnh khác và thử lại.",
+                text = stringResource(R.string.ui_text_120),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xFF6B7280)
             )
@@ -155,7 +157,7 @@ fun AiScanErrorCard(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Chọn ảnh khác")
+                Text(stringResource(R.string.ui_text_121))
             }
         }
     }

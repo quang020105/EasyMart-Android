@@ -1,4 +1,6 @@
 package com.example.easymart.presentation.ui.admin.orders.detail.components
+import androidx.compose.ui.res.stringResource
+import com.example.easymart.R
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -21,11 +23,11 @@ fun CustomerInfoSection(
     SectionCard(modifier = modifier) {
         SectionTitle(
             icon = Icons.Rounded.Person,
-            title = "Thông tin khách hàng"
+            title = stringResource(R.string.ui_text_033)
         )
 
         OrderDetailInfoRow(
-            label = "Tên khách:",
+            label = stringResource(R.string.ui_text_034),
             value = customerName,
             icon = Icons.Rounded.Person
         )
@@ -33,7 +35,7 @@ fun CustomerInfoSection(
         SectionDivider()
 
         OrderDetailInfoRow(
-            label = "Số điện thoại:",
+            label = stringResource(R.string.ui_text_035),
             value = phoneNumber,
             icon = Icons.Rounded.Phone
         )
@@ -42,7 +44,7 @@ fun CustomerInfoSection(
             SectionDivider()
 
             OrderDetailInfoRow(
-                label = "Email:",
+                label = stringResource(R.string.ui_text_036),
                 value = email,
                 icon = Icons.Rounded.Email
             )
