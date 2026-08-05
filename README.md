@@ -6,14 +6,85 @@ EasyMart is an Android e-commerce application with customer and administrator fl
 
 ## Demo
 
-Demo screenshots and GIFs are not included in the repository yet. Recommended captures for a portfolio-ready demo:
+The screenshots below are captured from the running Android application and highlight the main customer and administrator workflows.
 
-- Customer flow: home, category browsing, product details, cart, and checkout
-- Search flow: keyword suggestions, Algolia results, and image search
-- Order flow: payment result, order history, order details, and cancellation states
-- Admin flow: dashboard, product management, product editor, and order processing
+### Home and product search
 
-Suggested location: `docs/screenshots/`.
+<table>
+  <tr>
+    <td width="33%" align="center">
+      <img src="docs/screenshots/home1.png" alt="EasyMart home screen with featured products" width="260"><br>
+      <sub><b>Home and featured products</b></sub>
+    </td>
+    <td width="33%" align="center">
+      <img src="docs/screenshots/home2.png" alt="EasyMart personalized product recommendations" width="260"><br>
+      <sub><b>Recommendations and stock status</b></sub>
+    </td>
+    <td width="33%" align="center">
+      <img src="docs/screenshots/home3.png" alt="EasyMart product search with keyword suggestions" width="260"><br>
+      <sub><b>Live keyword suggestions</b></sub>
+    </td>
+  </tr>
+</table>
+
+`home3` shows the active product-search state, where matching keyword suggestions are displayed while the user enters a query.
+
+### Product discovery
+
+<table>
+  <tr>
+    <td width="33%" align="center">
+      <img src="docs/screenshots/productdetail1.png" alt="EasyMart product details with price rating and stock" width="260"><br>
+      <sub><b>Product information and inventory</b></sub>
+    </td>
+    <td width="33%" align="center">
+      <img src="docs/screenshots/productdetail3.png" alt="EasyMart product purchase controls and related products" width="260"><br>
+      <sub><b>Purchase controls and related items</b></sub>
+    </td>
+    <td width="33%" align="center">
+      <img src="docs/screenshots/imagesearch1.png" alt="EasyMart image search with similar product results" width="260"><br>
+      <sub><b>Image search and similar results</b></sub>
+    </td>
+  </tr>
+</table>
+
+### Shopping, payment, and orders
+
+<table>
+  <tr>
+    <td width="33%" align="center">
+      <img src="docs/screenshots/cart1.png" alt="EasyMart shopping cart with item selection and quantity controls" width="260"><br>
+      <sub><b>Cart selection and quantities</b></sub>
+    </td>
+    <td width="33%" align="center">
+      <img src="docs/screenshots/checkout3.png" alt="Successful EasyMart payment through PayOS" width="260"><br>
+      <sub><b>PayOS payment result</b></sub>
+    </td>
+    <td width="33%" align="center">
+      <img src="docs/screenshots/orderdetail2.png" alt="EasyMart delivered order details" width="260"><br>
+      <sub><b>Order status and payment details</b></sub>
+    </td>
+  </tr>
+</table>
+
+### Administrator product workflow
+
+<table>
+  <tr>
+    <td width="33%" align="center">
+      <img src="docs/screenshots/productmanagement1.png" alt="EasyMart administrator product management and filtering" width="260"><br>
+      <sub><b>Search, filters, and visibility</b></sub>
+    </td>
+    <td width="33%" align="center">
+      <img src="docs/screenshots/addproduct2.png" alt="EasyMart administrator product information form" width="260"><br>
+      <sub><b>Validated product information</b></sub>
+    </td>
+    <td width="33%" align="center">
+      <img src="docs/screenshots/addproduct1.png" alt="EasyMart product image management and AI scan" width="260"><br>
+      <sub><b>Multi-image upload and AI scan</b></sub>
+    </td>
+  </tr>
+</table>
 
 ## Key Features
 
@@ -215,7 +286,7 @@ Online payment leaves the app through a Chrome Custom Tab. Custom deep links ret
 - Update stale tests and add repository synchronization, Compose UI, and end-to-end checkout coverage.
 - Add durable constrained background synchronization for pending local changes.
 - Complete the administrator category-management screen, which is currently a placeholder route.
-- Add demo screenshots or a short GIF and document the companion API setup in a separate guide.
+- Add a short walkthrough video or GIF and document the companion API setup in a separate guide.
 
 ## Author
 
@@ -235,14 +306,12 @@ EasyMart là ứng dụng thương mại điện tử Android gồm luồng khá
 
 ### Demo
 
-Repository hiện chưa có ảnh hoặc GIF demo. Các màn hình nên được bổ sung để hoàn thiện hồ sơ dự án:
+Bộ ảnh demo thực tế được trình bày tại phần [Demo tiếng Anh](#demo) phía trên, gồm bốn nhóm:
 
-- Luồng khách hàng: trang chủ, danh mục, chi tiết sản phẩm, giỏ hàng và checkout
-- Luồng tìm kiếm: gợi ý từ khóa, kết quả Algolia và tìm kiếm bằng hình ảnh
-- Luồng đơn hàng: kết quả thanh toán, lịch sử đơn, chi tiết đơn và các trạng thái hủy đơn
-- Luồng quản trị: dashboard, quản lý sản phẩm, chỉnh sửa sản phẩm và xử lý đơn hàng
-
-Vị trí đề xuất: `docs/screenshots/`.
+- **Trang chủ và tìm kiếm:** sản phẩm nổi bật, danh sách gợi ý và trạng thái tìm kiếm từ khóa trực tiếp. `home3` là màn hình đang nhập nội dung tìm kiếm và hiển thị các từ khóa gợi ý phù hợp.
+- **Khám phá sản phẩm:** thông tin chi tiết, tồn kho, thao tác mua và tìm kiếm sản phẩm tương tự bằng hình ảnh.
+- **Mua hàng và đơn hàng:** chọn sản phẩm trong giỏ, kết quả thanh toán PayOS và theo dõi trạng thái đơn.
+- **Quản trị sản phẩm:** tìm kiếm/lọc sản phẩm, nhập thông tin có validation, upload nhiều ảnh và quét ảnh bằng AI.
 
 ### Chức năng chính
 
@@ -444,7 +513,7 @@ Thanh toán trực tuyến được mở trong Chrome Custom Tab. Deep link đư
 - Cập nhật các test cũ và bổ sung test cho đồng bộ Repository, Compose UI và luồng checkout end-to-end.
 - Bổ sung cơ chế đồng bộ nền bền vững với điều kiện ràng buộc cho các thay đổi local đang chờ.
 - Hoàn thiện màn hình quản lý danh mục của quản trị viên, hiện mới là placeholder route.
-- Thêm ảnh/GIF demo và tài liệu cấu hình companion API riêng.
+- Thêm video hoặc GIF walkthrough ngắn và tài liệu cấu hình companion API riêng.
 
 ### Tác giả
 
